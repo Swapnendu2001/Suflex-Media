@@ -12,11 +12,14 @@ def header_style():
             height: 8vh;
             box-shadow: 0 0.68vw 4.83vw 0 #017AFF;
             gap: 0.625vw;
-            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            
+            width: 100vw;
+            height: 15vh;
+            box-sizing: border-box;
+            z-index: 1000;
+            margin: 0;
         }
         .logo img {
             height: 7vh;
