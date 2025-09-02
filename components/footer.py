@@ -10,16 +10,17 @@ def footer_style():
             background: linear-gradient(180deg, rgba(217, 217, 217, 0) 0%, rgba(1, 122, 255, 0.25) 100%);
             font-family: 'Lexend', sans-serif;
             gap: 5vh;
-            position: fixed;
+            position: static;
             bottom: 0;
             left: 0;
             right: 0;
+            width: 100vw;
 
         }
         .footer-content {
             display: flex;
             justify-content: space-around;
-            width: 100%;
+            width: 100vw;
             align-items: flex-start;
         }
         .footer-section {
