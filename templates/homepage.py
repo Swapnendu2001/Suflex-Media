@@ -2,6 +2,9 @@ from components.header import header_style, header_content
 from components.footer import footer_style, footer_content
 from components.homepage_hero_section import homepage_hero_section_style, homepage_hero_section_content
 from components.homepage_work_with_us import work_with_us_css, work_with_us_html
+from components.homepage_scaling_section import scaling_section_css, scaling_section_html
+from components.homepage_care_section import care_section_css, care_section_html
+from components.homepage_insights_section import insights_section_css, insights_section_html
 
 
 
@@ -34,6 +37,9 @@ def homepage():
             {header_style()}
             {homepage_hero_section_style()}
             {work_with_us_css()}
+            {scaling_section_css()}
+            {care_section_css()}
+            {insights_section_css()}
             {footer_style()}
             
         </head>
@@ -42,6 +48,9 @@ def homepage():
             <div class="content-wrapper">
                 {homepage_hero_section_content()}
                 {work_with_us_html()}
+                {scaling_section_html()}
+                {care_section_html()}
+                {insights_section_html()}
             </div>
             {footer_content()}
         </body>
