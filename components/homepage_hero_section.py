@@ -6,7 +6,7 @@ def homepage_hero_section_style():
         .hero-section {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: 150vh;
             background-color: #f8fafc;
             font-family: 'Lexend', sans-serif;
             overflow: hidden;
@@ -21,16 +21,16 @@ def homepage_hero_section_style():
         /* Main Heading */
         .hero-section h1 {
             position: absolute;
-            width: 75.06vw; /* 1201px at 1600px */
-            height: 11.25vh; /* 180px at 1600px */
-            left: calc(50% - 75.06vw/2 - 0.03vw);
-            top: 20.19vh; /* 323px at 1600px */
+            width: 75vw;
+            height: auto;
+            left: 12.5vw;
+            top: 5vh;
             
-            font-family: 'Lexend';
+            font-family: 'Lexend', sans-serif;
             font-style: normal;
-            font-weight: 400;
-            font-size: 5vw; /* 80px at 1600px */
-            line-height: 6.25vh; /* 100px at 1600px */
+            font-weight: 700;
+            font-size: 5vw;
+            line-height: 1.2;
             text-align: center;
             letter-spacing: -0.04em;
             
@@ -39,24 +39,24 @@ def homepage_hero_section_style():
         }
         
         .hero-section .highlight {
+            font-weight: 700;
             color: #017AFF;
         }
         
         /* Sub heading */
         .hero-section .sub-heading {
             position: absolute;
-            width: 32.25vw; /* 516px at 1600px */
-            height: 2.81vh; /* 45px at 1600px */
-            left: calc(50% - 32.25vw/2 - 0.06vw);
-            top: 36.13vh; /* 578px at 1600px */
+            width: 32.25vw;
+            height: auto;
+            left: calc(50% - 16.125vw);
+            top: 35vh;
             
-            font-family: 'Lexend';
+            font-family: 'Lexend', sans-serif;
             font-style: normal;
             font-weight: 300;
-            font-size: 2.25vw; /* 36px at 1600px */
-            line-height: 2.81vh; /* 45px at 1600px */
+            font-size: 1.5vw;
+            line-height: 1.5;
             text-align: center;
-            letter-spacing: -0.04em;
             
             color: #080808;
             margin: 0;
@@ -65,102 +65,55 @@ def homepage_hero_section_style():
         /* CTA Button Container */
         .cta-container {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 1.71vh 0; /* 27.4311px */
-            gap: 1.71vh;
-            
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            width: 37.38vw; /* 598px at 1600px */
-            height: 8.74vh; /* 139.9px at 1600px */
-            left: 35.56vw; /* 569px at 1600px */
-            top: 41.81vh; /* 669px at 1600px */
-            
+            width: 24vw;
+            height: 7vh;
+            left: 38vw;
+            top: 45vh;
             filter: drop-shadow(0px 0.34vh 0.21vh rgba(0, 0, 0, 0.25));
         }
         
         /* CTA Button */
         .hero-section .cta-button {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 0.34vh 0; /* 5.48623px */
-            gap: 1.71vh;
-            
-            width: 33.95vw; /* 543.14px at 1600px */
-            height: 5.32vh; /* 85.04px at 1600px */
-            
+            width: 100%;
+            height: 100%;
             background: #017AFF;
-            border-radius: 3.6vh; /* 57.6054px at 1600px */
-            
-            flex: none;
-            order: 0;
-            align-self: stretch;
-            flex-grow: 0;
+            border-radius: 3vh;
             text-decoration: none;
         }
         
         .cta-inner {
             display: flex;
-            flex-direction: row;
             justify-content: center;
             align-items: center;
-            padding: 1.71vh;
-            gap: 1.71vh;
-            
-            width: 32.89vw; /* 526.18px at 1600px */
-            height: 6.24vh; /* 99.86px at 1600px */
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
+            gap: 1vw;
         }
         
         .cta-text {
-            width: 25vw; /* 400px at 1600px */
-            height: 2.81vh; /* 45px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
+            font-family: 'Lexend', sans-serif;
             font-weight: 400;
-            font-size: 2.23vw; /* 35.6605px at 1600px */
-            line-height: 2.81vh; /* 45px at 1600px */
-            text-align: center;
-            letter-spacing: -0.04em;
-            
+            font-size: 1.5vw;
             color: #FFFFFF;
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
         }
         
         .cta-icon {
             display: flex;
-            flex-direction: row;
             align-items: center;
-            padding: 0.69vh;
-            gap: 1.71vh;
-            
-            width: 2.74vw; /* 43.89px at 1600px */
-            height: 2.74vh; /* 43.89px at 1600px */
-            
+            justify-content: center;
+            width: 4.0vh;
+            height: 4.0vh;
             background: #FFFFFF;
-            border-radius: 1.37vh; /* 21.9449px at 1600px */
-            
-            flex: none;
-            order: 1;
-            flex-grow: 0;
+            border-radius: 50%;
         }
         
         .cta-icon img {
-            width: 1.37vw; /* 21.94px at 1600px */
-            height: 1.37vh; /* 21.94px at 1600px */
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
+            width: 2.0vh;
+            height: 2.0vh;
         }
         
         /* Trusted Logos */
@@ -169,323 +122,180 @@ def homepage_hero_section_style():
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            padding: 0px;
-            gap: 2.72vw; /* 43.45px at 1600px */
+            padding: 0;
+            gap: 1.72vw;
             
             position: absolute;
-            width: 47.42vw; /* 758.79px at 1600px */
-            height: 3.94vh; /* 63px at 1600px */
-            left: calc(50% - 47.42vw/2 + 0.02vw);
-            top: 52.63vh; /* 842px at 1600px */
+            width: 48.42vw;
+            height: 3.94vh;
+            left: calc(50% - 23.71vw);
+            top: 59vh;
         }
         
         .trusted-logos .brandlution {
-            width: 12.90vw; /* 206.38px at 1600px */
-            height: 2.67vh; /* 42.65px at 1600px */
+            width: 12.90vw;
+            height: 5.67vh;
             background: url('/static/brandlution.png') no-repeat center;
             background-size: contain;
-            flex: none;
-            order: 0;
-            flex-grow: 0;
         }
         
         .trusted-logos .excelra {
-            width: 9.41vw; /* 150.51px at 1600px */
-            height: 2.30vh; /* 36.78px at 1600px */
+            width: 11.41vw;
+            height: 4.30vh;
             background: url('/static/excelra.png') no-repeat center;
             background-size: contain;
-            flex: none;
-            order: 1;
-            flex-grow: 0;
         }
         
         .trusted-logos .decisionalgo {
-            width: 19.69vw; /* 315px at 1600px */
-            height: 3.94vh; /* 63px at 1600px */
+            width: 17.69vw;
+            height: 6.94vh;
             background: url('/static/decisionalgo.png') no-repeat center;
             background-size: contain;
-            flex: none;
-            order: 2;
-            flex-grow: 0;
         }
         
-        /* Left Side Card - Turning Ideas into Books */
+        /* Left Side Card */
         .side-card-left {
             box-sizing: border-box;
-            
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             align-items: center;
-            padding: 2.63vh 2.91vw;
-            gap: 1.39vh;
+            padding: 4vh 3vw;
             
             position: absolute;
-            width: 23.15vw; /* 370.47px at 1600px */
-            height: 43.81vh; /* 701px at 1600px */
-            left: 4.19vw; /* 67px at 1600px */
-            top: 50.31vh; /* 805px at 1600px */
+            width: 20vw;
+            height: 80vh;
+            left: 5vw;
+            top: 58vh;
             
             background: url('/static/idea.gif') no-repeat center, #FBFBFB;
             background-size: cover;
-            border: 0.03vw solid #000000;
+            border: 1px solid #000000;
             box-shadow: 0.28vw -0.42vh 0.47vw rgba(0, 0, 0, 0.25);
-            border-radius: 3.33vh;
+            border-radius: 6.33vh;
         }
         
         .side-card-left h3 {
-            width: 17.19vw; /* 275.08px at 1600px */
-            height: 5.50vh; /* 88px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
+            font-family: 'Lexend', sans-serif;
             font-weight: 500;
-            font-size: 2.22vw; /* 35.4937px at 1600px */
-            line-height: 2.75vh; /* 44px at 1600px */
-            display: flex;
-            align-items: flex-end;
-            letter-spacing: -0.04em;
-            
+            font-size: 1.8vw;
+            text-align: left;
             color: #080808;
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
             margin: 0;
         }
         
-        /* Right Side Card - Turning Content into Lead Magnets */
+        /* Right Side Card */
         .side-card-right {
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             align-items: center;
-            padding: 2.36vh 2.91vw;
-            gap: 1.39vh;
+            padding: 4vh 3vw;
             
             position: absolute;
-            width: 23.15vw; /* 370.47px at 1600px */
-            height: 43.81vh; /* 701px at 1600px */
-            left: 80.75vw; /* 1292px at 1600px */
-            top: 50.31vh; /* 805px at 1600px */
+            width: 20vw;
+            height: 80vh;
+            right: 5vw;
+            top: 58vh;
             
             background: url('/static/6913652_Motion_Graphics_Motion_Graphic_1080x1920.gif') no-repeat center;
             background-size: cover;
             filter: drop-shadow(0.28vw -0.42vh 0.47vw rgba(0, 0, 0, 0.25));
-            border-radius: 3.33vh;
+            border-radius: 6.33vh;
         }
         
         .side-card-right h3 {
-            width: 17.19vw; /* 275.08px at 1600px */
-            height: 8.25vh; /* 132px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
+            font-family: 'Lexend', sans-serif;
             font-weight: 500;
-            font-size: 2.22vw; /* 35.4937px at 1600px */
-            line-height: 2.75vh; /* 44px at 1600px */
-            display: flex;
-            align-items: flex-end;
-            letter-spacing: -0.04em;
-            
+            font-size: 1.8vw;
+            text-align: left;
             color: #000000;
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
             margin: 0;
         }
         
-        /* Center Main Card */
-        .center-main-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 1.63vh 2.81vw;
-            gap: 0.63vh;
-            
+        /* Center Block */
+        .stats-container {
             position: absolute;
-            width: 48.81vw; /* 781px at 1600px */
-            height: 20.69vh; /* 331px at 1600px */
-            left: calc(50% - 48.81vw/2 - 0.03vw);
-            top: 73.44vh; /* 1175px at 1600px */
+            display: flex;
+            flex-direction: row;
+            gap: 1.13vw;
+            width: 44vw;
+            height: 20vh;
+            left: 28vw;
+            top: 70vh;
+        }
+        
+        .stat-box-left, .stat-box-right {
+            box-sizing: border-box;
+            width: 21.435vw;
+            height: 20vh;
+            background: #2D91FF;
+            box-shadow: 0.16vw -0.25vh 0.28vw rgba(0, 0, 0, 0.25);
+            border-radius: 2.98vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1vh 1vw;
+        }
+        
+        .stat-inner-left, .stat-inner-right {
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+            width: 100%;
+        }
+        
+        .stat-icon-left, .stat-icon-right {
+            flex-shrink: 0;
+        }
+
+        .stat-icon-left {
+            width: 8vw;
+            height: 11vh;
+            background: url('/static/icons/brand-asset-management.png') no-repeat center;
+            background-size: contain;
+        }
+        
+        .stat-text-left, .stat-text-right {
+            font-family: 'Lexend', sans-serif;
+            font-weight: 500;
+            font-size: 1.2vw;
+            line-height: 1.2;
+            color: #FFFFFF;
+            text-align: center;
+        }
+        
+        .stat-icon-right {
+            width: 4vh;
+            height: 4vh;
+            background: url('/static/icons/open-book.png') no-repeat center;
+            background-size: contain;
+        }
+        
+        .center-main-card {
+            box-sizing: border-box;
+            position: absolute;
+            width: 44vw;
+            height: 46vh;
+            left: 28vw;
+            top: 92vh;
             
             background: url('/static/sequence_01_3.gif') no-repeat center;
             background-size: cover;
             filter: drop-shadow(0.13vw -0.19vh 0.21vw rgba(0, 0, 0, 0.25));
-            border-radius: 1.5vh;
+            border-radius: 3.5vh;
+            
+            display: flex;
+            align-items: center;
+            padding: 2vh 2vw;
         }
         
         .center-main-card h3 {
-            width: 16vw; /* 256px at 1600px */
-            height: 11.25vh; /* 180px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
+            font-family: 'Lexend', sans-serif;
             font-weight: 500;
-            font-size: 2.25vw; /* 36px at 1600px */
-            line-height: 2.81vh; /* 45px at 1600px */
-            display: flex;
-            align-items: flex-end;
-            letter-spacing: -0.04em;
-            
+            font-size: 2vw;
             color: #FFFFFF;
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-            margin: 0;
-        }
-        
-        /* Stats Container */
-        .stats-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 0px;
-            gap: 1.13vw; /* 18px at 1600px */
-            
-            position: absolute;
-            width: 48.63vw; /* 778px at 1600px */
-            height: 12.44vh; /* 199px at 1600px */
-            left: calc(50% - 48.63vw/2 + 0.03vw);
-            top: 59.81vh; /* 957px at 1600px */
-        }
-        
-        /* Stat Box Left */
-        .stat-box-left {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0.99vh 1.73vw;
-            gap: 0.82vh;
-            
-            width: 23.75vw; /* 380px at 1600px */
-            height: 12.44vh; /* 199px at 1600px */
-            
-            background: #2D91FF;
-            box-shadow: 0.16vw -0.25vh 0.28vw rgba(0, 0, 0, 0.25);
-            border-radius: 1.98vh;
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-        
-        .stat-inner-left {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 0px;
-            gap: 0.49vw;
-            
-            width: 17.63vw; /* 282px at 1600px */
-            height: 7.38vh; /* 118px at 1600px */
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-        
-        .stat-icon-left {
-            width: 7.09vw; /* 113.47px at 1600px */
-            height: 7.09vh; /* 113.47px at 1600px */
-            background: url('/static/icons/brand-asset-management.png') no-repeat center;
-            background-size: contain;
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-        
-        .stat-text-left {
-            width: 10.04vw; /* 160.62px at 1600px */
-            height: 4.94vh; /* 79.07px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
-            font-weight: 500;
-            font-size: 1.98vw; /* 31.6291px at 1600px */
-            line-height: 2.5vh; /* 40px at 1600px */
-            text-align: center;
-            letter-spacing: -0.04em;
-            
-            color: #FFFFFF;
-            
-            flex: none;
-            order: 1;
-            flex-grow: 1;
-            margin: 0;
-        }
-        
-        /* Stat Box Right */
-        .stat-box-right {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1.24vh 1.73vw;
-            gap: 0.82vh;
-            
-            width: 23.75vw; /* 380px at 1600px */
-            height: 12.44vh; /* 199px at 1600px */
-            
-            background: #2D91FF;
-            box-shadow: 0.16vw -0.25vh 0.28vw rgba(0, 0, 0, 0.25);
-            border-radius: 1.98vh;
-            
-            flex: none;
-            order: 1;
-            flex-grow: 0;
-        }
-        
-        .stat-inner-right {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 0px;
-            gap: 1.32vw;
-            
-            width: 18.38vw; /* 294px at 1600px */
-            height: 6.44vh; /* 103px at 1600px */
-            
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-        
-        .stat-icon-right {
-            width: 5.69vw; /* 91px at 1600px */
-            height: 5.69vh; /* 91px at 1600px */
-            background: url('/static/icons/open-book.png') no-repeat center;
-            background-size: contain;
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-        
-        .stat-text-right {
-            width: 11.37vw; /* 181.91px at 1600px */
-            height: 4.94vh; /* 79.07px at 1600px */
-            
-            font-family: 'Lexend';
-            font-style: normal;
-            font-weight: 500;
-            font-size: 1.98vw; /* 31.6291px at 1600px */
-            line-height: 2.5vh; /* 40px at 1600px */
-            display: flex;
-            align-items: flex-end;
-            text-align: center;
-            letter-spacing: -0.04em;
-            
-            color: #FFFFFF;
-            
-            flex: none;
-            order: 1;
-            flex-grow: 1;
             margin: 0;
         }
     </style>
@@ -496,7 +306,7 @@ def homepage_hero_section_content():
     <section class="hero-section">
         <div class="hero-content">
             <!-- Main Heading -->
-            <h1>We Obsess Over Your Brand so <span class="highlight">You Don't Have To</span></h1>
+            <h1>We Obsess Over Your Brand so <br><span class="highlight">You Don't Have To</span></h1>
             
             <!-- Sub Heading -->
             <p class="sub-heading">300+ Customers Served 🙌</p>
@@ -519,7 +329,17 @@ def homepage_hero_section_content():
                 <div class="excelra"></div>
                 <div class="decisionalgo"></div>
             </div>
+
+            <!-- Left Side Card -->
+            <div class="side-card-left">
+                <h3>Turning Ideas into Books</h3>
+            </div>
             
+            <!-- Right Side Card -->
+            <div class="side-card-right">
+                <h3>Turning Content into Lead Magnets</h3>
+            </div>
+
             <!-- Stats Container -->
             <div class="stats-container">
                 <div class="stat-box-left">
@@ -538,17 +358,7 @@ def homepage_hero_section_content():
             
             <!-- Center Main Card -->
             <div class="center-main-card">
-                <h3>Turning Leaders into Thought Leaders</h3>
-            </div>
-            
-            <!-- Left Side Card -->
-            <div class="side-card-left">
-                <h3>Turning Ideas into Books</h3>
-            </div>
-            
-            <!-- Right Side Card -->
-            <div class="side-card-right">
-                <h3>Turning Content into Lead Magnets</h3>
+                <h3>Turning<br>Leaders into<br>Thought<br>Leaders</h3>
             </div>
         </div>
     </section>
