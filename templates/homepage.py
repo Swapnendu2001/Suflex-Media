@@ -8,6 +8,15 @@ from components.homepage_insights_section import insights_section_css, insights_
 
 
 
+from components.homepage_faq_section import faq_section_css, faq_section_html
+ 
+
+
+from components.homepage_brands_section import brands_section_css, brands_section_html
+from components.homepage_booking_section import booking_section_css, booking_section_html
+
+
+
 def homepage():
     style = """
     <style>
@@ -40,6 +49,9 @@ def homepage():
             {scaling_section_css()}
             {care_section_css()}
             {insights_section_css()}
+            {brands_section_css()}
+            {booking_section_css()}
+            {faq_section_css()}
             {footer_style()}
             
         </head>
@@ -51,6 +63,9 @@ def homepage():
                 {scaling_section_html()}
                 {care_section_html()}
                 {insights_section_html()}
+                {brands_section_html()}
+                {booking_section_html()}
+                {faq_section_html()}
             </div>
             {footer_content()}
         </body>
