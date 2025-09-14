@@ -6,7 +6,7 @@ def footer_style():
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 5vh 5vw;
+            padding: 25vh 5vh 5vw 5vw;
             background: linear-gradient(180deg, rgba(217, 217, 217, 0) 0%, rgba(1, 122, 255, 0.25) 100%);
             font-family: 'Lexend', sans-serif;
             gap: 5vh;
