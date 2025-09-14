@@ -1,19 +1,13 @@
 from components.header import header_style, header_content
 from components.footer import footer_style, footer_content
-from components.homepage_hero_section import homepage_hero_section_style, homepage_hero_section_content
-from components.homepage_work_with_us import work_with_us_css, work_with_us_html
-from components.homepage_scaling_section import scaling_section_css, scaling_section_html
-from components.homepage_care_section import care_section_css, care_section_html
-from components.homepage_insights_section import insights_section_css, insights_section_html
-
-
-
-from components.homepage_faq_section import faq_section_css, faq_section_html
- 
-
-
-from components.homepage_brands_section import brands_section_css, brands_section_html
-from components.homepage_booking_section import booking_section_css, booking_section_html
+from components.homepage.homepage_hero_section import homepage_hero_section_style, homepage_hero_section_content
+from components.homepage.homepage_work_with_us import work_with_us_css, work_with_us_html
+from components.homepage.homepage_scaling_section import scaling_section_css, scaling_section_html
+from components.homepage.homepage_care_section import care_section_css, care_section_html
+from components.homepage.homepage_insights_section import insights_section_css, insights_section_html
+from components.homepage.homepage_faq_section import faq_section_css, faq_section_html
+from components.homepage.homepage_brands_section import brands_section_css, brands_section_html
+from components.homepage.homepage_booking_section import booking_section_css, booking_section_html
 
 
 

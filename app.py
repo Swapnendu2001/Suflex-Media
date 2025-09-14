@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from templates.homepage import homepage
+from templates.about import about
 import uvicorn
 
 app = FastAPI()
@@ -12,6 +13,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return homepage()
+@app.get("/about", response_class=HTMLResponse)
+async def about_page():
+    return about()
+
 
 
 
