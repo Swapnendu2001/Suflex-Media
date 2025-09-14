@@ -58,8 +58,8 @@ def header_content():
             <img src="/static/logo_header.png" alt="Suflex Media Logo">
         </div>
         <nav class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">About Us</a>
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
             <a href="#">Services</a>
             <a href="#">Portfolio</a>
             <a href="#">Blog</a>
