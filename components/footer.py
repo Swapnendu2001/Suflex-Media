@@ -85,9 +85,9 @@ def footer_content():
             </div>
             <div class="footer-section">
                 <h3>Quick Links</h3>
-                <a href="#">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Services</a>
+                <a href="/">Home</a>
+                <a href="/about">About Us</a>
+                <a href="/services">Services</a>
                 <a href="#">Blog</a>
                 <a href="#">Careers</a>
             </div>

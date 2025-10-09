@@ -60,7 +60,7 @@ def header_content():
         <nav class="nav-links">
             <a href="/">Home</a>
             <a href="/about">About Us</a>
-            <a href="#">Services</a>
+            <a href="/services">Services</a>
             <a href="#">Portfolio</a>
             <a href="#">Blog</a>
             <a href="#">Careers</a>
