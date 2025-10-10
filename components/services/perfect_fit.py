@@ -77,7 +77,10 @@ def perfect_fit_css():
         }
         
         .brand-philosophy-section {
-            background: #1A1A1A;
+            background-image: url('/static/what goes into a book background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             padding: 8vh 5vw;
             text-align: center;
             position: relative;
@@ -89,27 +92,29 @@ def perfect_fit_css():
             content: '';
             position: absolute;
             top: 0;
+            left: 0;
             right: 0;
-            width: 30vw;
-            height: 100%;
-            background-repeat: repeat;
-            background-size: contain;
-            opacity: 1;
-            pointer-events: none;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 0;
         }
         
         .brand-philosophy-section::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 25vw;
+            top: 0;
+            right: 0;
+            width: 40vw;
             height: 100%;
-            background-repeat: repeat;
-            background-size: contain;
-            opacity: 1;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 1vh,
+                rgba(255, 255, 255, 0.03) 1vh,
+                rgba(255, 255, 255, 0.03) 2vh
+            );
             pointer-events: none;
-            transform: rotate(180deg);
+            z-index: 0;
         }
         
         .philosophy-content {

@@ -102,7 +102,7 @@ def why_hire_css():
             bottom: 0;
             left: 0;
             right: 0;
-            height: 6vh;
+            height: 3vh;
             background: linear-gradient(to bottom, rgba(1, 122, 255, 0) 0%, rgba(1, 122, 255, 0.4) 100%);
             pointer-events: none;
         }
