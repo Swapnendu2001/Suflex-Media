@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from templates.homepage import homepage
 from templates.about import about
 from templates.services import services
+from templates.contact import contact
 import uvicorn
 
 app = FastAPI()
@@ -22,6 +23,10 @@ async def about_page():
 @app.get("/services", response_class=HTMLResponse)
 async def services_page():
     return services()
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page():
+    return contact()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
