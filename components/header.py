@@ -61,11 +61,11 @@ def header_content():
             <a href="/">Home</a>
             <a href="/about">About Us</a>
             <a href="/services">Services</a>
-            <a href="#">Portfolio</a>
-            <a href="#">Blog</a>
-            <a href="#">Careers</a>
+            <a href="/portfolio">Portfolio</a>
+            <a href="/blog">Blog</a>
+            <a href="/careers">Careers</a>
         </nav>
-        <a href="#" class="contact-us">
+        <a href="/contact" class="contact-us">
             <img src="/static/icons/phone-icon.png" alt="Phone icon" class="icon">
             <span>Contact Us</span>
         </a>

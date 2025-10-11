@@ -7,10 +7,16 @@ from templates.services import services
 from templates.contact import contact
 import uvicorn
 
+# Import admin routes
+from admin_routes import router as admin_router
+
 app = FastAPI()
 
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Include admin routes
+app.include_router(admin_router, tags=["admin"])
 
 @app.get("/", response_class=HTMLResponse)
 async def root():

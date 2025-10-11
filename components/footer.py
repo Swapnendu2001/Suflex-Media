@@ -88,16 +88,16 @@ def footer_content():
                 <a href="/">Home</a>
                 <a href="/about">About Us</a>
                 <a href="/services">Services</a>
-                <a href="#">Blog</a>
-                <a href="#">Careers</a>
+                <a href="/blog">Blog</a>
+                <a href="/careers">Careers</a>
             </div>
             <div class="footer-section">
                 <h3>Services</h3>
-                <a href="#">Book Writing</a>
-                <a href="#">LinkedIn Branding</a>
-                <a href="#">Content Writing</a>
-                <a href="#">Performance Marketing</a>
-                <a href="#">Website Development</a>
+                <a href="/services">Book Writing</a>
+                <a href="/services">LinkedIn Branding</a>
+                <a href="/services">Content Writing</a>
+                <a href="/services">Performance Marketing</a>
+                <a href="/services">Website Development</a>
             </div>
             <div class="footer-section">
                 <h3>Social Links</h3>
