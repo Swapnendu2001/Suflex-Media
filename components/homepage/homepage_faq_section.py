@@ -53,6 +53,51 @@ def faq_section_css():
             max-height: 100vh; /* A large enough value */
             padding-top: 1vh;
         }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .faq-section {
+                flex-direction: column;
+                padding: 6vh 6vw;
+                gap: 4vh;
+            }
+            
+            .faq-title-container {
+                width: 100%;
+            }
+            
+            .faq-title {
+                font-size: 6.5vw;
+                top: 0;
+                position: static;
+                margin-bottom: 4vh;
+            }
+            
+            .faq-accordion {
+                width: 100%;
+            }
+            
+            .faq-item {
+                border-radius: 3vw;
+                padding: 3vh 5vw;
+                margin-bottom: 2.5vh;
+            }
+            
+            .faq-question {
+                font-size: 4vw;
+            }
+            
+            .faq-question .icon {
+                font-size: 5vw;
+                margin-right: 3vw;
+            }
+            
+            .faq-answer {
+                font-size: 3.5vw;
+                padding-left: 8vw;
+                line-height: 1.6;
+            }
+        }
     </style>
     """
 

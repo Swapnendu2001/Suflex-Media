@@ -8,7 +8,7 @@ from templates.contact import contact
 import uvicorn
 
 # Import admin routes
-from admin_routes import router as admin_router
+# from admin_routes import router as admin_router
 
 app = FastAPI()
 
@@ -16,7 +16,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Include admin routes
-app.include_router(admin_router, tags=["admin"])
+# app.include_router(admin_router, tags=["admin"])
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -35,4 +35,4 @@ async def contact_page():
     return contact()
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

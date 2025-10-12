@@ -81,7 +81,7 @@ def homepage_hero_section_style():
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 100%;
+            height: 80%;
             background: #017AFF;
             border-radius: 3vh;
             text-decoration: none;
@@ -298,6 +298,236 @@ def homepage_hero_section_style():
             color: #FFFFFF;
             margin: 0;
         }
+        
+        .center-main-card video {
+            display: none !important;
+        }
+        
+        .center-main-card .mobile-text {
+            display: none;
+        }
+        
+        .center-main-card .desktop-text {
+            display: block;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: auto;
+                min-height: 140vh;
+                padding-bottom: 5vh;
+                margin-top: -10vh;
+            }
+            
+            .hero-content {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto auto auto auto 18vh 18vh 18vh 18vh;
+                gap: 2vh;
+                padding: 0 5vw;
+            }
+            
+            .hero-section h1 {
+                position: static;
+                width: 100%;
+                margin: 3vh 0 2vh;
+                font-size: 7vw;
+                line-height: 1.3;
+                grid-column: 1 / 3;
+            }
+            
+            .hero-section .sub-heading {
+                position: static;
+                width: 100%;
+                margin: 2vh 0;
+                font-size: 4vw;
+                grid-column: 1 / 3;
+            }
+            
+            .cta-container {
+                position: static;
+                width: 100%;
+                margin: 3vh 0;
+                height: 9vh;
+                grid-column: 1 / 3;
+            }
+            
+            .cta-inner {
+                gap: 3vw;
+                margin-left: 10vw;
+            }
+            
+            .cta-text {
+                font-size: 4vw;
+            }
+            
+            .cta-icon {
+                width: 4vh;
+                height: 4vh;
+                margin-top: 1vh;
+                margin-bottom: 1vh;
+                margin-left: 2vh;
+            }
+            
+            .cta-icon img {
+                width: 2vh;
+                height: 1vh;
+            }
+            
+            .trusted-logos {
+                position: static;
+                width: 100%;
+                margin: 4vh 0;
+                flex-wrap: nowrap;
+                gap: 3vw;
+                height: auto;
+                justify-content: space-between;
+                grid-column: 1 / 3;
+            }
+            
+            .trusted-logos .brandlution {
+                width: 28vw;
+                height: 6vh;
+            }
+            
+            .trusted-logos .excelra {
+                width: 26vw;
+                height: 5vh;
+            }
+            
+            .trusted-logos .decisionalgo {
+                width: 32vw;
+                height: 7vh;
+            }
+            
+            .side-card-left,
+            .side-card-right {
+                position: static;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 3vh 4vw;
+                left: auto;
+                right: auto;
+                top: auto;
+            }
+            
+            .side-card-left {
+                grid-row: 5 / 7;
+                grid-column: 1 / 2;
+            }
+            
+            .side-card-left h3,
+            .side-card-right h3 {
+                font-size: 3.5vw;
+            }
+            
+            .stats-container {
+                position: static;
+                display: contents;
+                width: auto;
+                margin: 0;
+                gap: 0;
+                height: auto;
+                flex-direction: row;
+                left: auto;
+                top: auto;
+            }
+            
+            .stat-box-left {
+                width: 100%;
+                height: 100%;
+                padding: 2vh 3vw;
+                margin: 0;
+                grid-row: 5 / 6;
+                grid-column: 2 / 3;
+            }
+            
+            .stat-box-right {
+                width: 100%;
+                height: 100%;
+                padding: 2vh 3vw;
+                margin: 0;
+                grid-row: 6 / 7;
+                grid-column: 2 / 3;
+            }
+            
+            .stat-inner-left,
+            .stat-inner-right {
+                gap: 2vw;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .stat-icon-left {
+                width: 15vw;
+                height: 8vh;
+            }
+            
+            .stat-icon-right {
+                width: 6vh;
+                height: 6vh;
+            }
+            
+            .stat-text-left,
+            .stat-text-right {
+                font-size: 3.5vw;
+                text-align: center;
+            }
+            
+            .center-main-card {
+                position: static;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 3vh 4vw;
+                grid-row: 7 / 9;
+                grid-column: 1 / 2;
+                left: auto;
+                top: auto;
+                background: none;
+                overflow: hidden;
+                display: flex;
+                align-items: flex-end;
+                justify-content: flex-start;
+            }
+            
+            .center-main-card video {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: 0;
+                border-radius: 3.5vh;
+            }
+            
+            .center-main-card .desktop-text {
+                display: none;
+            }
+            
+            .center-main-card .mobile-text {
+                display: block;
+                font-size: 3.5vw;
+                position: relative;
+                z-index: 1;
+                font-family: 'Lexend', sans-serif;
+                font-weight: 500;
+                color: #FFFFFF;
+                margin: 0;
+                top: 2vh;
+                left: 1vw;
+            }
+            
+            .side-card-right {
+                grid-row: 7 / 9;
+                grid-column: 2 / 3;
+            }
+        }
     </style>
     """
 
@@ -335,11 +565,6 @@ def homepage_hero_section_content():
                 <h3>Turning Ideas into Books</h3>
             </div>
             
-            <!-- Right Side Card -->
-            <div class="side-card-right">
-                <h3>Turning Content into Lead Magnets</h3>
-            </div>
-
             <!-- Stats Container -->
             <div class="stats-container">
                 <div class="stat-box-left">
@@ -358,7 +583,16 @@ def homepage_hero_section_content():
             
             <!-- Center Main Card -->
             <div class="center-main-card">
-                <h3>Turning<br>Leaders into<br>Thought<br>Leaders</h3>
+                <video autoplay loop muted playsinline>
+                    <source src="/static/icons/mobile_thought_leader.mp4" type="video/mp4">
+                </video>
+                <h3 class="desktop-text">Turning<br>Leaders into<br>Thought<br>Leaders</h3>
+                <h3 class="mobile-text">TurningLeaders<br>into Thought<br>Leaders</h3>
+            </div>
+            
+            <!-- Right Side Card -->
+            <div class="side-card-right">
+                <h3>Turning Content into Lead Magnets</h3>
             </div>
         </div>
     </section>
