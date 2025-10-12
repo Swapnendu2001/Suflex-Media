@@ -2,8 +2,9 @@ def brands_section_html():
     return """
     <div class="brands-section">
         <div class="brands-heading">
-            <h1>Big Brands. Smart Founders. One</h1>
-            <h1>Thing in Common: <span class="blue-text">Suflex.</span></h1>
+            <h1 class="desktop-heading">Big Brands. Smart Founders. One</h1>
+            <h1 class="desktop-heading">Thing in Common: <span class="blue-text">Suflex.</span></h1>
+            <h1 class="mobile-heading">Real Brands<br><span class="blue-text">Real Stories</span></h1>
         </div>
         <div class="brands-content">
             <div class="brands-left">
@@ -50,7 +51,7 @@ def brands_section_css():
     }
 
     .brands-heading h1 {
-        font-size: 3.2vw;
+        font-size: 4.2vw;
         font-weight: 700;
         color: #000;
         margin: 0;
@@ -59,6 +60,14 @@ def brands_section_css():
 
     .brands-heading .blue-text {
         color: #007bff;
+    }
+
+    .mobile-heading {
+        display: none;
+    }
+
+    .desktop-heading {
+        display: block;
     }
 
     .brands-content {
@@ -168,6 +177,83 @@ def brands_section_css():
 
     .brands-buttons .view-all-btn:hover {
         background-color: #f0f0f0;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .brands-section {
+            padding: 6vh 6vw;
+        }
+        
+        .brands-heading {
+            margin-bottom: 5vh;
+        }
+        
+        .desktop-heading {
+            display: none;
+        }
+        
+        .mobile-heading {
+            display: block;
+            font-size: 6.5vw;
+            line-height: 1.3;
+            font-weight: 700;
+            color: #000;
+            margin: 0;
+        }
+        
+        .brands-content {
+            flex-direction: column;
+            gap: 5vh;
+        }
+        
+        .brands-left {
+            width: 90vw;
+            height: 60vw;
+        }
+        
+        .brands-left .image-container {
+            border-radius: 6vw;
+        }
+        
+        .brands-left .play-button {
+            width: 20vw;
+            height: 20vw;
+        }
+        
+        .brands-right {
+            width: 90vw;
+        }
+        
+        .brands-right h2 {
+            font-size: 5vw;
+            margin-bottom: 3vh;
+            line-height: 1.4;
+        }
+        
+        .brands-right ul {
+            padding-left: 5vw;
+            margin-bottom: 4vh;
+        }
+        
+        .brands-right li {
+            font-size: 3.5vw;
+            margin-bottom: 2vh;
+            padding-left: 1vw;
+            line-height: 1.6;
+        }
+        
+        .brands-buttons {
+            flex-direction: row;
+            gap: 3vw;
+        }
+        
+        .brands-buttons button {
+            padding: 2.5vh 5vw;
+            border-radius: 2vw;
+            font-size: 3.5vw;
+            flex: 1;
+        }
     }
 
     </style>

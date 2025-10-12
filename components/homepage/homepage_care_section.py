@@ -129,5 +129,55 @@ def care_section_css():
         border-radius: 0.5vw;
         cursor: pointer;
     }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .care-section {
+            padding: 8vh 5vw;
+        }
+        .care-heading {
+            margin-bottom: 6vh;
+        }
+        .care-heading h1 {
+            font-size: 6vw;
+        }
+        .care-heading h2 {
+            font-size: 6.5vw;
+            margin-top: 1vh;
+        }
+        .care-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3vw;
+            width: 90vw;
+        }
+        .care-card {
+            padding: 4vw;
+            border-radius: 3vw;
+        }
+        .card-left {
+            gap: 1.5vh;
+        }
+        .card-left img {
+            width: 12vw;
+        }
+        .card-left p {
+            font-size: 4vw;
+        }
+        .card-arrow {
+            width: 7vw;
+            top: auto;
+            bottom: 4vw;
+            right: 4vw;
+        }
+        .care-cta-button {
+            margin-top: 6vh;
+            padding: 2.5vh 8vw;
+            font-size: 4vw;
+            border-radius: 2vw;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
 </style>
 '''

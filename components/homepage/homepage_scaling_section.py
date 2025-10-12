@@ -2,7 +2,8 @@ def scaling_section_html():
     return """
         <div class="scaling-section">
             <div class="scaling-intro">
-                <h2>Ready to Start <span class="scaling-blue">Scaling</span> Your Brand?</h2>
+                <h2 class="desktop-heading">Ready to Start <span class="scaling-blue">Scaling</span> Your Brand?</h2>
+                <h2 class="mobile-heading">Ready to Start<br><span class="scaling-blue-full">Scaling Your Brand?</span></h2>
                 <p>Let's build a marketing story that sparks genuine connection—only real results and success.</p>
                 <p>We shatter the usual playbook to give your brand a voice that's as original as it is authentic as you.</p>
             </div>
@@ -33,12 +34,21 @@ def scaling_section_css():
                 background-position: center;
             }
             .scaling-intro h2 {
-                font-size: 3.5vw;
+                font-size: 4.5vw;
                 font-weight: bold;
                 margin-bottom: 3vh;
             }
             .scaling-blue {
                 color: #007bff;
+            }
+            .scaling-blue-full {
+                color: #007bff;
+            }
+            .mobile-heading {
+                display: none;
+            }
+            .desktop-heading {
+                display: block;
             }
             .scaling-intro p {
                 font-size: 1.3vw;
@@ -76,6 +86,59 @@ def scaling_section_css():
                 font-size: 1.1vw;
                 color: #333;
                 line-height: 1.7;
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .scaling-section {
+                    padding: 6vh 4vw;
+                    border-top: 2px solid #e0e0e0;
+                }
+                .desktop-heading {
+                    display: none;
+                }
+                .mobile-heading {
+                    display: block;
+                    font-size: 6.5vw;
+                    margin-bottom: 3vh;
+                    line-height: 1.3;
+                }
+                .scaling-intro p {
+                    font-size: 3.5vw;
+                    line-height: 1.5;
+                    margin-bottom: 1.5vh;
+                    padding: 0 2vw;
+                }
+                .scaling-intro p:last-of-type {
+                    margin-bottom: 5vh;
+                }
+                .scaling-cards {
+                    flex-direction: row;
+                    gap: 3vw;
+                    padding: 0 2vw;
+                }
+                .scaling-card {
+                    width: 45vw;
+                    padding: 2.5vh 2.5vw;
+                    border-radius: 3vw;
+                    border: 1px solid #e0e0e0;
+                }
+                .card-image {
+                    width: 100%;
+                    height: auto;
+                    max-height: 18vh;
+                    margin-bottom: 1.5vh;
+                    object-fit: contain;
+                }
+                .scaling-card h3 {
+                    font-size: 3.8vw;
+                    margin-bottom: 1.5vh;
+                    line-height: 1.3;
+                }
+                .scaling-card p {
+                    font-size: 2.8vw;
+                    line-height: 1.4;
+                }
             }
         </style>
     """

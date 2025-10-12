@@ -2,8 +2,9 @@ def insights_section_html():
     return '''
 <section class="insights-section">
     <div class="insights-header">
-        <h1>Insights and Strategies for</h1>
-        <h2>Performance Marketing Success</h2>
+        <h1 class="desktop-header">Insights and Strategies for</h1>
+        <h2 class="desktop-header">Performance Marketing Success</h2>
+        <h1 class="mobile-header">Insights and Strategies<br>for Performance<br>Marketing Success</h1>
         <p>At Suflex Media, we share insights, tips, and strategies to maximize your performance marketing efforts. Whether you're a business owner or a marketer, our articles will help you achieve measurable results and</p>
     </div>
     <div class="insights-main">
@@ -56,7 +57,7 @@ def insights_section_css():
 }
 
 .insights-header h1 {
-    font-size: 2.5vw;
+    font-size: 4.5vw;
     font-weight: bold;
     color: #000;
     margin: 0;
@@ -67,6 +68,14 @@ def insights_section_css():
     font-weight: bold;
     color: #007bff;
     margin-top: 1vh;
+}
+
+.mobile-header {
+    display: none;
+}
+
+.desktop-header {
+    display: block;
 }
 
 .insights-header p {
@@ -160,6 +169,98 @@ def insights_section_css():
     border: 1px solid #007bff;
     border-radius: 0.5vw;
     cursor: pointer;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .insights-section {
+        padding-top: 8vh;
+    }
+    
+    .insights-header {
+        padding: 0 6vw 10vh 6vw;
+    }
+    
+    .desktop-header {
+        display: none;
+    }
+    
+    .mobile-header {
+        display: block;
+        font-size: 6vw;
+        font-weight: bold;
+        color: #000;
+        margin: 0;
+        line-height: 1.3;
+    }
+    
+    .insights-header p {
+        font-size: 3.8vw;
+        width: 90vw;
+        margin: 4vh auto 0 auto;
+        line-height: 1.6;
+    }
+    
+    .insights-main {
+        padding: 10vh 5vw 8vh 5vw;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        margin-top: 0;
+        background-color: #007bff;
+        background-image: url('/static/Doodles file.png');
+        background-size: cover;
+    }
+    
+    .insights-cards {
+        flex-direction: column;
+        gap: 4vh;
+        margin-left: 2.5vw;
+    }
+    
+    .insight-card {
+        width: 85vw;
+        padding: 6vw;
+        border-radius: 5vw;
+    }
+    
+    .card-top {
+        margin-bottom: 2vh;
+    }
+    
+    .color-marker {
+        width: 4vw;
+        height: 4vw;
+        margin-right: 2vw;
+    }
+    
+    .read-time {
+        font-size: 3.5vw;
+    }
+    
+    .insight-card h3 {
+        font-size: 4.5vw;
+        margin: 0 0 2vh 0;
+        line-height: 1.4;
+    }
+    
+    .insight-card p {
+        font-size: 3.5vw;
+        line-height: 1.6;
+        margin-bottom: 5vh;
+    }
+    
+    .card-arrow-icon {
+        width: 8vw;
+        bottom: 4vw;
+        right: 6vw;
+    }
+    
+    .insights-cta {
+        margin-top: 6vh;
+        padding: 2vh 6vw;
+        font-size: 3.8vw;
+        border-radius: 2vw;
+    }
 }
 </style>
 '''
