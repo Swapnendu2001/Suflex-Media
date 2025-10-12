@@ -141,9 +141,14 @@ def perfect_fit_css():
         }
         
         @media (max-width: 992px) {
+            .perfect-fit-section {
+                padding: 6vh 6vw;
+            }
+            
             .perfect-fit-container {
                 grid-template-columns: 1fr;
                 gap: 5vh;
+                max-width: 100%;
             }
             
             .perfect-fit-content {
@@ -152,51 +157,91 @@ def perfect_fit_css():
             }
             
             .perfect-fit-content h2 {
-                font-size: 5vw;
+                font-size: 6vw;
+                margin-bottom: 2.5vh;
             }
             
             .perfect-fit-content p {
-                font-size: 2.5vw;
+                font-size: 3.5vw;
+                margin-bottom: 3vh;
+                line-height: 1.7;
             }
             
             .perfect-fit-content .cta-button {
-                font-size: 2.5vw;
-                padding: 2vh 5vw;
+                font-size: 3.5vw;
+                padding: 2vh 6vw;
+                border-radius: 3vw;
+            }
+            
+            .perfect-fit-illustration {
+                order: -1;
+            }
+            
+            .brand-philosophy-section {
+                padding: 6vh 6vw;
+            }
+            
+            .philosophy-content {
+                max-width: 85vw;
             }
             
             .philosophy-quote {
-                font-size: 4.5vw;
+                font-size: 5vw;
+                margin-bottom: 2.5vh;
             }
             
             .philosophy-attribution {
-                font-size: 2vw;
+                font-size: 2.5vw;
             }
         }
         
         @media (max-width: 576px) {
+            .perfect-fit-section {
+                padding: 5vh 6vw;
+            }
+            
+            .perfect-fit-container {
+                gap: 4vh;
+            }
+            
             .perfect-fit-content h2 {
-                font-size: 7vw;
+                font-size: 7.5vw;
+                margin-bottom: 2vh;
+                line-height: 1.3;
             }
             
             .perfect-fit-content p {
-                font-size: 3.5vw;
+                font-size: 4.2vw;
+                margin-bottom: 3vh;
+                line-height: 1.7;
             }
             
             .perfect-fit-content .cta-button {
-                font-size: 3.5vw;
-                padding: 2.5vh 6vw;
+                font-size: 4.2vw;
+                padding: 2.5vh 7vw;
+                border-radius: 4vw;
             }
             
-            .philosophy-quote {
-                font-size: 6vw;
+            .brand-philosophy-section {
+                padding: 5vh 6vw;
             }
             
-            .philosophy-attribution {
-                font-size: 3vw;
+            .brand-philosophy-section::after {
+                width: 60vw;
             }
             
             .philosophy-content {
                 max-width: 90vw;
+            }
+            
+            .philosophy-quote {
+                font-size: 4.5vw;
+                margin-bottom: 2vh;
+                line-height: 1.4;
+            }
+            
+            .philosophy-attribution {
+                font-size: 3.5vw;
             }
         }
     </style>
