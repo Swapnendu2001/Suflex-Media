@@ -97,6 +97,7 @@ def faq_css():
             .services-faq-section {
                 flex-direction: column;
                 gap: 5vh;
+                padding: 6vh 6vw;
             }
             
             .services-faq-title-container {
@@ -105,50 +106,87 @@ def faq_css():
             }
             
             .services-faq-title {
-                font-size: 5vw;
-            }
-            
-            .services-faq-subtitle {
-                font-size: 2vw;
-            }
-            
-            .services-faq-question {
-                font-size: 2.5vw;
-            }
-            
-            .services-faq-answer {
-                font-size: 2vw;
-            }
-            
-            .services-faq-question .icon {
-                font-size: 3vw;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .services-faq-title {
-                font-size: 7vw;
+                font-size: 6vw;
+                margin-bottom: 2vh;
             }
             
             .services-faq-subtitle {
                 font-size: 3vw;
+            }
+            
+            .services-faq-accordion {
+                gap: 2.5vh;
+            }
+            
+            .services-faq-item {
+                padding: 2.5vh 3vw;
+                border-radius: 2vh;
             }
             
             .services-faq-question {
                 font-size: 3.5vw;
             }
             
+            .services-faq-question .icon {
+                font-size: 4vw;
+                margin-right: 2vw;
+            }
+            
             .services-faq-answer {
                 font-size: 3vw;
+                padding-left: 6vw;
+                line-height: 1.7;
+            }
+            
+            .services-faq-item.active .services-faq-answer {
+                max-height: 60vh;
+                padding-top: 2vh;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .services-faq-section {
+                padding: 5vh 6vw;
+                gap: 4vh;
+            }
+            
+            .services-faq-title {
+                font-size: 7.5vw;
+                line-height: 1.3;
+            }
+            
+            .services-faq-subtitle {
+                font-size: 3.8vw;
+            }
+            
+            .services-faq-accordion {
+                gap: 2vh;
+            }
+            
+            .services-faq-item {
+                padding: 2.5vh 4vw;
+                border-radius: 2vh;
+            }
+            
+            .services-faq-question {
+                font-size: 4.2vw;
+                line-height: 1.4;
             }
             
             .services-faq-question .icon {
-                font-size: 4vw;
+                font-size: 5vw;
                 margin-right: 3vw;
             }
             
             .services-faq-answer {
-                padding-left: 7vw;
+                font-size: 3.8vw;
+                padding-left: 8vw;
+                line-height: 1.7;
+            }
+            
+            .services-faq-item.active .services-faq-answer {
+                max-height: 70vh;
+                padding-top: 2vh;
             }
         }
     </style>

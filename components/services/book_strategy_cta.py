@@ -77,32 +77,74 @@ def book_strategy_cta_css():
         }
         
         @media (max-width: 992px) {
-            .book-strategy-cta-title {
-                font-size: 5.5vw;
+            .book-strategy-cta-section {
+                padding: 6vh 6vw;
             }
             
-            .book-strategy-cta-button {
-                font-size: 2.5vw;
-                padding: 2.5vh 6vw;
+            .book-strategy-cta-section::before {
+                width: 40vw;
+                height: 40vw;
+                top: -15vh;
+                left: -15vw;
+            }
+            
+            .book-strategy-cta-section::after {
+                width: 40vw;
+                height: 40vw;
+                bottom: -15vh;
+                right: -15vw;
             }
             
             .book-strategy-cta-content {
                 max-width: 85vw;
             }
-        }
-        
-        @media (max-width: 576px) {
+            
             .book-strategy-cta-title {
-                font-size: 7vw;
+                font-size: 6.5vw;
+                margin-bottom: 3.5vh;
+                line-height: 1.3;
             }
             
             .book-strategy-cta-button {
                 font-size: 3.5vw;
-                padding: 2.5vh 8vw;
+                padding: 2.5vh 6vw;
+                border-radius: 4vw;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .book-strategy-cta-section {
+                padding: 5vh 6vw;
+            }
+            
+            .book-strategy-cta-section::before {
+                width: 50vw;
+                height: 50vw;
+                top: -20vh;
+                left: -20vw;
+            }
+            
+            .book-strategy-cta-section::after {
+                width: 50vw;
+                height: 50vw;
+                bottom: -20vh;
+                right: -20vw;
             }
             
             .book-strategy-cta-content {
                 max-width: 90vw;
+            }
+            
+            .book-strategy-cta-title {
+                font-size: 7.5vw;
+                margin-bottom: 3vh;
+                line-height: 1.3;
+            }
+            
+            .book-strategy-cta-button {
+                font-size: 4.2vw;
+                padding: 2.5vh 8vw;
+                border-radius: 5vw;
             }
         }
     </style>
