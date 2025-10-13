@@ -22,6 +22,7 @@ def footer_style():
             justify-content: space-around;
             width: 100vw;
             align-items: flex-start;
+            padding: 0 5vw;
         }
         .footer-section {
             display: flex;
@@ -36,6 +37,10 @@ def footer_style():
             text-decoration: none;
             color: #000;
             font-size: 1.1vw;
+        }
+        .footer-section.cta {
+            border-right: 3px solid #000;
+            padding-right: 2vw;
         }
         .footer-section.cta h2 {
             font-size: 2vw;
@@ -67,10 +72,67 @@ def footer_style():
             width: 100%;
         }
         .footer-logo img {
-            height: 8vh;
+            height: 15vh;
         }
         .copyright {
             font-size: 1vw;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .footer {
+                padding: 15vh 8vw 8vw 8vw;
+            }
+            .footer-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 6vh 6vw;
+                padding: 0;
+                width: 100%;
+            }
+            .footer-section.cta {
+                grid-column: 1 / -1;
+                border-right: none;
+                padding-right: 0;
+                text-align: center;
+            }
+            .footer-section {
+                text-align: left;
+                width: 100%;
+            }
+            .footer-section h3 {
+                font-size: 5vw;
+                margin-bottom: 2vh;
+            }
+            .footer-section a, .footer-section p {
+                font-size: 4vw;
+            }
+            .footer-section.cta h2 {
+                font-size: 8vw;
+            }
+            .footer-section.cta .button {
+                font-size: 4vw;
+                padding: 2vh 6vw;
+                border-radius: 2vw;
+                max-width: 60vw;
+                margin: 0 auto;
+            }
+            .social-links {
+                justify-content: flex-start;
+                gap: 4vw;
+            }
+            .social-links img {
+                width: 8vw;
+                height: 8vw;
+            }
+            .footer-logo img {
+                height: 10vh;
+            }
+            .copyright {
+                font-size: 3.5vw;
+                text-align: center;
+            }
         }
     </style>
     """
@@ -80,7 +142,7 @@ def footer_content():
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section cta">
-                <h2>Ready to grow your business?</h2>
+                <h2>Ready to grow your<br>business?</h2>
                 <a href="#" class="button">Book a free strategy call</a>
             </div>
             <div class="footer-section">
@@ -99,13 +161,15 @@ def footer_content():
                 <a href="/services">Performance Marketing</a>
                 <a href="/services">Website Development</a>
             </div>
-            <div class="footer-section">
+            <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
                     <a href="#"><img src="/static/icons/instagram.png" alt="Instagram"></a>
                     <a href="#"><img src="/static/icons/linkedin.png" alt="LinkedIn"></a>
                     <a href="#"><img src="/static/icons/x.png" alt="X"></a>
                 </div>
+            </div>
+            <div class="footer-section contact-section">
                 <h3>Contact Us</h3>
                 <a href="mailto:hello@suflexmedia.com">hello@suflexmedia.com</a>
             </div>

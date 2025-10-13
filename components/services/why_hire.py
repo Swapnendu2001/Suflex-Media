@@ -203,87 +203,196 @@ def why_hire_css():
         }
         
         @media (max-width: 992px) {
+            .suflex-media-intro {
+                padding: 6vh 6vw;
+            }
+            
             .suflex-media-intro .section-title {
-                font-size: 5vw;
+                font-size: 6vw;
+                margin-bottom: 2.5vh;
             }
             
             .suflex-media-intro .section-description {
-                font-size: 2.5vw;
-                max-width: 80vw;
+                font-size: 3.5vw;
+                max-width: 85vw;
+                margin-bottom: 5vh;
             }
             
             .key-metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 3vw;
-                padding: 0 5vw;
+                padding: 0 6vw;
+                margin-bottom: 8vh;
+            }
+            
+            .metric-card {
+                padding: 3.5vh 3vw;
+                min-height: 25vh;
+            }
+            
+            .metric-card .metric-icon {
+                width: 6vh;
+                height: 6vh;
+                margin-bottom: 2vh;
             }
             
             .metric-card .metric-value {
-                font-size: 5vw;
+                font-size: 6vw;
+                margin-bottom: 1.5vh;
             }
             
             .metric-card .metric-label {
-                font-size: 2.2vw;
+                font-size: 3vw;
             }
             
-            .book-types-section .section-subtitle {
-                font-size: 5vw;
-            }
-            
-            .book-types-grid {
-                grid-template-columns: repeat(2, 1fr);
-                max-width: 90vw;
-            }
-            
-            .book-type-card .book-type-label {
-                font-size: 2.5vw;
-            }
-            
-            .cta-container .cta-button {
-                font-size: 2.5vw;
-                padding: 2vh 5vw;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .suflex-media-intro .section-title {
-                font-size: 7vw;
-            }
-            
-            .suflex-media-intro .section-description {
-                font-size: 3.5vw;
-                max-width: 90vw;
-            }
-            
-            .key-metrics-grid {
-                grid-template-columns: 1fr;
-                gap: 3vh;
-            }
-            
-            .metric-card .metric-value {
-                font-size: 8vw;
-            }
-            
-            .metric-card .metric-label {
-                font-size: 3.5vw;
+            .book-types-section {
+                padding: 6vh 6vw;
             }
             
             .book-types-section .section-subtitle {
                 font-size: 6vw;
+                margin-bottom: 5vh;
             }
             
             .book-types-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3vw;
                 max-width: 90vw;
+                margin-bottom: 5vh;
+            }
+            
+            .book-type-card {
+                padding: 3vh 3vw;
+                min-height: 16vh;
+            }
+            
+            .book-type-card .book-type-icon {
+                width: 5.5vh;
+                height: 5.5vh;
+                margin-bottom: 1.5vh;
             }
             
             .book-type-card .book-type-label {
-                font-size: 4vw;
+                font-size: 3vw;
+            }
+            
+            .cta-container {
+                margin-top: 5vh;
             }
             
             .cta-container .cta-button {
-                font-size: 3vw;
-                padding: 2vh 5vw;
+                font-size: 3.5vw;
+                padding: 2vh 6vw;
+                border-radius: 2vw;
+                gap: 1.5vw;
+            }
+            
+            .cta-container .cta-icon {
+                width: 4.5vh;
+                height: 4.5vh;
+            }
+            
+            .cta-container .cta-icon img {
+                width: 2.2vh;
+                height: 2.2vh;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .suflex-media-intro {
+                padding: 5vh 6vw;
+            }
+            
+            .suflex-media-intro .section-title {
+                font-size: 7.5vw;
+                margin-bottom: 2vh;
+            }
+            
+            .suflex-media-intro .section-description {
+                font-size: 4.2vw;
+                max-width: 90vw;
+                margin-bottom: 4vh;
+                line-height: 1.7;
+            }
+            
+            .key-metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3vw;
+                padding: 0 6vw;
+                margin-bottom: 6vh;
+            }
+            
+            .metric-card {
+                padding: 3vh 3vw;
+                min-height: 20vh;
+            }
+            
+            .metric-card .metric-icon {
+                width: 6vh;
+                height: 6vh;
+                margin-bottom: 1.5vh;
+            }
+            
+            .metric-card .metric-value {
+                font-size: 8vw;
+                margin-bottom: 1vh;
+            }
+            
+            .metric-card .metric-label {
+                font-size: 3.5vw;
+            }
+            
+            .book-types-section {
+                padding: 5vh 6vw;
+            }
+            
+            .book-types-section .section-subtitle {
+                font-size: 7vw;
+                margin-bottom: 4vh;
+            }
+            
+            .book-types-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3vw;
+                max-width: 90vw;
+                margin-bottom: 4vh;
+            }
+            
+            .book-type-card {
+                padding: 3vh 3vw;
+                min-height: 15vh;
+            }
+            
+            .book-type-card .book-type-icon {
+                width: 5.5vh;
+                height: 5.5vh;
+                margin-bottom: 1.5vh;
+            }
+            
+            .book-type-card .book-type-label {
+                font-size: 3.8vw;
+            }
+            
+            .cta-container {
+                margin-top: 4vh;
+            }
+            
+            .cta-container .cta-button {
+                font-size: 4.2vw;
+                padding: 0.5vh 5vw;
+                border-radius: 9vw;
+                gap: 2vw;
+            }
+            
+            .cta-container .cta-icon {
+                width: 3vh;
+                height: 3vh;
+                margin: 1vh 1vh 1vh 1vh;
+            }
+            
+            .cta-container .cta-icon img {
+                width: 2.5vh;
+                height: 1.5vh;
             }
         }
     </style>

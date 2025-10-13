@@ -148,6 +148,10 @@ def hero_css():
             filter: drop-shadow(0 2vh 4vh rgba(0, 0, 0, 0.2));
         }
         
+        .mobile-book-header {
+            display: none;
+        }
+        
         .services-stats {
             background: url('/static/what goes into a book background.jpg') center center/cover no-repeat;
             padding: 8vh 5vw;
@@ -224,43 +228,132 @@ def hero_css():
         }
         
         @media (max-width: 768px) {
+            .services-hero {
+                padding: 6vh 6vw;
+                min-height: 40vh;
+                margin-top: -15vh;
+            }
+
+            .services-difference img {
+                max-width: 96vw;
+                height: auto;
+                filter: drop-shadow(0 2vh 4vh rgba(0, 0, 0, 0.2));
+                margin-top: -10vh;
+            }
+            
             .services-hero h1 {
                 font-size: 8vw;
+                margin-bottom: 2.5vh;
             }
             
             .services-hero .tagline {
-                font-size: 3vw;
+                font-size: 4vw;
+                margin-bottom: 3vh;
             }
             
             .services-hero .cta-button {
-                font-size: 3vw;
-                padding: 2vh 5vw;
+                font-size: 4vw;
+                padding: 2vw 2vw 2vw 2vw;
+                border-radius: 9vw;
+                gap: 2vw;
+            }
+            
+            .services-hero .cta-button .icon {
+                width: 5vw;
+                height: 5vw;
+            }
+            
+            .cta-icon {
+                width: 5vh;
+                height: 5vh;
+            }
+            
+            .cta-icon img {
+                width: 2.5vh;
+                height: 2.5vh;
             }
             
             .services-difference {
                 grid-template-columns: 1fr;
                 gap: 4vh;
+                padding: 5vh 6vw;
+                padding-left: 6vw;
+                margin-bottom: -8vh;
+            }
+            
+            .services-difference::before {
+                width: 100%;
+                opacity: 0.2;
             }
             
             .services-difference h2 {
-                font-size: 6vw;
+                font-size: 4.5vw;
+                margin-bottom: 2.5vh;
             }
             
             .services-difference p {
-                font-size: 3vw;
+                font-size: 4vw;
+                margin-bottom: 2vh;
+            }
+            
+            .services-difference .image-container {
+                margin-bottom: 3vh;
+            }
+            
+            .services-stats {
+                padding: 6vh 6vw;
+            }
+            
+            .services-stats h2 {
+                display: none;
+            }
+            
+            .mobile-book-header {
+                display: block;
+                background: white;
+                padding: 4vh 6vw;
+                text-align: center;
+                margin-top: 9vh;
+            }
+            
+            .mobile-book-header h2 {
+                font-size: 9vw;
+                font-weight: 300;
+                color: #017AFF;
+                margin: 0;
+                font-family: 'Lexend', sans-serif;
             }
             
             .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 4vh;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3vw;
+                margin-bottom: 4vh;
+            }
+            
+            .stat-card {
+                padding: 3vh 2vw;
+            }
+            
+            .stat-card:nth-child(3) {
+                grid-column: 1 / -1;
+                justify-self: center;
+                max-width: 50%;
             }
             
             .stat-card .number {
                 font-size: 10vw;
+                margin-bottom: 1.5vh;
             }
             
             .stat-card .description {
                 font-size: 3.5vw;
+                line-height: 1.3;
+            }
+            
+            .services-stats .cta-button {
+                font-size: 4vw;
+                padding: 2vh 6vw;
+                border-radius: 9vw;
             }
         }
         .cta-icon {
@@ -275,7 +368,7 @@ def hero_css():
             
         .cta-icon img {
                 width: 2.0vh;
-                height: 2.0vh;
+                height: 1.0vh;
         }
     </style>
     """
@@ -305,6 +398,10 @@ def hero_html():
         <div class="image-container">
             <img src="static/services-hero.png" alt="Ghost writer at desk" />
         </div>
+    </section>
+    
+    <section class="mobile-book-header">
+        <h2>What Goes Into a Book?</h2>
     </section>
 
     <section class="services-stats">

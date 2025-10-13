@@ -58,7 +58,7 @@ def work_with_us_css():
                 padding-bottom: 5vh;
             }
             .work-with-us-title h2 {
-                font-size: 2.5vw;
+                font-size: 4.5vw;
                 font-weight: bold;
                 color: #000000;
                 margin: 0;
@@ -98,7 +98,6 @@ def work_with_us_css():
                 box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.1);
                 display: flex;
                 flex-direction: column;
-                aspect-ratio: 3 / 4;
             }
             .work-with-us-content .card img {
                 width: 100%;
@@ -117,6 +116,56 @@ def work_with_us_css():
                 font-size: 1vw;
                 color: #333;
                 margin: 0.5vh 0;
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .work-with-us {
+                    padding-top: 5vh;
+                    padding-bottom: 5vh;
+                }
+                .work-with-us-title {
+                    padding-bottom: 4vh;
+                }
+                .work-with-us-title h2 {
+                    font-size: 6vw;
+                }
+                .work-with-us-title h3 {
+                    font-size: 7vw;
+                }
+                .work-with-us-content {
+                    padding: 5vh 6vw;
+                    background-image: url('/static/handdrawn_doodle.png');
+                    background-size: auto;
+                    background-repeat: repeat;
+                }
+                .card-row-top {
+                    grid-template-columns: 1fr;
+                    gap: 4vh;
+                }
+                .card-row-bottom {
+                    grid-template-columns: 1fr;
+                    gap: 4vh;
+                    width: 100%;
+                }
+                .card {
+                    padding: 5vw;
+                    border-radius: 5vw;
+                    aspect-ratio: auto;
+                }
+                .work-with-us-content .card img {
+                    border-radius: 3vw;
+                    margin-bottom: 2vh;
+                }
+                .work-with-us-content .card h4 {
+                    font-size: 5vw;
+                    margin: 0 0 2vh 0;
+                }
+                .work-with-us-content .card p {
+                    font-size: 3.5vw;
+                    margin: 1vh 0;
+                    line-height: 1.6;
+                }
             }
         </style>
     """

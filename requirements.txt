@@ -1,5 +1,6 @@
 uvicorn == 0.35.0
 fastapi == 0.116.1
-supabase == 2.15.1
 python-dotenv == 1.1.0
 python-multipart == 0.0.9
+asyncpg
+supabase == 1.0.0   

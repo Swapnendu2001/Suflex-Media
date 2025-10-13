@@ -372,7 +372,7 @@ def booking_section_css():
                 background-color: #fff;
                 border-radius: 2vw;
                 padding: 3vw;
-                max-width: 85vw;
+                max-width: 65vw;
                 margin: 0 auto;
                 position: relative;
                 z-index: 1;
@@ -588,6 +588,120 @@ def booking_section_css():
             .year-selector li.selected-year {
                 background-color: #007bff;
                 color: #fff;
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                #booking-section {
+                    padding-top: 10vh;
+                    padding-bottom: 20vh;
+                }
+                
+                .booking-header h2 {
+                    font-size: 6vw;
+                    margin-bottom: 4vh;
+                }
+                
+                .booking-main {
+                    padding: 10vh 4vw;
+                    background-size: 80vw;
+                }
+                
+                .booking-main::before {
+                    height: 8vh;
+                    border-bottom-left-radius: 50vw 8vh;
+                    border-bottom-right-radius: 50vw 8vh;
+                }
+                
+                .booking-widget {
+                    max-width: 92vw;
+                    padding: 6vw;
+                    border-radius: 5vw;
+                    margin-bottom: -15vh;
+                }
+                
+                .calendar-nav {
+                    margin-bottom: 3vh;
+                    padding: 0 2vw;
+                }
+                
+                .calendar-nav .month-year {
+                    font-size: 4.5vw;
+                }
+                
+                .calendar-nav img {
+                    width: 4vw;
+                }
+                
+                .calendar-grid {
+                    gap: 1vw;
+                }
+                
+                .day-header, .date-cell {
+                    font-size: 3.5vw;
+                    padding: 2vw;
+                }
+                
+                .time-slot-header .back-to-calendar {
+                    width: 4vw;
+                    left: 2vw;
+                }
+                
+                .time-slot-view .selected-date-header,
+                .time-slot-view .details-header {
+                    font-size: 4.5vw;
+                    margin-bottom: 2vh;
+                }
+                
+                .time-slots-container {
+                    max-height: 35vh;
+                }
+                
+                .time-slot-btn {
+                    padding: 2vh 4vw;
+                    border-radius: 10vw;
+                    font-size: 3.5vw;
+                }
+                
+                .next-btn {
+                    padding: 2vh 4vw;
+                    border-radius: 10vw;
+                    font-size: 3.5vw;
+                }
+                
+                .time-slot-selected-row {
+                    gap: 2vw;
+                }
+                
+                .details-form {
+                    gap: 2vh;
+                    margin-bottom: 3vh;
+                }
+                
+                .details-form input {
+                    border-radius: 2vw;
+                    padding: 2.5vh 4vw;
+                    font-size: 3.5vw;
+                }
+                
+                .cta-btn {
+                    padding: 2.5vh 5vw;
+                    border-radius: 10vw;
+                    font-size: 4vw;
+                    margin-top: 2vh;
+                }
+                
+                .year-selector {
+                    top: 12vh;
+                    width: 40vw;
+                    max-height: 35vh;
+                    border-radius: 3vw;
+                }
+                
+                .year-selector li {
+                    padding: 2vh 4vw;
+                    font-size: 3.5vw;
+                }
             }
 
         </style>
