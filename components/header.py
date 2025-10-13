@@ -65,7 +65,7 @@ def header_style():
             transition: all 0.3s ease;
         }
         .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
+            transform: rotate(45deg) translate(5px, 4px);
         }
         .hamburger.active span:nth-child(2) {
             opacity: 0;

@@ -6,49 +6,12 @@ def best_section_html():
             <p>Take a look for yourself!</p>
         </div>
         <div class="feature-cluster">
-            <div id="creative-solution" class="feature-item item-blue">
-                <img src="/static/icons/solution.png" alt="Creative Solution">
-                <span>Creative<br>Solution</span>
-            </div>
-            <div id="transparency" class="feature-item item-white">
-                <img src="/static/icons/transparency.png" alt="Transparency">
-                <span>Transparency</span>
-            </div>
-            <div id="client-satisfaction" class="feature-item item-blue">
-                <img src="/static/icons/satisfaction.png" alt="Client Satisfaction">
-                <span>100% Client<br>Satisfaction</span>
-            </div>
-            <div id="affordability" class="feature-item item-white">
-                <img src="/static/icons/affordability.png" alt="Affordability">
-                <span>Affordability</span>
-            </div>
-            <div id="fast-responds" class="feature-item item-blue">
-                <img src="/static/icons/response.png" alt="Fast Responds">
-                <span>Fast<br>Responds</span>
-            </div>
-            <div id="witty-content" class="feature-item item-white">
-                <img src="/static/icons/witty-content.png" alt="Witty Content">
-                <span>Witty Content</span>
-            </div>
-            <div id="attention-to-details" class="feature-item item-blue">
-                <img src="/static/icons/attention-to-detail.png" alt="Attention to Details">
-                <span>Attention to<br>Details</span>
-            </div>
-            <div id="aesthetic-design" class="feature-item item-white">
-                <img src="/static/icons/aesthetic-design.png" alt="Aesthetic Design">
-                <span>Aesthetic<br>Design</span>
-            </div>
-            <div id="fast-delivery" class="feature-item item-blue">
-                <img src="/static/icons/on-time.png" alt="Fast Delivery">
-                <span>Fast Delivery</span>
-            </div>
-            <div id="timeless-quality" class="feature-item item-white">
-                <img src="/static/icons/timeless-quality.png" alt="Timeless Quality">
-                <span>Timeless<br>Quality</span>
-            </div>
+            <img src="/static/about_us_why_we_are_best.svg" alt="Why We Are Best" class="feature-cluster-img desktop-only">
+            <img src="/static/about_us_why_we_are_best_mobile.svg" alt="Why We Are Best" class="feature-cluster-img mobile-only">
         </div>
     </section>
     """
+
 
 def best_section_css():
     return """
@@ -99,13 +62,27 @@ def best_section_css():
 
         .feature-cluster {
             position: relative;
-            width: 85vw;
-            height: 50vh;
+            width: 72vw;
+            height: 80vh;
             margin: 0 auto;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+        }
+
+        .feature-cluster-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        .desktop-only {
+            display: block;
         }
 
         .feature-item {
@@ -254,74 +231,104 @@ def best_section_css():
         }
 
         /* Responsive Design */
-        @media (max-width: 1200px) {
-            .best-section-title h2 {
-                font-size: 5vw;
-            }
-            
-            .best-section-title p {
-                font-size: 2.2vw;
-            }
-            
-            .feature-item {
-                padding: 1.5vw;
-            }
-            
-            .feature-item img {
-                width: 4vw;
-                height: 4vw;
-            }
-            
-            .feature-item span {
-                font-size: 1.3vw;
-            }
-        }
-
-        @media (max-width: 768px) {
+        /* Tablet Design (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 768px) {
             .best-section {
-                padding: 6vh 3vw;
-                min-height: 70vh;
+                padding: 7vh 4vw;
+                min-height: 75vh;
             }
             
             .best-section-title h2 {
-                font-size: 7vw;
+                font-size: 5.5vw;
+                margin-bottom: 1.5vh;
             }
             
             .best-section-title p {
-                font-size: 3vw;
-                margin-bottom: 4vh;
+                font-size: 3.5vw;
+                margin-bottom: 5vh;
             }
             
             .feature-cluster {
-                width: 95vw;
-                height: 60vh;
+                width: 85vw;
+                height: 70vh;
             }
             
-            .feature-item {
-                padding: 3vw;
+            .desktop-only {
+                display: block;
             }
             
-            .feature-item img {
-                width: 6vw;
-                height: 6vw;
-                margin-bottom: 2vh;
+            .mobile-only {
+                display: none;
+            }
+        }
+
+        /* Mobile Design (Under 768px) */
+        @media (max-width: 767px) {
+            .best-section {
+                padding: 5vh 4vw;
+                min-height: auto;
             }
             
-            .feature-item span {
-                font-size: 2vw;
+            .best-section::before {
+                opacity: 0.2;
             }
             
-            /* Adjust positioning for mobile */
-            #creative-solution, #transparency, #client-satisfaction, 
-            #affordability, #fast-responds {
-                width: 18vw;
-                height: 18vw;
+            .best-section-title h2 {
+                font-size: 8vw;
+                margin-bottom: 1vh;
+                font-weight: 700;
             }
             
-            #witty-content, #attention-to-details, #aesthetic-design, 
-            #fast-delivery, #timeless-quality {
-                width: 18vw;
-                height: 18vw;
+            .best-section-title p {
+                font-size: 5vw;
+                margin-bottom: 4vh;
+                font-weight: 400;
+            }
+            
+            .feature-cluster {
+                width: 100%;
+                height: auto;
+                min-height: 60vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .mobile-only {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+            
+            .feature-cluster-img {
+                width: 100%;
+                height: auto;
+            }
+            .best-section-title {
+                margin-bottom: -20vh;
+            }
+        }
+        
+        /* Small Mobile Devices (Under 480px) */
+        @media (max-width: 480px) {
+            .best-section {
+                padding: 4vh 3vw;
+            }
+            
+            .best-section-title h2 {
+                font-size: 8vw;
+            }
+            
+            .best-section-title p {
+                font-size: 5.5vw;
+            }
+            
+            .feature-cluster {
+                min-height: 50vh;
             }
         }
     </style>
