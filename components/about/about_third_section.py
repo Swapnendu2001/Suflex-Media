@@ -112,6 +112,209 @@ def about_third_section_css():
             width: 1.5vw;
             height: 1.5vw;
         }
+
+        /* Tablet Responsive Design (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .about-third-section {
+                top: 3vh;
+            }
+            
+            .about-third-section-top {
+                width: 90vw;
+                left: 5vw;
+                padding: 4vh 3vw;
+                height: auto;
+                min-height: 20vh;
+            }
+            
+            .about-third-section-top h1 {
+                font-size: 5vw;
+            }
+            
+            .about-third-section-top h2 {
+                font-size: 3.5vw;
+            }
+            
+            .about-third-section-middle {
+                padding: 4vh 5vw;
+                gap: 4vw;
+            }
+            
+            .about-third-section-middle-left {
+                width: 45vw;
+            }
+            
+            .about-third-section-middle-left::before {
+                top: -6vh;
+                left: -3vw;
+                font-size: 10vw;
+            }
+            
+            .about-third-section-middle-left::after {
+                bottom: -12vh;
+                left: 42vw;
+                font-size: 10vw;
+            }
+            
+            .about-third-section-middle-left p {
+                font-size: 2vw;
+            }
+            
+            .about-third-section-middle-right {
+                width: 40vw;
+            }
+            
+            .about-third-section-bottom {
+                padding: 6vh 0;
+            }
+            
+            .about-third-section-bottom h3 {
+                font-size: 3.5vw;
+                margin-bottom: 3vh;
+            }
+            
+            .about-third-section-cta {
+                font-size: 2vw;
+                padding: 2vh 4vw;
+                gap: 2vw;
+            }
+            
+            .about-third-section-cta span {
+                width: 4vw;
+                height: 4vw;
+            }
+            
+            .about-third-section-cta img {
+                width: 2.5vw;
+                height: 2.5vw;
+            }
+        }
+
+        /* Mobile Responsive Design (Under 768px) */
+        @media (max-width: 767px) {
+            .about-third-section {
+                top: 2vh;
+            }
+            
+            .about-third-section-top {
+                width: 90vw;
+                left: 5vw;
+                padding: 4vh 5vw;
+                height: auto;
+                min-height: auto;
+            }
+            
+            .about-third-section-top h1 {
+                font-size: 7vw;
+                line-height: 1.3;
+            }
+            
+            .about-third-section-top h2 {
+                font-size: 5vw;
+                margin-top: 1vh;
+            }
+            
+            .about-third-section-middle {
+                flex-direction: column;
+                padding: 4vh 5vw;
+                gap: 4vh;
+            }
+            
+            .about-third-section-middle-left {
+                width: 100%;
+                padding: 0 2vw;
+            }
+            
+            .about-third-section-middle-left::before {
+                top: -4vh;
+                left: -2vw;
+                font-size: 15vw;
+            }
+            
+            .about-third-section-middle-left::after {
+                bottom: -8vh;
+                left: auto;
+                right: -2vw;
+                font-size: 15vw;
+            }
+            
+            .about-third-section-middle-left p {
+                font-size: 4vw;
+                line-height: 1.7;
+                text-align: center;
+            }
+            
+            .about-third-section-middle-right {
+                width: 80vw;
+                margin: 0 auto;
+            }
+            
+            .about-third-section-bottom {
+                padding: 5vh 5vw;
+            }
+            
+            .about-third-section-bottom h3 {
+                font-size: 6vw;
+                margin-bottom: 3vh;
+                line-height: 1.3;
+            }
+            
+            .about-third-section-cta {
+                font-size: 4vw;
+                padding: 2vh 6vw;
+                gap: 3vw;
+                border-radius: 40px;
+            }
+            
+            .about-third-section-cta span {
+                width: 8vw;
+                height: 8vw;
+            }
+            
+            .about-third-section-cta img {
+                width: 4vw;
+                height: 4vw;
+            }
+        }
+
+        /* Small Mobile Devices (Under 480px) */
+        @media (max-width: 480px) {
+            .about-third-section-top {
+                left: 0;
+                width: 92vw;
+                padding: 3vh 5vw;
+                margin-left: 4vw;
+            }
+            
+            .about-third-section-top h1 {
+                font-size: 8vw;
+            }
+            
+            .about-third-section-top h2 {
+                font-size: 6vw;
+            }
+            
+            .about-third-section-middle {
+                padding: 3vh 4vw;
+            }
+            
+            .about-third-section-middle-left p {
+                font-size: 4.5vw;
+            }
+            
+            .about-third-section-middle-right {
+                width: 90vw;
+            }
+            
+            .about-third-section-bottom h3 {
+                font-size: 7vw;
+            }
+            
+            .about-third-section-cta {
+                font-size: 4.5vw;
+                padding: 2vh 7vw;
+            }
+        }
     </style>
     """
 
