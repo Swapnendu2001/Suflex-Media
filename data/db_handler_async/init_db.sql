@@ -48,18 +48,6 @@ CREATE TABLE IF NOT EXISTS organization (
     percentage DOUBLE PRECISION
 );
 
--- Create ads table
-CREATE TABLE IF NOT EXISTS ads (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    organization TEXT,
-    title TEXT,
-    description TEXT,
-    url TEXT,
-    image TEXT,
-    aspect_ratio TEXT
-);
-
 -- Create blogs table
 CREATE TABLE IF NOT EXISTS blogs (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -77,19 +65,8 @@ CREATE TABLE IF NOT EXISTS blogs (
     labels JSONB
 );
 
--- Create magazine_details table
-CREATE TABLE IF NOT EXISTS magazine_details (
-    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    pdf_url TEXT,
-    thumbnail_url TEXT,
-    title TEXT,
-    created_by TEXT DEFAULT 'internal'
-);
-
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_blogs_status ON blogs(status);
 CREATE INDEX IF NOT EXISTS idx_blogs_category ON blogs(category);
 CREATE INDEX IF NOT EXISTS idx_blogs_created_at ON blogs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_main_pages_name ON main_pages(page_name);
-CREATE INDEX IF NOT EXISTS idx_magazine_created_at ON magazine_details(created_at DESC);
