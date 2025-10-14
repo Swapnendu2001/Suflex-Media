@@ -7,6 +7,10 @@ def perfect_fit_css():
             background: #FFFFFF;
             padding: 8vh 5vw;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .perfect-fit-container {
@@ -84,8 +88,11 @@ def perfect_fit_css():
             padding: 8vh 5vw;
             text-align: center;
             position: relative;
-            overflow: hidden;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .brand-philosophy-section::before {

@@ -64,6 +64,10 @@ def care_section_css():
         align-items: center;
         justify-content: center;
         font-family: 'Lexend', sans-serif;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
     .care-heading {
         text-align: center;
@@ -98,6 +102,20 @@ def care_section_css():
         display: flex;
         justify-content: space-between;
         align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        cursor: pointer;
+    }
+    .care-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.4);
+        background-color: #007bff;
+    }
+    .care-card:hover .card-left p {
+        color: #fff;
+    }
+    .care-card:hover .card-left img,
+    .care-card:hover .card-arrow {
+        filter: brightness(0) invert(1);
     }
     .card-left {
         display: flex;

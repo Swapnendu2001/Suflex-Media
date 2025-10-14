@@ -23,8 +23,11 @@ def best_section_css():
             font-family: 'Lexend', sans-serif;
             color: white;
             position: relative;
-            overflow: hidden;
             min-height: 80vh;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         .best-section::before {

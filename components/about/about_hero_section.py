@@ -7,6 +7,10 @@ def about_hero_section_style():
             flex-direction: column;
             align-items: center;
             gap: 5vh;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .about-hero-intro {
             display: flex;

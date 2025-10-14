@@ -14,13 +14,16 @@ def services():
             padding: 0;
             box-sizing: border-box;
         }
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            overflow-x: hidden;
         }
         .content-wrapper {
             margin-top: 10vh;
+            width: 100%;
         }
     </style>
     """

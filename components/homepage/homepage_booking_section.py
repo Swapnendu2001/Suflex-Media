@@ -333,7 +333,10 @@ def booking_section_css():
                 padding-top: 15vh;
                 padding-bottom: 35vh;
                 position: relative;
-                overflow: visible;
+                width: 100%;
+                max-width: 100vw;
+                box-sizing: border-box;
+                overflow-x: hidden;
             }
 
             .booking-header h2 {

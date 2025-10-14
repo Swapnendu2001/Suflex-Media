@@ -137,6 +137,8 @@ def portfolio_case_study_section_css():
     .case-study-section {
         background-color: transparent;
         font-family: 'Lexend', sans-serif;
+        width: 100%;
+        overflow-x: hidden;
     }
     
     .case-study-container {
@@ -144,6 +146,7 @@ def portfolio_case_study_section_css():
         margin: 0 auto;
         display: flex;
         flex-direction: column;
+        width: 100%;
     }
     
     .case-study-card {
@@ -153,7 +156,8 @@ def portfolio_case_study_section_css():
         background-color: transparent;
         overflow: hidden;
         width: 100%;
-        padding: 6vh 10vh;
+        padding: 6vh 10vw;
+        box-sizing: border-box;
     }
     
     .case-study-card.dark {

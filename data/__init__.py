@@ -1,7 +1,7 @@
 # Data module for Suflex-Media
 # This module provides access to database handlers and page rendering functions
 
-from .db_handler import *
+from .db_handler_async import *
 from .page_handler import get_blog_preview, get_blog_page, get_homepage
 
 __all__ = [

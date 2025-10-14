@@ -56,6 +56,9 @@ def portfolio_hero_section_css():
         align-items: center;
         justify-content: center;
         font-family: 'Lexend', sans-serif;
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
     .portfolio-hero-heading {
         text-align: center;
@@ -95,6 +98,20 @@ def portfolio_hero_section_css():
         flex: 1;
         min-width: 15vw;
         max-width: 17vw;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        cursor: pointer;
+    }
+    .portfolio-hero-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.4);
+        background-color: #007bff;
+    }
+    .portfolio-hero-card:hover .card-left p {
+        color: #fff;
+    }
+    .portfolio-hero-card:hover .card-left img,
+    .portfolio-hero-card:hover .card-arrow {
+        filter: brightness(0) invert(1);
     }
     .card-left {
         display: flex;
