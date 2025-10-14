@@ -20,7 +20,7 @@ def header_style():
             z-index: 1000;
             margin: 0;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         .logo img {
             height: 7vh;
@@ -48,6 +48,11 @@ def header_style():
             flex: none;
             order: 0;
             flex-grow: 0;
+        }
+        
+        /* Hide Contact Us inside nav-links on desktop */
+        .nav-links .contact-us {
+            display: none;
         }
         
         /* Hamburger Menu */
@@ -129,6 +134,7 @@ def header_style():
                 width: 80% !important;
                 text-align: center !important;
             }
+            /* Show Contact Us inside nav-links on mobile */
             .nav-links .contact-us {
                 display: flex !important;
                 font-size: 5vw !important;
