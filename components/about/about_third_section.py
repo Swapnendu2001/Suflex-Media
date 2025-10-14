@@ -6,6 +6,10 @@ def about_third_section_css():
             font-family: 'Lexend', sans-serif;
             position: relative;
             top: 5vh;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .about-third-section-top {
             background-color: #000;

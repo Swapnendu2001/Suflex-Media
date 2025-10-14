@@ -9,15 +9,24 @@ from templates.portfolio import portfolio
 import uvicorn
 
 # Import admin routes
-# from admin_routes import router as admin_router
+from admin_routes import router as admin_router
+
+from data.db_handler_async import initialize_database
 
 app = FastAPI()
+
+# Event handler for application startup
+@app.on_event("startup")
+async def startup_event():
+    print("Initializing database...")
+    await initialize_database()
+    print("Database initialized successfully!")
 
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Include admin routes
-# app.include_router(admin_router, tags=["admin"])
+app.include_router(admin_router, tags=["admin"])
 
 @app.get("/", response_class=HTMLResponse)
 async def root():

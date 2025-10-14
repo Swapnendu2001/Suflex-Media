@@ -11,8 +11,11 @@ def book_strategy_cta_css():
             padding: 8vh 5vw;
             text-align: center;
             position: relative;
-            overflow: hidden;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .book-strategy-cta-section::before {

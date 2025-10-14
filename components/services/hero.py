@@ -13,6 +13,10 @@ def hero_css():
             justify-content: center;
             align-items: center;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .services-hero h1 {
@@ -74,8 +78,11 @@ def hero_css():
             gap: 5vw;
             align-items: center;
             position: relative;
-            overflow: hidden;
             font-family: 'Lexend', sans-serif;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .services-difference::before {

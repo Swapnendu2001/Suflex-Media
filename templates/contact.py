@@ -11,8 +11,10 @@ def contact_css():
             font-family: 'Lexend', sans-serif;
         }
 
-        body {
+        html, body {
             background: #e8ecf0;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         .contact-container {

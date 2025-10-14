@@ -94,6 +94,10 @@ def why_hire_css():
             background: #FFFFFF;
             font-family: 'Lexend', sans-serif;
             position: relative;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .book-types-section::after {

@@ -14,8 +14,10 @@ def footer_style():
             bottom: 0;
             left: 0;
             right: 0;
-            width: 100vw;
-
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .footer-content {
             display: flex;

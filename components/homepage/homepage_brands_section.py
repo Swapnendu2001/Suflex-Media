@@ -42,7 +42,10 @@ def brands_section_css():
         background-color: #fff;
         padding: 8vh 8vw;
         font-family: 'Lexend', sans-serif;
-        overflow: hidden;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .brands-heading {

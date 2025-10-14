@@ -20,7 +20,6 @@ def header_style():
             z-index: 1000;
             margin: 0;
             position: relative;
-            overflow: hidden;
         }
         .logo img {
             height: 7vh;

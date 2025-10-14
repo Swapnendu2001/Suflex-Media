@@ -5,11 +5,13 @@ def homepage_hero_section_style():
         
         .hero-section {
             position: relative;
-            width: 100vw;
+            width: 100%;
+            max-width: 100vw;
             height: 150vh;
-            background-color: #f8fafc;
+            background-color: transparent;
             font-family: 'Lexend', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
         
         .hero-content {

@@ -49,6 +49,10 @@ def insights_section_css():
     font-family: 'Lexend', sans-serif;
     text-align: center;
     padding-top: 10vh;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .insights-header {

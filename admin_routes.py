@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 # Import database handlers
-from data.db_handler import (
+from data.db_handler_async import (
     admin_login_db_check,
     get_blogs_list_db,
     save_blogs_to_db,
@@ -30,6 +30,11 @@ from data.db_handler import (
     update_main_page_db,
     delete_main_page_db,
     sha256_hash,
+    create_admin_user,
+    get_all_admin_users,
+    delete_admin_user,
+    update_admin_user,
+    create_default_admin,
 )
 
 router = APIRouter()
@@ -630,5 +635,91 @@ async def update_ad(
 @router.delete("/api/ads/{ad_id}")
 async def delete_ad(ad_id: int):
     """Delete an ad"""
+    delete_ad_db(ad_id)
+    return JSONResponse({"message": "Ad deleted"})
+
+
+# --------------------------------------------------------------------------------#
+#                           ADMIN USER MANAGEMENT ROUTES                           #
+# --------------------------------------------------------------------------------#
+
+@router.post("/api/admin_users")
+async def create_admin(request: Request):
+    """Create a new admin user"""
+    try:
+        data = await request.json()
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        
+        if not all([username, email, password]):
+            return JSONResponse(
+                {"status": "error", "message": "Username, email, and password are required"},
+                status_code=400
+            )
+        
+        result = create_admin_user(username, email, password)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)},
+            status_code=500
+        )
+
+
+@router.get("/api/admin_users")
+async def get_admin_users():
+    """Get all admin users"""
+    try:
+        result = get_all_admin_users()
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)},
+            status_code=500
+        )
+
+
+@router.delete("/api/admin_users/{email}")
+async def delete_admin(email: str):
+    """Delete an admin user by email"""
+    try:
+        result = delete_admin_user(email)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)},
+            status_code=500
+        )
+
+
+@router.put("/api/admin_users/{email}")
+async def update_admin(email: str, request: Request):
+    """Update an admin user's information"""
+    try:
+        data = await request.json()
+        new_username = data.get("username")
+        new_password = data.get("password")
+        
+        result = update_admin_user(email, new_username=new_username, new_password=new_password)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)},
+            status_code=500
+        )
+
+
+@router.post("/api/create_default_admin")
+async def create_default_admin_endpoint():
+    """Create a default admin user if none exists"""
+    try:
+        result = create_default_admin()
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse(
+            {"status": "error", "message": str(e)},
+            status_code=500
+        )
     delete_ad_db(ad_id)
     return JSONResponse({"message": "Ad deleted"})

@@ -7,6 +7,10 @@ def faq_section_css():
             display: flex;
             font-family: 'Lexend', sans-serif;
             color: white;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .faq-title-container {
             width: 40vw;

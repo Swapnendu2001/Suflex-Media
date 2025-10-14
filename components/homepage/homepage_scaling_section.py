@@ -29,9 +29,12 @@ def scaling_section_css():
                 background-color: #ffffff;
                 padding: 8vh 0;
                 text-align: center;
-                background-image: url('/static/icons/Doodles.png');
                 background-size: contain;
                 background-position: center;
+                width: 100%;
+                max-width: 100vw;
+                box-sizing: border-box;
+                overflow-x: hidden;
             }
             .scaling-intro h2 {
                 font-size: 4.5vw;

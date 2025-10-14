@@ -48,9 +48,12 @@ def work_with_us_css():
     return """
         <style>
             .work-with-us {
-                width: 100vw;
+                width: 100%;
+                max-width: 100vw;
                 padding-top: 5vh;
                 padding-bottom: 5vh;
+                box-sizing: border-box;
+                overflow-x: hidden;
             }
             .work-with-us-title {
                 text-align: center;

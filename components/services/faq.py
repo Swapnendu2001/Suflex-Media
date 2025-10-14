@@ -10,6 +10,10 @@ def faq_css():
             gap: 5vw;
             font-family: 'Lexend', sans-serif;
             color: white;
+            width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         
         .services-faq-title-container {
