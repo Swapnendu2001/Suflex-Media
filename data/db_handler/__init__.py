@@ -1,13 +1,3 @@
-from .ad_manager import (get_organizations_db, 
-                         add_organization_db,
-                         update_organization_db,
-                         delete_organization_db,
-                         get_ads_db,
-                         add_ad_db,
-                         update_ad_db,
-                         delete_ad_db,
-                         get_orgs_db)
-
 from .auth import (admin_login_db_check,
                   user_register_db,
                   user_login_db_check)
@@ -25,17 +15,10 @@ from .files import (upload_file_to_storage,
                     delete_file_from_storage_by_url,
                     delete_file_from_storage)
 
-from .magazine import (get_magazine_url,
-                       create_magazine_db,
-                       get_recent_magazines_db,
-                       get_magazine_details_db,
-                       delete_magazine_from_db)
-
 from .general_function import (sha256_hash,
                                get_page_data,
                                format_file_size,
                                get_leadership_details,
                                update_main_page_db,
                                delete_main_page_db,
-                               get_chosen_orgs,
                                get_main_pages_db)

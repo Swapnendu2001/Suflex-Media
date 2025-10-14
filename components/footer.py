@@ -152,7 +152,7 @@ def footer_content():
                 <a href="/">Home</a>
                 <a href="/about">About Us</a>
                 <a href="/services">Services</a>
-                <a href="/blog">Blog</a>
+                <a href="/blogs">Blog</a>
                 <a href="/careers">Careers</a>
             </div>
             <div class="footer-section">

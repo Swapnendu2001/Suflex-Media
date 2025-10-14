@@ -9,6 +9,11 @@ __all__ = [
     'admin_login_db_check',
     'user_register_db',
     'user_login_db_check',
+    'create_admin_user',
+    'get_all_admin_users',
+    'delete_admin_user',
+    'update_admin_user',
+    'create_default_admin',
     
     # Blog functions
     'get_blogs_list_db',
@@ -25,24 +30,6 @@ __all__ = [
     'delete_file_from_storage_by_url',
     'delete_file_from_storage',
     
-    # Magazine functions
-    'get_magazine_url',
-    'create_magazine_db',
-    'get_recent_magazines_db',
-    'get_magazine_details_db',
-    'delete_magazine_from_db',
-    
-    # Ad manager functions
-    'get_organizations_db',
-    'add_organization_db',
-    'update_organization_db',
-    'delete_organization_db',
-    'get_ads_db',
-    'add_ad_db',
-    'update_ad_db',
-    'delete_ad_db',
-    'get_orgs_db',
-    
     # General functions
     'sha256_hash',
     'get_page_data',
@@ -50,7 +37,6 @@ __all__ = [
     'get_leadership_details',
     'update_main_page_db',
     'delete_main_page_db',
-    'get_chosen_orgs',
     'get_main_pages_db',
     
     # Page handler functions

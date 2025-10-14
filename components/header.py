@@ -195,7 +195,7 @@ def header_content():
             <a href="/about">About Us</a>
             <a href="/services">Services</a>
             <a href="/portfolio">Portfolio</a>
-            <a href="/blog">Blog</a>
+            <a href="/blogs">Blog</a>
             <a href="/careers">Careers</a>
             <a href="/contact" class="contact-us">
                 <img src="/static/icons/phone-icon.png" alt="Phone icon" class="icon">
