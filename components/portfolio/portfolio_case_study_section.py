@@ -2,7 +2,7 @@ def portfolio_case_study_section_html():
     return '''
 <section class="case-study-section">
     <div class="case-study-container">
-        <div class="case-study-card">
+        <div class="case-study-card case-study-card-light">
             <div class="case-study-image">
                 <img src="/static/Frame1.jpg" alt="Case Study">
             </div>
@@ -60,7 +60,7 @@ def portfolio_case_study_section_html():
             </div>
         </div>
         
-        <div class="case-study-card">
+        <div class="case-study-card case-study-card-light">
             <div class="case-study-image">
                 <img src="/static/Frame3.jpg" alt="Case Study">
             </div>
@@ -297,17 +297,23 @@ def portfolio_case_study_section_css():
             max-width: 90vw;
             gap: 3vh;
         }
+
+        .case-study-card-light{
+            border: 0.3vw solid #017AFF;
+        }
         
         .case-study-card {
             flex-direction: column;
             gap: 0;
             border-radius: 3vw;
+            padding: 0;
         }
         
         .case-study-image {
             flex: none;
             width: 100%;
             min-height: 30vh;
+            padding: 2vh;
         }
         
         .case-study-content {

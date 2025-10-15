@@ -138,12 +138,13 @@ def portfolio_hero_section_css():
     @media (max-width: 768px) {
         .portfolio-hero-section {
             padding: 8vh 5vw;
+            margin-top: -14vh;
         }
         .portfolio-hero-heading {
             margin-bottom: 6vh;
         }
         .portfolio-hero-heading h1 {
-            font-size: 6vw;
+            font-size: 8vw;
         }
         .portfolio-hero-heading h2 {
             font-size: 6.5vw;
