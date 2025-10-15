@@ -43,6 +43,10 @@ async def login(credentials: LoginRequest):
         await conn.close()
         
         if user:
+            if not user['active']:
+                print(f"✗ Login failed - Account is deactivated: {user['username']}")
+                raise HTTPException(status_code=403, detail="Account is deactivated. Please contact administrator.")
+            
             print(f"✓ Login successful for user: {user['username']}")
             return {
                 "status": "success",
@@ -90,6 +94,10 @@ async def auto_login(credentials: AutoLoginRequest):
         await conn.close()
         
         if user:
+            if not user['active']:
+                print(f"✗ Auto-login failed - Account is deactivated: {user['username']}")
+                raise HTTPException(status_code=403, detail="Account is deactivated. Please contact administrator.")
+            
             print(f"✓ Auto-login successful for user: {user['username']}")
             return {
                 "status": "success",

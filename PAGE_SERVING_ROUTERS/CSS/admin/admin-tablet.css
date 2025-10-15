@@ -48,6 +48,26 @@ body {
     animation: fadeIn .6s cubic-bezier(.2, .8, .2, 1) forwards;
 }
 
+.logout-btn {
+    position: fixed;
+    top: 3vw;
+    right: 3vw;
+    padding: 1.2vw 2.5vw;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.8vw;
+    color: var(--fg);
+    font-size: 1.8vw;
+    cursor: pointer;
+    transition: all .3s ease;
+    z-index: 100;
+}
+
+.logout-btn:hover {
+    background: var(--border);
+    color: #ff4a4a;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
