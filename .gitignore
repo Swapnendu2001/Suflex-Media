@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 trial.py
+clean_db.py
 
 # C extensions
 *.so
