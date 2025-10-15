@@ -37,7 +37,7 @@ body {
 }
 
 .brand {
-    margin: 0 0 10vw;
+    margin: 5vh 0 10vw;
     font-size: 14vw;
     letter-spacing: 0.2vw;
     font-weight: 700;
@@ -46,6 +46,26 @@ body {
     opacity: .95;
     font-family: 'Ciguatera', sans-serif;
     animation: fadeIn .6s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+.logout-btn {
+    position: fixed;
+    top: 5vw;
+    right: 5vw;
+    padding: 2.5vw 4vw;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5vw;
+    color: var(--fg);
+    font-size: 3.5vw;
+    cursor: pointer;
+    transition: all .3s ease;
+    z-index: 100;
+}
+
+.logout-btn:hover {
+    background: var(--border);
+    color: #ff4a4a;
 }
 
 @keyframes fadeIn {

@@ -2,6 +2,7 @@
   const toastHost = document.getElementById('toast');
   const loadingOverlay = document.getElementById('loadingOverlay');
   const cards = document.querySelectorAll('.card');
+  const logoutBtn = document.getElementById('logoutBtn');
 
   function getCookie(name) {
     const nameEQ = name + "=";
@@ -150,6 +151,19 @@
     setTimeout(() => {
       if (el.parentNode) host.removeChild(el);
     }, 2700);
+  }
+
+  function handleLogout() {
+    deleteCookie('hashed_email');
+    deleteCookie('hashed_password');
+    toast("Logging out...");
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 800);
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
   }
 
   document.addEventListener('keydown', function(e) {
