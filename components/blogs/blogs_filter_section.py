@@ -84,20 +84,20 @@ def blogs_filter_section_css():
     @media (max-width: 768px) {
         .blogs-filter-section {
             padding: 6vh 5vw;
+            margin-top: -10vh;
         }
         .filter-heading {
             margin-bottom: 4vh;
         }
         .filter-heading h1 {
-            font-size: 7vw;
+            font-size: 8vw;
         }
         .filter-buttons-container {
             gap: 2.5vw;
             max-width: 90vw;
         }
         .filter-btn {
-            padding: 1.5vh 4vw;
-            font-size: 3.5vw;
+            font-size: 2.5vw;
             border-radius: 10vw;
             border-width: 0.3vw;
         }
