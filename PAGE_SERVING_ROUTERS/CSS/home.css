@@ -517,7 +517,7 @@ body {
 @media (max-width: 768px) {
     .hero-section {
         height: auto;
-        min-height: 140vh;
+        min-height: 145vh;
         padding-bottom: 5vh;
         margin-top: -10vh;
         overflow-y: hidden;
