@@ -42,6 +42,47 @@ class ImageDeleteResponse(BaseModel):
     status: str
     message: str
     object_name: str
+class ImageListResponse(BaseModel):
+    status: str
+    message: str
+    images: list
+
+@router.get("/list-images")
+async def list_images():
+    """
+    API endpoint to list all images from MinIO bucket
+    Returns list of image objects with their names and public URLs
+    """
+    print("Image list request received")
+    
+    try:
+        objects = minio_client.list_objects(MINIO_BUCKET_NAME)
+        
+        images = []
+        for obj in objects:
+            public_url = f"{MINIO_PUBLIC_ENDPOINT}/{MINIO_BUCKET_NAME}/{obj.object_name}"
+            images.append({
+                "object_name": obj.object_name,
+                "public_url": public_url,
+                "size": obj.size,
+                "last_modified": obj.last_modified.isoformat() if obj.last_modified else None
+            })
+        
+        print(f"✓ Found {len(images)} images in bucket")
+        
+        return ImageListResponse(
+            status="success",
+            message=f"Found {len(images)} images",
+            images=images
+        )
+            
+    except S3Error as e:
+        print(f"✗ MinIO error: {e}")
+        raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
+    except Exception as e:
+        print(f"✗ Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @router.post("/upload-image")
 async def upload_image(file: UploadFile = File(...)):

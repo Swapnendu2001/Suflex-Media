@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin/admin-blogs-desktop.css" />
+</head>
+
+<body>
+    <nav class="fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <button onclick="window.history.back()" class="back-button p-2 rounded-full hover:bg-white/5 transition-colors" title="Go Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
+                </button>
+                <h1 class="logo-text text-2xl font-bold text-white">Sufflex Media</h1>
+            </div>
+            
+            <div class="navbar-wrapper"
+                style="backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 70px; padding: 12px 20px;">
+                <div id="navbarTabs" class="expandable-tabs flex items-center gap-4 anim-hidden-initial"
+                    style="animation: slideDown 0.8s cubic-bezier(0.25, 0.4, 0.25, 1) 0.3s forwards;">
+                </div>
+            </div>
+            
+            <button onclick="handleLogout()" class="logout-button">
+                <i data-lucide="log-out" class="w-4 h-4 text-black"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </nav>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <span class="spinner"></span>
+            <p class="loading-text">Authenticating...</p>
+        </div>
+    </div>
+    <div
+        class="fixed inset-0 bg-gradient-to-br from-indigo-500/[0.03] via-transparent to-rose-500/[0.03] pointer-events-none">
+    </div>
+
+    <main class="pt-20 px-4">
+        <div class="main-grid-container">
+            <div class="left-section" id="leftSection">
+                    <div class="left-section-header-new" id="galleryHeader">
+                        <div class="header-left">
+                            <h2 class="section-header-title">Files</h2>
+                        </div>
+                        <div class="header-center">
+                            <div class="expandable-tabs flex items-center gap-2">
+                                <button class="left-tab-button active" data-left-tab="upload-image">
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="image" class="w-4 h-4"></i>
+                                    </div>
+                                    <span>Upload Image</span>
+                                </button>
+                                <button class="left-tab-button" data-left-tab="storage">
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="image" class="w-4 h-4"></i>
+                                    </div>
+                                    <span>Gallery</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <button id="toggleGalleryBtn" class="gallery-toggle-btn" title="Toggle Gallery">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                <div id="upload-imageContent" class="left-content-section active">
+                    <h3 class="text-lg font-semibold mb-4 text-white" style="font-family: 'Playfair Display', serif;">
+                        Upload Images</h3>
+                    <div class="bg-black/20 border-white/10 rounded-[20px] p-6">
+                        <div id="imageDropzone" class="dropzone flex flex-col items-center justify-center space-y-3"
+                            style="border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease; background-color: rgba(255, 255, 255, 0.02);">
+                            <i id="imageDropzoneIcon" data-lucide="upload-cloud" class="w-12 h-12 text-white/40"></i>
+                            <p class="font-semibold">Drag & drop images here</p>
+                            <p id="imageDropzoneText" class="text-sm text-white/60">Upload JPG, PNG, WEBP, etc. Max
+                                10MB.</p>
+                            <p class="text-xs text-white/50">or</p>
+                            <button type="button" onclick="document.getElementById('imageFileInput').click()"
+                                class="form-button bg-white/10 hover:bg-white/20 text-white/90 !px-4 !py-2">Browse
+                                Files</button>
+                        </div>
+                        <input type="file" id="imageFileInput" multiple accept="image/*" class="hidden">
+
+                        <div id="imageFileQueue" class="mt-6 space-y-3"></div>
+
+                        <div class="mt-8 flex justify-center">
+                            <button id="imageUploadBtn" class="form-button bg-white text-black hover:bg-gray-100"
+                                disabled>
+                                <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                <span id="imageUploadBtnText">Upload 0 Files</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="storageContent" class="left-content-section">
+
+
+                    <div id="gallerySubContent" class="storage-sub-content active">
+                        <div id="galleryGrid" class="grid grid-cols-4 gap-4">
+                        </div>
+
+                        <div id="noGalleryItems" class="text-center py-8 hidden">
+                            <i data-lucide="folder-x" class="w-12 h-12 mx-auto text-white/20 mb-4"></i>
+                            <h4 class="text-lg font-medium text-white/80">No Images Found</h4>
+                            <p class="text-white/50 mt-2">Try uploading some images or changing your search.</p>
+                        </div>
+                    </div>
+
+                    <div id="magazinesSubContent" class="storage-sub-content">
+                        <div class="relative mb-6">
+                            <div class="search-input-container" style="position: relative;">
+                                <i data-lucide="search"
+                                    class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/40 z-10"></i>
+                                <input type="text" placeholder="Search magazines..."
+                                    class="search-input w-full py-2 pl-11 pr-4 text-sm rounded-[20px] focus:ring-0 focus:outline-none transition bg-transparent border-none color-white"
+                                    id="magazinesSearchInput"
+                                    style="background-color: transparent; border: none; color: white;">
+                            </div>
+                            </div>
+                        </div>
+                        <div id="magazinesGrid" class="grid grid-cols-4 gap-4">
+                        </div>
+
+                        <div id="noMagazineItems" class="text-center py-8 hidden">
+                            <i data-lucide="folder-x" class="w-12 h-12 mx-auto text-white/20 mb-4"></i>
+                            <h4 class="text-lg font-medium text-white/80">No Magazines Found</h4>
+                            <p class="text-white/50 mt-2">Try uploading some magazines or changing your search.</p>
+                        </div>
+                    </div>
+
+            </div>
+
+            <div class="right-section">
+                <section id="addBlogs" class="content-section active">
+                    <div class="form-container">
+                        <h2 class="section-title text-center">Add New Blog</h2>
+                        <form id="addBlogForm">
+
+                            <div
+                                class="category-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
+                                <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
+                                    <i data-lucide="tag" class="w-5 h-5 mr-2"></i>Category<span
+                                        class="text-red-400">*</span>
+                                </h3>
+
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <input type="text" id="blogCategory" name="blogCategory" class="form-input"
+                                            placeholder="Enter blog category..." required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="seo-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
+                                <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
+                                    <i data-lucide="search" class="w-5 h-5 mr-2"></i>SEO
+                                </h3>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="seoTitle">
+                                        <i data-lucide="type" class="w-4 h-4 inline mr-2"></i>Title
+                                    </label>
+                                    <input type="text" id="seoTitle" name="seoTitle" class="form-input"
+                                        placeholder="Enter SEO title..." />
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="seoMetaDescription">
+                                        <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>Meta Description
+                                    </label>
+                                    <textarea id="seoMetaDescription" name="seoMetaDescription" class="form-input"
+                                        style="height: 4rem; resize: vertical;"
+                                        placeholder="Enter SEO meta description..."></textarea>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="seoCanonicalUrl">
+                                        <i data-lucide="link" class="w-4 h-4 inline mr-2"></i>Canonical URL
+                                    </label>
+                                    <input type="url" id="seoCanonicalUrl" name="seoCanonicalUrl" class="form-input"
+                                        placeholder="https://suflexmedia.com/blog/title" />
+                                    <p class="text-xs text-white/50 mt-1">Leave empty for self-referencing canonical URL
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="content-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
+                                <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
+                                    <i data-lucide="layout" class="w-5 h-5 mr-2"></i>Content
+                                </h3>
+
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <label class="form-label" for="mainImageUrl">
+                                            <i data-lucide="image" class="w-4 h-4 inline mr-2"></i>Main Image URL <span
+                                                class="text-red-400">*</span>
+                                        </label>
+                                        <input type="url" id="mainImageUrl" name="mainImageUrl" class="form-input"
+                                            placeholder="https://example.com/image.jpg" required />
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="form-label" for="mainImageAlt">
+                                            <i data-lucide="type" class="w-4 h-4 inline mr-2"></i>Main Image Alt Text
+                                            <span class="text-red-400">*</span>
+                                        </label>
+                                        <input type="text" id="mainImageAlt" name="mainImageAlt" class="form-input"
+                                            placeholder="Describe the image..." required />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <label class="form-label" for="blogTitle">
+                                            <i data-lucide="heading" class="w-4 h-4 inline mr-2"></i>Blog Title <span
+                                                class="text-red-400">*</span>
+                                        </label>
+                                        <input type="text" id="blogTitle" name="blogTitle" class="form-input"
+                                            placeholder="Enter blog title..." required />
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="form-label" for="blogDate">
+                                            <i data-lucide="calendar" class="w-4 h-4 inline mr-2"></i>Blog Publish Date
+                                        </label>
+                                        <input type="date" id="blogDate" name="blogDate" class="form-input" />
+                                    </div>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="blogSummary">
+                                        <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>Blog Summary <span
+                                            class="text-red-400">*</span>
+                                    </label>
+                                    <textarea id="blogSummary" name="blogSummary" class="form-input"
+                                        style="height: 6rem; resize: vertical;"
+                                        placeholder="Write a brief summary of your blog..." required></textarea>
+                                </div>
+
+                                <div class="form-item" id="blogStatusSection" style="display: none;">
+                                    <label class="form-label">
+                                        <i data-lucide="settings" class="w-4 h-4 inline mr-2"></i>Blog Status
+                                    </label>
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="blogStatus" value="draft"
+                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                            <span class="text-sm text-white">Draft</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="blogStatus" value="published"
+                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                            <span class="text-sm text-white">Published</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label">
+                                        <i data-lucide="layers" class="w-4 h-4 inline mr-2"></i>Content Area
+                                    </label>
+
+                                    <div id="dynamicSections" class="space-y-4 mb-4">
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                                            <h4 class="text-sm font-medium text-white/80 mb-3 flex items-center">
+                                                <i data-lucide="heading" class="w-4 h-4 mr-2"></i>Headers
+                                            </h4>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button type="button" id="addH1Btn"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add H2 Header">
+                                                    <i data-lucide="heading-2" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" id="addH2Btn"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add H3 Header">
+                                                    <i data-lucide="heading-3" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" id="addH3Btn"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add H4 Header">
+                                                    <i data-lucide="heading-4" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" id="addH4Btn"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add H5 Header">
+                                                    <i data-lucide="heading-5" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" id="addH5Btn"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add H6 Header">
+                                                    <i data-lucide="heading-6" class="w-4 h-4"></i>
+                                                </button>
+                                                    
+                                            </div>
+                                        </div>
+
+                                        <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                                            <h4 class="text-sm font-medium text-white/80 mb-3 flex items-center">
+                                                <i data-lucide="more-horizontal" class="w-4 h-4 mr-2"></i>Others
+                                            </h4>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button type="button" id="addTextBtn"
+                                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add Text Content">
+                                                    <i data-lucide="type" class="w-4 h-4"></i>
+                                                    <span class="text-sm">Text</span>
+                                                </button>
+                                                <button type="button" id="addImageBtn"
+                                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
+                                                    title="Add Image">
+                                                    <i data-lucide="image" class="w-4 h-4"></i>
+                                                    <span class="text-sm">Image</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="labels-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
+                                <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
+                                    <i data-lucide="tags" class="w-5 h-5 mr-2"></i>Keywords<span
+                                        class="text-red-400">*</span>
+                                </h3>
+
+                                <div class="form-item mb-4">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="labelsNotMandatory"
+                                            class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500">
+                                        <span class="text-sm text-white/80">Keywords are not mandatory for this
+                                            blog</span>
+                                    </label>
+                                </div>
+
+                                <div id="labelsContainer" class="space-y-3 mb-4">
+                                    <div class="label-item flex items-center gap-3">
+                                        <div class="flex-1">
+                                            <input type="text" class="label-input form-input"
+                                                placeholder="Enter Keyword..." />
+                                        </div>
+                                        <div class="w-24">
+                                            <input type="number" class="weight-input form-input" placeholder="Volume"
+                                                min="1" max="100" />
+                                        </div>
+                                        <button type="button"
+                                            class="remove-label-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]"
+                                            title="Remove">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="button" id="addLabelBtn"
+                                    class="form-button bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm px-3 py-2">
+                                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                                    Add Keywords
+                                </button>
+                            </div>
+
+                            <div class="flex justify-end gap-3">
+                                <div id="addModeButtons" style="gap: 1rem;">
+                                    <button type="button" id="loadPreviewBtn"
+                                        class="form-button bg-white hover:bg-gray-100 text-black">
+                                        <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
+                                        Preview
+                                    </button>
+                                    <button type="button" id="saveDraftBtn"
+                                        class="form-button bg-gray-600 hover:bg-gray-700 text-white">
+                                        <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                                        Draft
+                                    </button>
+                                    <button type="submit" id="savePublishBtn"
+                                        class="form-button bg-green-600 hover:bg-green-700 text-white">
+                                        <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                                        Publish
+                                    </button>
+                                </div>
+
+                                <div id="editModeButtons" style="display: none; gap: 1rem;">
+                                    <button type="button" id="loadPreviewEditBtn"
+                                        class="form-button bg-white hover:bg-gray-100 text-black">
+                                        <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
+                                        Preview
+                                    </button>
+                                    <button type="button" id="deleteBlogBtn"
+                                        class="form-button bg-red-600 hover:bg-red-700 text-white">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            <p>Delete</p>
+                                        </div>
+                                    </button>
+                                    <button type="button" id="updateBlogBtn"
+                                        class="form-button bg-white/10 hover:bg-white/20 border border-white/20 text-white">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="save" class="w-4 h-4"></i>
+                                            <p>Update</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </section>
+
+                <section id="editBlogs" class="content-section">
+                    <div class="form-container">
+                        <h2 class="section-title text-center">Edit/Delete Blog</h2>
+                        <div class="section-content">
+
+
+                            <div class="form-row mb-6">
+                                <div class="form-item">
+                                    <label class="form-label" for="filterTitle"><i data-lucide="type"
+                                            class="w-4 h-4 inline mr-2"></i>Filter by Title</label>
+                                    <input type="text" id="filterTitle" class="form-input" placeholder="Enter title...">
+                                </div>
+                                <div class="form-item">
+                                    <label class="form-label" for="filterCategory"><i data-lucide="tag"
+                                            class="w-4 h-4 inline mr-2"></i>Filter by Category</label>
+                                    <input type="text" id="filterCategory" class="form-input" placeholder="Enter category...">
+                                </div>
+                            </div>
+
+                            <div id="blogsLoading" class="text-center py-8 hidden">
+                                <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto mb-2 text-white/60"></i>
+                                <p class="text-white/60">Loading blogs...</p>
+                            </div>
+
+                            <div id="noBlogsFound" class="text-center py-8 hidden">
+                                <i data-lucide="file-x" class="w-12 h-12 mx-auto mb-4 text-white/40"></i>
+                                <h3 class="text-lg font-semibold mb-2 text-white/80">No blogs found</h3>
+                                <p class="text-white/60">Try adjusting your search terms or check back later.</p>
+                            </div>
+
+                            <div id="blogsList" class="space-y-4">
+                            </div>
+
+                            <div id="paginationControls" class="flex justify-center items-center gap-4 mt-6 hidden">
+                                <button id="prevPage"
+                                    class="form-button bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="chevron-left" class="w-3 h-3"></i>
+                                        <p>Previous</p>
+                                    </div>
+                                </button>
+                                <span id="pageInfo" class="text-sm text-white/60 px-4">
+                                    Page 1 of 1
+                                </span>
+                                <button id="nextPage"
+                                    class="form-button bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <div class="flex items-center gap-2">
+                                        <p>Next</p>
+                                        <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" class="modal-title">Message</h3>
+                <button type="button" class="modal-close" onclick="closeModal()">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Message content goes here.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="linkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Hyperlink</h3>
+                <button type="button" class="modal-close" onclick="closeLinkModal()">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="form-item">
+                        <label class="form-label" for="linkUrl">
+                            <i data-lucide="link" class="w-4 h-4 inline mr-2"></i>URL <span
+                                class="text-red-400">*</span>
+                        </label>
+                        <input type="url" id="linkUrl" class="form-input" placeholder="https://example.com" required />
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label" for="linkDisplayName">
+                            <i data-lucide="type" class="w-4 h-4 inline mr-2"></i>Display Text <span
+                                class="text-red-400">*</span>
+                        </label>
+                        <input type="text" id="linkDisplayName" class="form-input" placeholder="Link text to display"
+                            required />
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeLinkModal()">
+                        <div class="flex items-center gap-2">
+                            <p>Cancel</p>
+                        </div>
+                    </button>
+                    <button type="button" class="modal-button modal-button-primary" onclick="insertLink()">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <p>Add Link</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bulletModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Bullet Points</h3>
+                <button type="button" class="modal-close" onclick="closeBulletModal()">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="form-item">
+                        <label class="form-label">
+                            <i data-lucide="list" class="w-4 h-4 inline mr-2"></i>Bullet Points
+                        </label>
+                        <p class="text-xs text-white/60 mb-2">Add one bullet point per line. Empty lines will be
+                            ignored.</p>
+                        <div id="bulletPointsContainer" class="space-y-2">
+                            <div class="bullet-point-item flex items-center gap-2">
+                                <input type="text" class="bullet-input form-input flex-1"
+                                    placeholder="Bullet point 1" />
+                                <button type="button"
+                                    class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-1"
+                                    title="Remove">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="bullet-point-item flex items-center gap-2">
+                                <input type="text" class="bullet-input form-input flex-1"
+                                    placeholder="Bullet point 2" />
+                                <button type="button"
+                                    class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-1"
+                                    title="Remove">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="addBulletBtn"
+                            class="mt-3 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Add another bullet point
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeBulletModal()">
+                        <div class="flex items-center gap-2">
+                            <p>Cancel</p>
+                        </div>
+                    </button>
+                    <button type="button" class="modal-button modal-button-primary" onclick="insertBulletList()">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                            <p>Add Bullet List</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Blog Deletion</h3>
+                <button type="button" class="modal-close" onclick="closeDeleteConfirmModal()">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="p-4 bg-red-600/10 border border-red-600/20 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-red-400 font-medium mb-1">Warning: This action will mark the blog as
+                                    deleted</h4>
+                                <p class="text-white/80 text-sm">You are about to mark the following blog as deleted:
+                                </p>
+                                <p id="deleteBlogTitle" class="text-white font-medium mt-2 break-words"></p>
+                                <p class="text-white/60 text-xs mt-2">Note: The blog will be marked as deleted but not
+                                    permanently removed from the database.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="form-label" for="redirectUrl">
+                            <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>Redirect URL <span
+                                class="text-white/50 text-xs">(Optional)</span>
+                        </label>
+                        <input type="url" id="redirectUrl" class="form-input"
+                            placeholder="https://example.com/new-page" />
+                        <p class="text-xs text-white/50 mt-1">
+                            If provided, visitors to the deleted blog will be redirected to this URL.
+                            If left blank, a 403 Forbidden page will be shown.
+                        </p>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="flex items-start gap-2 cursor-pointer">
+                            <input type="checkbox" id="confirmDeleteCheckbox"
+                                class="mt-1 w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500">
+                            <span class="text-sm text-white/80">
+                                I understand that this blog will be marked as deleted and will no longer be accessible
+                                to visitors.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="modal-button modal-button-secondary"
+                        onclick="closeDeleteConfirmModal()">
+                        <div class="flex items-center gap-2">
+                            <p>Cancel</p>
+                        </div>
+                    </button>
+                    <button type="button" id="confirmDeleteBtn"
+                        class="modal-button bg-red-600 hover:bg-red-700 text-white" onclick="confirmDeleteBlog()"
+                        disabled>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <p>Mark as Deleted</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="blogUrlModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Blog URL</h3>
+                <button type="button" class="modal-close" onclick="closeBlogUrlModal()">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="form-item">
+                        <label class="form-label">
+                            <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>Blog Title
+                        </label>
+                        <p id="urlBlogTitle"
+                            class="text-white/80 bg-white/5 p-3 rounded-lg border border-white/10 break-words"></p>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="form-label">
+                            <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>Blog URL
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="blogUrlDisplay" class="form-input flex-1" readonly />
+                            <button type="button" id="copyUrlBtn"
+                                class="form-button bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3 py-2"
+                                onclick="copyBlogUrl()" title="Copy URL to clipboard">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <p class="text-xs text-white/50 mt-1">
+                            Click the copy button to copy the URL to your clipboard, or click "Open" to visit the blog.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeBlogUrlModal()">
+                        <div class="flex items-center gap-2">
+                            <p>Close</p>
+                        </div>
+                    </button>
+                    <button type="button" id="openBlogBtn" class="modal-button modal-button-primary"
+                        onclick="openBlogInNewTab()">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            <p>Open Blog</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="/js/admin_blogs.js"></script>
+</body>
+
+</html>

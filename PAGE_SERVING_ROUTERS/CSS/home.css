@@ -520,6 +520,7 @@ body {
         min-height: 140vh;
         padding-bottom: 5vh;
         margin-top: -10vh;
+        overflow-y: hidden;
     }
 
     .hero-content {
