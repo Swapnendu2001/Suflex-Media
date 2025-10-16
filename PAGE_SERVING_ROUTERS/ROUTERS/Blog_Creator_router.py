@@ -1,7 +1,14 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from typing import Union
 from uuid import UUID
+import json
+import asyncpg
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_URL = os.getenv("POSTGRES_CONNECTION_URL")
 
 router = APIRouter()
 
@@ -829,45 +836,67 @@ async def get_cards(category):
     # Sample blog 1
     xx.append(
         f"""<a href="/blog/1" class="block">
-    <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-        <!-- Card image -->
-        <div class="h-48 overflow-hidden">
-            <img src="https://picsum.photos/seed/blog1/800/400" alt="Sample Blog Image 1" class="w-full h-full object-cover">
-        </div>
-        <!-- Card content -->
-        <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">The Future of Digital Marketing in 2024</h3>
-            <p class="text-gray-600 mb-4">Explore the latest trends and strategies that are shaping the digital marketing landscape this year.</p>
-            <div class="flex items-center text-sm text-gray-500 mb-3">
-                <span>John Doe</span>
-                <span class="mx-2">•</span>
-                <span>Jan 15, 2024</span>
-            </div>
-        </div>
-    </div>
-</a>"""
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
+                    <!-- Card image -->
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/seed/blog1/800/400" alt="Sample Blog Image 1" class="w-full h-full object-cover">
+                    </div>
+                    <!-- Card content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">The Future of Digital Marketing in 2024</h3>
+                        <p class="text-gray-600 mb-4">Explore the latest trends and strategies that are shaping the digital marketing landscape this year.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>John Doe</span>
+                            <span class="mx-2">•</span>
+                            <span>Jan 15, 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </a>"""
     )
 
     # Sample blog 2
     xx.append(
         f"""<a href="/blog/2" class="block">
-    <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-        <!-- Card image -->
-        <div class="h-48 overflow-hidden">
-            <img src="https://picsum.photos/seed/blog2/800/400" alt="Sample Blog Image 2" class="w-full h-full object-cover">
-        </div>
-        <!-- Card content -->
-        <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">AI and Machine Learning: Transforming Business</h3>
-            <p class="text-gray-600 mb-4">Discover how artificial intelligence is revolutionizing the way businesses operate and make decisions.</p>
-            <div class="flex items-center text-sm text-gray-500 mb-3">
-                <span>Jane Smith</span>
-                <span class="mx-2">•</span>
-                <span>Jan 20, 2024</span>
-            </div>
-        </div>
-    </div>
-</a>"""
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
+                    <!-- Card image -->
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/seed/blog2/800/400" alt="Sample Blog Image 2" class="w-full h-full object-cover">
+                    </div>
+                    <!-- Card content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">AI and Machine Learning: Transforming Business</h3>
+                        <p class="text-gray-600 mb-4">Discover how artificial intelligence is revolutionizing the way businesses operate and make decisions.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>Jane Smith</span>
+                            <span class="mx-2">•</span>
+                            <span>Jan 20, 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </a>"""
+    )
+
+    # Sample blog 3
+    xx.append(
+        f"""<a href="/blog/3" class="block">
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
+                    <!-- Card image -->
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/seed/blog3/800/400" alt="Sample Blog Image 3" class="w-full h-full object-cover">
+                    </div>
+                    <!-- Card content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Sustainable Business Practices for Growth</h3>
+                        <p class="text-gray-600 mb-4">Learn how sustainability can drive innovation and create long-term value for your business.</p>
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>Mike Johnson</span>
+                            <span class="mx-2">•</span>
+                            <span>Jan 25, 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </a>"""
     )
 
     return "\n".join(xx)
@@ -886,11 +915,14 @@ async def get_more_blogs_section(data: dict):
         .card:hover {
             transform: translateY(-4px);
         }
-        .tag {
-            transition: all 0.2s ease;
+        .see-more-btn {
+            transition: all 0.3s ease;
+            background-color: #3533CD;
         }
-        .tag:hover {
-            background-color: #e2e8f0;
+        .see-more-btn:hover {
+            background-color: #2821a8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(53, 51, 205, 0.3);
         }
     </style>
     
@@ -901,32 +933,20 @@ async def get_more_blogs_section(data: dict):
         <h2 class="text-4xl font-serif text-center mb-10 text-gray-800">Related Articles and Topics</h2>
         
         <!-- Main content container -->
-        <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Articles container - left side -->
-            <div class="flex flex-col md:flex-row gap-6 lg:w-2/3">
+        <div class="flex flex-col gap-6">
+            <!-- Articles container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Cards -->
                 [[cards]]
-                
-
-                
             </div>
 
-            <!-- Topics container - right side -->
-            <div class="lg:w-1/3 flex flex-wrap content-start gap-3">
-                <a href="/business" class="tag px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                    Business
-                </a>
-                <a href="/technology" class="tag px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                    Technology
-                </a>
-                <a href="/gcc" class="tag px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                    Gcc
-                </a>
-                <a href="/sustainability" class="tag px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                    Sustainability
-                </a>
-                <a href="/semiconductor" class="tag px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                    Semiconductor
+            <!-- See More Button -->
+            <div class="flex justify-center mt-8">
+                <a href="/blogs" class="see-more-btn px-8 py-3 text-white font-medium rounded-lg inline-flex items-center gap-2">
+                    See More Articles
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
                 </a>
             </div>
         </div>
@@ -965,10 +985,13 @@ async def get_blog_hero_section(data: dict):
     <article>
     <nav class="mb-4 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-4" aria-label="Breadcrumb">
         <div class="text-sm text-gray-600">
-            <span class="font-jakarta font-medium flex items-center">
-                <a href="/technology">{data['blogCategory']}
-                </a>
-                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <span class="font-jakarta font-medium flex items-center flex-wrap">
+                <a href="/blogs" class="flex items-center">blogs</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                <span class="flex items-center">{data['blogCategory']}</span>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
             </span>
@@ -988,9 +1011,6 @@ async def get_blog_hero_section(data: dict):
             {data['blogTitle']}
         </h1>
         <div class="flex justify-center items-center gap-2 text-center mb-4">
-            <p class="font-jakarta font-semibold text-[11px] sm:text-[12px] md:text-[14px] leading-[100.9%] text-black">
-                {data['blogAuthor']} </p>
-            <span class="text-black">- -</span>
             <p class="font-jakarta font-normal text-[11px] sm:text-[12px] md:text-[14px] leading-[100.9%] text-black">
                 {data['blogDate']} </p>
         </div>
@@ -1033,9 +1053,9 @@ async def generate_mobile_toc(data):
                             </span>
                         </div>
                         <div class="flex space-x-3 ml-3">
-                            <img src="/static/images/whatsapp_logo.png" alt="WhatsApp"
+                            <img src="/icons/whatsapp_logo.png" alt="WhatsApp"
                                 class="w-[35px] h-[35px] object-contain hover:opacity-80 transition-opacity" />
-                            <img src="/static/images/insta_logo.png" alt="Instagram"
+                            <img src="/icons/insta_logo.png" alt="Instagram"
                                 class="w-[35px] h-[35px] object-contain hover:opacity-80 transition-opacity" />
                         </div>
                     </div>
@@ -1137,9 +1157,9 @@ async def generate_desktop_toc(data):
                                 </span>
                             </div>
                             <div class="flex space-x-3 ml-3">
-                                <img src="/static/images/whatsapp_logo.png" alt="WhatsApp"
+                                <img src="/icons/whatsapp_logo.png" alt="WhatsApp"
                                     class="w-[35px] h-[35px] object-contain hover:opacity-80 transition-opacity" />
-                                <img src="/static/images/insta_logo.png" alt="Instagram"
+                                <img src="/icons/insta_logo.png" alt="Instagram"
                                     class="w-[35px] h-[35px] object-contain hover:opacity-80 transition-opacity" />
                             </div>
                         </div>
@@ -1191,10 +1211,10 @@ async def get_blog_content(data: dict):
 
 async def get_blog_body(data: dict):
     hero_section = await get_blog_hero_section(data)
-    mobile_toc = await generate_mobile_toc(data['dynamicSections'])
-    desktop_toc = await generate_desktop_toc(data['dynamicSections'])
-    blog_content = await get_blog_content(data['dynamicSections'])
-    
+    mobile_toc = await generate_mobile_toc(data["dynamicSections"])
+    desktop_toc = await generate_desktop_toc(data["dynamicSections"])
+    blog_content = await get_blog_content(data["dynamicSections"])
+
     return f"""
         <style>
             @media (max-width: 768px) {{
@@ -1215,6 +1235,8 @@ async def get_blog_body(data: dict):
         </div>
 
 """
+
+
 EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
 <html lang="en" class="scroll-smooth w-full">
 
@@ -1250,7 +1272,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                         "podcast-bg":
                             "linear-gradient(360deg, rgba(255, 255, 255, 0) 74.02%, #FFFFFF 100%), linear-gradient(180deg, rgba(255, 255, 255, 0) 61.61%, #FFFFFF 100%), url('Your paragraph text (8).png')",
                         "cta-bg":
-                            "linear-gradient(0deg, rgba(0, 0, 0, 0.69), rgba(0, 0, 0, 0.69)), url('Screenshot 2024-09-18 at 9.57.41\u202FPM.png')",
+                            "linear-gradient(0deg, rgba(0, 0, 0, 0.69), rgba(0, 0, 0, 0.69)), url('Screenshot 2024-09-18 at 9.57.41\u202fPM.png')",
                         "gradient-line":
                             "linear-gradient(90deg, #000000 0%, #9747FF 100%)",
                     },
@@ -1933,9 +1955,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                 const mainImageUrl = mainImage?.src || '';
                 const mainImageAlt = mainImage?.alt || articleTitle;
                 
-                const authorDateDiv = document.querySelector('article .flex.justify-center.items-center.gap-2');
-                const authorInfo = authorDateDiv?.innerHTML || '';
-                
                 const summaryP = document.querySelector('article > p.font-jakarta.font-medium');
                 const summary = summaryP?.innerHTML || '';
                 
@@ -1955,7 +1974,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                             img { max-width: 100%; height: auto; margin: 20px 0; }
                                             .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
                                             h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
-                                            .author-info { font-size: 14px; color: #666; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
                                             .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                             h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                             h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -1965,7 +1983,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                         img { max-width: 100%; height: auto; margin: 20px 0; }
                                         .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
                                         h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
-                                        .author-info { font-size: 14px; color: #666; margin-bottom: 20px; }
                                         .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                         h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                         h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -1975,7 +1992,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                 <body>
                                     ${mainImageUrl ? `<img src="${mainImageUrl}" alt="${mainImageAlt}" class="main-image" />` : ''}
                                     <h1>${articleTitle}</h1>
-                                    ${authorInfo ? `<div class="author-info">${authorInfo}</div>` : ''}
                                     ${summary ? `<div class="summary">${summary}</div>` : ''}
                                     <div class="content">
                                         ${bodyContent}
@@ -1993,15 +2009,15 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                         console.log('Print window opened successfully');
                     } else {
                         console.log('Failed to open print window, trying fallback');
-                        fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, authorInfo, summary, bodyContent);
+                        fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
                     }
                 } catch (error) {
                     console.error('Print method failed:', error);
-                    fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, authorInfo, summary, bodyContent);
+                    fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
                 }
             }
             
-            function fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, authorInfo, summary, bodyContent) {
+            function fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent) {
                 console.log('Using fallback download method');
                 
                 const htmlContent = `
@@ -2014,7 +2030,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                 img { max-width: 100%; height: auto; margin: 20px 0; }
                                 .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
                                 h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
-                                .author-info { font-size: 14px; color: #666; margin-bottom: 20px; }
                                 .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                 h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                 h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -2024,7 +2039,6 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                         <body>
                             ${mainImageUrl ? `<img src="${mainImageUrl}" alt="${mainImageAlt}" class="main-image" />` : ''}
                             <h1>${articleTitle}</h1>
-                            ${authorInfo ? `<div class="author-info">${authorInfo}</div>` : ''}
                             ${summary ? `<div class="summary">${summary}</div>` : ''}
                             <div class="content">
                                 ${bodyContent}
@@ -2137,6 +2151,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
 
 </html>"""
 
+
 async def create_blog_html(data: str) -> str:
     l = []
     l.append(await getHeader())
@@ -2150,95 +2165,83 @@ async def create_blog_html(data: str) -> str:
     return l
 
 
-@router.get("/blog/{blog_id}")
-async def get_blog(blog_id: Union[UUID, str]) -> dict:
-    data = {
-        "blogDate": "2025-07-06",
-        "seoTitle": "AI in 2025: The Next Frontier of Innovation & Disruption",
-        "blogTitle": "The World in 2025: How Artificial Intelligence Will Redefine Our Reality",
-        "blogAuthor": "Alex Chen",
-        "blogStatus": "draft",
-        "blogSummary": "As 2025 approaches, Artificial Intelligence is set to move beyond its current capabilities, becoming more integrated, intuitive, and indispensable. This article delves into the key predictions for AI, examining its role in revolutionizing industries, personalizing daily life, and tackling global challenges.",
-        "blogCategory": "TECHNOLOGY",
-        "mainImageAlt": "Futuristic illustration of a humanoid AI interacting with a complex digital interface, symbolizing the advancements of AI in 2025.",
-        "mainImageUrl": "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        "dynamicSections": [
-            {
-                "id": "section_1",
-                "type": "h1",
-                "content": "Introduction: Beyond the Hype",
-            },
-            {
-                "id": "section_2",
-                "type": "text",
-                "content": "The conversation around Artificial Intelligence has long been a mix of science fiction and practical application. As we stand on the cusp of 2025, the theoretical is rapidly becoming the tangible. AI is evolving from a tool for specific tasks into a foundational layer of our digital and physical worlds. This isn't about sentient robots; it's about smarter systems, deeper insights, and a fundamental shift in how we work, live, and interact.",
-            },
-            {
-                "id": "section_3",
-                "type": "h2",
-                "content": "1. Hyper-Personalization at Scale",
-            },
-            {
-                "id": "section_4",
-                "type": "text",
-                "content": "By 2025, the concept of personalization will be supercharged by AI. Expect predictive models that don't just know what you bought, but why you bought it, and what you'll need next. In retail, this means curated shopping experiences that feel uniquely yours. In entertainment, streaming services will generate dynamic content trailers and recommendations with uncanny accuracy. Your digital life will be less about searching and more about being presented with what you need, before you even realize it.",
-            },
-            {
-                "id": "section_5",
-                "type": "image",
-                "content": {
-                    "alt": "AI algorithm flowchart showing connections between data points, representing hyper-personalization.",
-                    "url": "https://images.pexels.com/photos/5952243/pexels-photo-5952243.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-                },
-            },
-            {
-                "id": "section_6",
-                "type": "h2",
-                "content": "2. The Rise of Autonomous Systems",
-            },
-            {
-                "id": "section_7",
-                "type": "text",
-                "content": "While fully autonomous cars on every street might still be a few years away, the integration of Level 4 autonomous systems in controlled environments like logistics, shipping, and public transport will be commonplace. AI will manage entire supply chains, optimizing routes for delivery drones and autonomous trucks to reduce emissions and increase efficiency. In manufacturing, 'lights-out' factories run by AI-powered robotics will become more prevalent, operating 24/7 with minimal human intervention.",
-            },
-            {
-                "id": "section_8",
-                "type": "h2",
-                "content": "3. A Revolution in Healthcare and Science",
-            },
-            {
-                "id": "section_9",
-                "type": "text",
-                "content": "AI's impact on healthcare will be profound. In 2025, AI-powered diagnostic tools will assist doctors in identifying diseases like cancer from medical scans with greater speed and accuracy than the human eye. Drug discovery, a traditionally slow and expensive process, will be accelerated as AI models simulate molecular interactions to find promising new compounds. We will also see a rise in personalized medicine, where treatment plans are tailored to an individual's genetic makeup and lifestyle, all powered by AI analysis.",
-            },
-            {
-                "id": "section_10",
-                "type": "h2",
-                "content": "4. AI as a Creative and Collaborative Partner",
-            },
-            {
-                "id": "section_11",
-                "type": "text",
-                "content": "Far from replacing human creativity, AI in 2025 will become an indispensable creative partner. Musicians will use AI to generate novel melodies, artists will collaborate with generative models to create stunning visual works, and writers will use advanced language models for research, brainstorming, and editing. The focus will shift from the act of creation to the art of curation and direction, with humans guiding AI tools to achieve their creative vision.",
-            },
-            {
-                "id": "section_12",
-                "type": "h1",
-                "content": "Conclusion: Navigating the New Normal",
-            },
-            {
-                "id": "section_13",
-                "type": "text",
-                "content": "The world in 2025 will be inextricably linked with Artificial Intelligence. Its integration will bring unprecedented efficiency, personalization, and discovery. However, this rapid advancement also necessitates a global conversation on ethics, governance, and job displacement. Successfully navigating this new era requires not just technological prowess, but a commitment to building a future where AI serves humanity as a whole. The next frontier is here, and it's powered by intelligence—both artificial and human.",
-            },
-        ],
-        "seoCanonicalUrl": "https://brandsoutloud.com/blog/ai-in-2025",
-        "adBannerBelowUrl": "https://picsum.photos/1920/1080/?random=129",
-        "adBannerBelowHref": "ad",
-        "adBannerBesideUrl": "https://picsum.photos/1920/1080/?random=125",
-        "adBannerBesideHref": "ad",
-        "labelsNotMandatory": False,
-        "seoMetaDescription": "Explore the transformative impact of AI in 2025. From hyper-personalization and autonomous systems to advancements in healthcare and creative industries, discover the key trends shaping our future.",
-    }
+@router.get("/blog/{slug}")
+async def get_blog(slug: str):
+    """
+    Render a blog post page by its slug
+    Fetches blog data from database and renders it as HTML
+    """
+    print("=" * 80)
+    print(f"[DEBUG] Blog endpoint called with slug: {slug}")
+    print("=" * 80)
+    
+    try:
+        print(f"[DEBUG] Attempting to connect to database...")
+        conn = await asyncpg.connect(DATABASE_URL)
+        print(f"[DEBUG] Database connection established")
+        
+        print(f"[DEBUG] Querying for blog with slug: {slug}")
+        blog_record = await conn.fetchrow(
+            """
+            SELECT id, blog, status, date, category, slug, isDeleted
+            FROM blogs
+            WHERE slug = $1 AND isDeleted = FALSE
+            """,
+            slug
+        )
+        
+        await conn.close()
+        print(f"[DEBUG] Database connection closed")
+        
+        if not blog_record:
+            print(f"[DEBUG] Blog not found for slug: {slug}")
+            raise HTTPException(status_code=404, detail=f"Blog post not found: {slug}")
+        
+        print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
+        print(f"[DEBUG] Blog data type: {type(blog_record['blog'])}")
+        print(f"[DEBUG] Blog data keys: {list(blog_record['blog'].keys()) if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog']).keys()}")
+        
+        if blog_record['status'] != 'published':
+            print(f"[DEBUG] Blog is not published, status: {blog_record['status']}")
+            raise HTTPException(status_code=404, detail="Blog post not available")
+        
+        blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
+        print(f"[DEBUG] Rendering blog HTML...")
+        
+        html_content = await create_blog_html(blog_data)
+        print(f"[DEBUG] HTML generated successfully, length: {len(html_content)}")
+        print("=" * 80)
+        
+        return HTMLResponse(html_content)
+        
+    except HTTPException:
+        print(f"[DEBUG] HTTPException raised")
+        raise
+    except asyncpg.PostgresError as e:
+        print(f"[DEBUG] Database error: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        print(f"[DEBUG] Unexpected error: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-    return HTMLResponse(await create_blog_html(data))
+@router.post("/api/admin_blog_preview")
+async def admin_blog_preview(request: Request):
+    """
+    Preview blog from admin panel
+    Receives preview data from frontend and logs it to console
+    Returns success response for frontend to handle preview rendering
+    """
+    try:
+        data = await request.json()
+        
+        return {
+            "status": "success",
+            "message": "Preview data received and logged to console",
+            "data": await create_blog_html(data)
+        }
+        
+    except Exception as e:
+        print(f"✗ Error in admin_blog_preview: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
