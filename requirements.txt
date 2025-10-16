@@ -1,5 +1,8 @@
 uvicorn == 0.35.0
 fastapi == 0.116.1
+pydantic
 python-dotenv == 1.1.0
 python-multipart == 0.0.9
 asyncpg
+email-validator
+minio

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/404.css">
+</head>
+
+<body>
+    <section class="bg-white font-serif min-h-screen flex items-center justify-center">
+        <div class="container mx-auto">
+            <div class="flex justify-center">
+                <div class="w-full sm:w-10/12 md:w-8/12 text-center">
+                    <div class="bg-404-image h-[250px] sm:h-[350px] md:h-[400px]" aria-hidden="true">
+                        <h1 class="text-center text-black text-6xl sm:text-7xl md:text-8xl pt-6 sm:pt-8">
+                            404
+                        </h1>
+                    </div>
+
+                    <div class="mt-[-50px]">
+                        <h3 class="text-2xl text-black sm:text-3xl font-bold mb-4">
+                            Look like you're lost
+                        </h3>
+                        <p class="mb-6 text-black sm:mb-5">
+                            The page you are looking for is not available!
+                        </p>
+
+                        <button onclick="goToHome()" class="btn-primary my-5">
+                            Go to Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/404.js"></script>
+</body>
+
+</html>

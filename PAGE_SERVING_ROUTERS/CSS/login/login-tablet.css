@@ -1,0 +1,244 @@
+/* Tablet styles (768px - 1023px) */
+@font-face {
+  font-family: 'Ciguatera';
+  src: url('../../fonts/TaraType.ttf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0b0b0b;
+  --fg: #eaeaea;
+  --muted: #bdbdbd;
+  --card: #111;
+  --border: #2a2a2a;
+  --accent: #fff;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.82vw/1.4 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  display: grid;
+  place-items: center;
+}
+
+.card {
+  width: min(54.69vw, 92vw);
+  background: transparent;
+  border: none;
+  overflow: visible;
+  transform: translateY(-5.21vw);
+  animation: rise .5s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes rise {
+  to { transform: translateY(-5.21vw); }
+}
+
+header {
+  display: none;
+}
+
+
+.brand {
+  margin: 0 0 3.13vw;
+  font-size: 15vw;
+  letter-spacing: 0.13vw;
+  font-weight: 700;
+  color: var(--fg);
+  text-align: center;
+  opacity: .95;
+  font-family: 'Ciguatera', sans-serif;
+}
+
+
+.body {
+  padding: 2.86vw 2.6vw 3.13vw;
+  margin-top: -35vh;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 1.56vw;
+  margin: 0.52vw 0.26vw 2.08vw;
+}
+
+form {
+  display: grid;
+  gap: 2.08vw;
+}
+
+.field {
+  position: relative;
+}
+
+.field input {
+  width: 100%;
+  padding: 1.82vw 0 1.3vw;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  outline: none;
+  font-size: 1.82vw;
+  text-align: center;
+}
+
+.field input::placeholder {
+  color: var(--muted);
+  opacity: .9;
+  letter-spacing: 0.026vw;
+  font-family: 'Merriweather', serif;
+  text-align: center;
+}
+
+.field::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.13vw;
+  background: var(--border);
+}
+
+.field::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.13vw;
+  height: 0.26vw;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+}
+
+.field:hover::after,
+.field:focus-within::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.field.shrink::after {
+  transform-origin: right;
+}
+
+button.primary {
+  appearance: none;
+  border: none;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 1.56vw 1.82vw;
+  border-radius: 1.3vw;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.026vw;
+  transition: transform .15s ease, opacity .2s ease, background .3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.04vw;
+  width: 100%;
+  font-size: 1.82vw;
+  font-family: 'Merriweather', serif;
+}
+
+button.primary:hover {
+  transform: translateY(-0.13vw);
+  opacity: .95;
+}
+
+button.primary svg {
+  width: 2.34vw;
+  height: 2.34vw;
+  flex-shrink: 0;
+}
+
+.footer {
+  margin-top: 1.3vw;
+  font-size: 1.56vw;
+  color: var(--muted);
+  display: flex;
+  justify-content: center;
+  gap: 0.78vw;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.center {
+  text-align: center;
+}
+
+.spinner {
+  width: 2.08vw;
+  height: 2.08vw;
+  border: 0.26vw solid var(--border);
+  border-top-color: var(--fg);
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin .75s linear infinite;
+  vertical-align: middle;
+  margin-right: 1.04vw;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.toast {
+  position: fixed;
+  inset: auto 1.56vw 1.56vw 1.56vw;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast .msg {
+  max-width: 67.71vw;
+  background: var(--card);
+  border: 0.13vw solid var(--border);
+  color: var(--fg);
+  padding: 1.3vw 1.56vw;
+  border-radius: 1.3vw;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(1.04vw);
+  animation: toast .35s ease forwards;
+  font-size: 1.56vw;
+}
+
+.msg.error {
+  border-color: #d33;
+  color: #fff;
+  background: #111;
+}
+
+@media (prefers-color-scheme: light) {
+  .msg.error {
+    background: #fff;
+    color: #000;
+  }
+}
+
+@keyframes toast {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

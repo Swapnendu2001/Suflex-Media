@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+trial.py
+clean_db.py
+
 # C extensions
 *.so
 

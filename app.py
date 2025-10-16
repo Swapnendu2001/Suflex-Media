@@ -1,86 +1,60 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from templates.homepage import homepage
-from templates.about import about
-from templates.services import services
-from templates.contact import contact
-from templates.portfolio import portfolio
-from templates.blogs import blogs
+from fastapi.responses import FileResponse
+from fastapi.exceptions import HTTPException
 import uvicorn
+from contextlib import asynccontextmanager
 
-# Import admin routes
-from admin_routes import router as admin_router
+from DATABASE_HANDLER import initialize_database
+from PAGE_SERVING_ROUTERS.ROUTERS.homepage_router import router as homepage_router
+from PAGE_SERVING_ROUTERS.ROUTERS.about_router import router as about_router
+from PAGE_SERVING_ROUTERS.ROUTERS.services_router import router as services_router
+from PAGE_SERVING_ROUTERS.ROUTERS.contact_router import router as contact_router
+from PAGE_SERVING_ROUTERS.ROUTERS.portfolio_router import router as portfolio_router
+from PAGE_SERVING_ROUTERS.ROUTERS.blogs_router import router as blogs_router
+from PAGE_SERVING_ROUTERS.ROUTERS.error_router import router as error_router
+from PAGE_SERVING_ROUTERS.ROUTERS.login_router import router as login_router
+from PAGE_SERVING_ROUTERS.ROUTERS.admin_homepage_router import router as admin_homepage_router
+from PAGE_SERVING_ROUTERS.ROUTERS.admin_users_router import router as admin_users_router
+from PAGE_SERVING_ROUTERS.ROUTERS.Blog_Creator_router import router as blog_creator_router
+from API_ROUTERS.login_api_router import router as login_api_router
+from API_ROUTERS.admin_users_api_router import router as admin_users_api_router
+from API_ROUTERS.serve_images_api_router import router as serve_images_api_router
 
-from data.db_handler_async import initialize_database
-
-app = FastAPI()
-
-# Event handler for application startup
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     print("Initializing database...")
     await initialize_database()
     print("Database initialized successfully!")
+    yield
 
-# Mount the static directory to serve static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app = FastAPI(lifespan=lifespan)
 
-# Include admin routes
-app.include_router(admin_router, tags=["admin"])
+app.mount("/css", StaticFiles(directory="PAGE_SERVING_ROUTERS/CSS"), name="css")
+app.mount("/icons", StaticFiles(directory="PAGE_SERVING_ROUTERS/ICONS"), name="icons")
+app.mount("/images", StaticFiles(directory="PAGE_SERVING_ROUTERS/IMAGES"), name="images")
+app.mount("/js", StaticFiles(directory="PAGE_SERVING_ROUTERS/JS"), name="js")
+app.mount("/pages", StaticFiles(directory="PAGE_SERVING_ROUTERS/PAGES"), name="pages")
+app.mount("/fonts", StaticFiles(directory="PAGE_SERVING_ROUTERS/FONTS"), name="fonts")
 
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    return homepage()
+app.include_router(homepage_router)
+app.include_router(about_router)
+app.include_router(services_router)
+app.include_router(contact_router)
+app.include_router(portfolio_router)
+app.include_router(blogs_router)
+app.include_router(error_router)
+app.include_router(login_router)
+app.include_router(admin_homepage_router)
+app.include_router(admin_users_router)
+app.include_router(blog_creator_router)
+app.include_router(login_api_router)
+app.include_router(admin_users_api_router)
+app.include_router(serve_images_api_router)
 
-@app.get("/about", response_class=HTMLResponse)
-async def about_page():
-    return about()
-
-@app.get("/services", response_class=HTMLResponse)
-async def services_page():
-    return services()
-
-@app.get("/contact", response_class=HTMLResponse)
-async def contact_page():
-    return contact()
-
-@app.get("/portfolio", response_class=HTMLResponse)
-async def portfolio_page():
-    return portfolio()
-
-@app.get("/blogs", response_class=HTMLResponse)
-async def blogs_page():
-    return blogs()
-
-@app.get("/blog/{blog_id}", response_class=HTMLResponse)
-async def display_blog(blog_id: str):
-    """Display a single blog post"""
-    from data.page_handler import get_blog_page
-    
-    blog_data = get_blog_page(blog_id)
-    
-    if blog_data.get('status') == "not_found":
-        return HTMLResponse(content="<h1>Blog not found</h1>", status_code=404)
-    
-    if blog_data.get('status') == "error":
-        return HTMLResponse(content="<h1>Error loading blog</h1>", status_code=500)
-    
-    if blog_data.get('status') == "redirect":
-        redirect_url = blog_data.get("redirect_url")
-        if redirect_url:
-            return RedirectResponse(url=redirect_url)
-        else:
-            return HTMLResponse(content="<h1>Blog not found</h1>", status_code=404)
-    
-    if blog_data.get("status") == "deleted":
-        redirect_url = blog_data.get("redirect_url")
-        if redirect_url:
-            return RedirectResponse(url=redirect_url)
-        else:
-            return HTMLResponse(content="<h1>Blog has been deleted</h1>", status_code=404)
-
-    return blog_data['html']
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc: HTTPException):
+    return FileResponse("PAGE_SERVING_ROUTERS/PAGES/404.html", status_code=404)
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
