@@ -2043,7 +2043,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addH3Btn').addEventListener('click', () => addDynamicSection('h3'));
     document.getElementById('addH4Btn').addEventListener('click', () => addDynamicSection('h4'));
     document.getElementById('addH5Btn').addEventListener('click', () => addDynamicSection('h5'));
-    document.getElementById('addH6Btn').addEventListener('click', () => addDynamicSection('h6'));
     document.getElementById('addImageBtn').addEventListener('click', () => addDynamicSection('image'));
 
     const filterTitleInput = document.getElementById('filterTitle');
