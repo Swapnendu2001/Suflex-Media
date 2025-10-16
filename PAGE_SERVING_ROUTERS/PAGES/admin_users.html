@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Users Management • Suflex Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/admin-users-mobile.css" media="(max-width: 767px)" />
+  <link rel="stylesheet" href="/css/admin/admin-users-tablet.css" media="(min-width: 768px) and (max-width: 1029px)" />
+  <link rel="stylesheet" href="/css/admin/admin-users-desktop.css" media="(min-width: 1030px)" />
+</head>
+
+<body>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+  <button class="back-btn" id="backBtn" title="Back to Admin">←</button>
+  <header class="page-header">
+    <h1 class="brand">Suflex Media</h1>
+  </header>
+
+  <main class="container">
+    <section class="section-header">
+      <h2 class="page-title">Admin Users Management</h2>
+      <div class="header-actions">
+        <select id="statusFilter" class="filter-select">
+          <option value="all">All Users</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
+        </select>
+        <button class="btn btn-primary" id="addUserBtn">+ Add New Admin</button>
+      </div>
+    </section>
+
+    <section class="users-list" id="usersList">
+      <div class="loading-placeholder">
+        <span class="spinner-small"></span>
+        <p>Loading users...</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="addUserModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Admin User</h3>
+        <button class="modal-close" id="closeAddModal">&times;</button>
+      </div>
+      <form id="addUserForm" class="modal-form">
+        <div class="form-group">
+          <label for="newUsername" class="form-label">Username</label>
+          <input type="text" id="newUsername" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="newEmail" class="form-label">Email</label>
+          <input type="email" id="newEmail" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="newPassword" class="form-label">Password</label>
+          <input type="password" id="newPassword" class="form-input" required />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelAddBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Admin User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="updatePasswordModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Update Password</h3>
+        <button class="modal-close" id="closeUpdateModal">&times;</button>
+      </div>
+      <form id="updatePasswordForm" class="modal-form">
+        <input type="hidden" id="updateUserId" />
+        <p class="info-text">Update password for: <strong id="updateUsername"></strong></p>
+        <div class="form-group">
+          <label for="updatePassword" class="form-label">New Password</label>
+          <input type="password" id="updatePassword" class="form-input" required />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelUpdateBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmModal">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirmTitle">Confirm Action</h3>
+        <button class="modal-close" id="closeConfirmModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage" class="confirm-text"></p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelConfirmBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <span class="spinner"></span>
+      <p class="loading-text">Authenticating...</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="/js/admin_users.js"></script>
+</body>
+
+</html>

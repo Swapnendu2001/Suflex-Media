@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Suflex Media</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/contact_us.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <img src="/images/logo_header.png" alt="Suflex Media Logo">
+        </div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
+            <a href="/services">Services</a>
+            <a href="/portfolio">Portfolio</a>
+            <a href="/blogs">Blog</a>
+            <a href="/careers">Careers</a>
+            <a href="/contact" class="contact-us">
+                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+                <span>Contact Us</span>
+            </a>
+        </nav>
+        <a href="/contact" class="contact-us">
+            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+            <span>Contact Us</span>
+        </a>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+
+    <div class="contact-container">
+        <div class="contact-wrapper">
+            <div class="contact-form-section">
+                <h2>Have An Enquiry Or Some Feedback For Us?<br>Fill Out The Form Below To Contact Our Team.</h2>
+
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="tel" name="phone" placeholder="Phone Number" required>
+                        </div>
+                        <div class="form-group">
+                            <select name="service" required>
+                                <option value="" disabled selected>Select Service</option>
+                                <option value="web-development">Web Development</option>
+                                <option value="app-development">App Development</option>
+                                <option value="digital-marketing">Digital Marketing</option>
+                                <option value="seo">SEO Services</option>
+                                <option value="graphic-design">Graphic Design</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea name="message" placeholder="Message" required></textarea>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label for="consent">I hereby authorize to send notifications on
+                            SMS/Messages/Promotional/Informational Messages</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Now</button>
+                </form>
+            </div>
+
+            <div class="contact-info-section">
+                <img src="/images/contact-us-hero.png" alt="Contact Illustration" class="illustration">
+
+                <h3>Want To See Us In Action?</h3>
+                <h2>Let's Connect!</h2>
+
+                <a href="tel:+911234567890" class="phone-number">+91 123456789</a>
+                <a href="mailto:hello@suflexmedia.com" class="email-address">hello@suflexmedia.com</a>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section cta">
+                <h2>Ready to grow your<br>business?</h2>
+                <a href="#" class="button">Book a free strategy call</a>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About Us</a>
+                <a href="/services">Services</a>
+                <a href="/blogs">Blog</a>
+                <a href="/careers">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <a href="/services">Book Writing</a>
+                <a href="/services">LinkedIn Branding</a>
+                <a href="/services">Content Writing</a>
+                <a href="/services">Performance Marketing</a>
+                <a href="/services">Website Development</a>
+            </div>
+            <div class="footer-section social-section">
+                <h3>Social Links</h3>
+                <div class="social-links">
+                    <a href="#"><img src="/icons/instagram.png" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
+                    <a href="#"><img src="/icons/x.png" alt="X"></a>
+                </div>
+            </div>
+            <div class="footer-section contact-section">
+                <h3>Contact Us</h3>
+                <a href="mailto:hello@suflexmedia.com">hello@suflexmedia.com</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-logo">
+                <img src="/images/logo_header.png" alt="Suflex Media Logo">
+            </div>
+            <div class="copyright">
+                <p>Copyright © 2024 SuflexMedia | All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/contact_us.js"></script>
+</body>
+
+</html>

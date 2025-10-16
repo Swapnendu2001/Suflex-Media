@@ -1,0 +1,242 @@
+@font-face {
+    font-family: 'Ciguatera';
+    src: url('../../fonts/TaraType.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --bg: #0b0b0b;
+    --fg: #eaeaea;
+    --muted: #bdbdbd;
+    --card: #111;
+    --border: #2a2a2a;
+    --accent: #fff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 0.73vw/1.4 ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4vw 2vw;
+}
+
+.brand {
+    margin: 0 0 3vw;
+    font-size: 8vw;
+    letter-spacing: 0.05vw;
+    font-weight: 700;
+    color: var(--fg);
+    text-align: center;
+    opacity: .95;
+    font-family: 'Ciguatera', sans-serif;
+    animation: fadeIn .6s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+.logout-btn {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    padding: 12px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--fg);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .3s ease;
+    z-index: 100;
+}
+
+.logout-btn:hover {
+    background: var(--border);
+    color: #ff4a4a;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-1vw);
+    }
+    to {
+        opacity: .95;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 70vw;
+    animation: rise .5s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(2vw);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2vw;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.52vw;
+    padding: 2.5vw 2vw;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.2, .8, .2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0.21vw;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-0.52vw);
+    box-shadow: var(--shadow);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:active {
+    transform: translateY(-0.26vw);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1vw;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.88vw;
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: 0.02vw;
+    text-align: center;
+}
+
+.card-description {
+    margin: 0;
+    font-size: 0.83vw;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: center;
+    opacity: .9;
+}
+
+.toast {
+    position: fixed;
+    bottom: 2vw;
+    right: 2vw;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.52vw;
+}
+
+.toast .msg {
+    background: var(--card);
+    color: var(--fg);
+    padding: 0.83vw 1.56vw;
+    border-radius: 0.42vw;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    font-size: 0.73vw;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all .3s cubic-bezier(.2, .8, .2, 1);
+}
+
+.toast .msg.error {
+    border-color: #d32f2f;
+    background: rgba(211, 47, 47, 0.1);
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0b0b0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 1;
+    transition: opacity .3s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vw;
+}
+
+.spinner {
+    width: 3vw;
+    height: 3vw;
+    border: 0.26vw solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    margin: 0;
+    font-size: 1.2vw;
+    color: var(--fg);
+    opacity: .9;
+    letter-spacing: 0.02vw;
+}
