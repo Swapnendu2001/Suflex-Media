@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS blogs (
     slug TEXT UNIQUE,
     blog JSONB NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'draft',
+    type VARCHAR(50) NOT NULL DEFAULT 'BLOG',
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     keyword JSONB,
     category VARCHAR(100),
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS blogs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_blogs_status ON blogs(status) WHERE isDeleted = FALSE;
+CREATE INDEX IF NOT EXISTS idx_blogs_type ON blogs(type) WHERE isDeleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_blogs_date ON blogs(date DESC) WHERE isDeleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_blogs_category ON blogs(category) WHERE isDeleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_blogs_slug ON blogs(slug) WHERE isDeleted = FALSE;
