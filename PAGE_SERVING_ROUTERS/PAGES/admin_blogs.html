@@ -153,6 +153,30 @@
                         <form id="addBlogForm">
 
                             <div
+                                class="type-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
+                                <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
+                                    <i data-lucide="tag" class="w-5 h-5 mr-2"></i>Type<span
+                                        class="text-red-400">*</span>
+                                </h3>
+
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <div class="toggle-switch-container w-full">
+                                            <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5">
+                                                <button type="button" id="blogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md bg-white text-black transition-colors active" data-type="BLOG">
+                                                    BLOG
+                                                </button>
+                                                <button type="button" id="caseStudyTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="CASE STUDY">
+                                                    CASE STUDY
+                                                </button>
+                                            </div>
+                                            <input type="hidden" id="contentType" name="contentType" value="BLOG" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
                                 class="category-section-wrapper p-4 rounded-lg bg-white/[0.01] border border-white/[0.03] mb-6">
                                 <h3 class="text-lg font-medium text-white/90 mb-4 flex items-center">
                                     <i data-lucide="tag" class="w-5 h-5 mr-2"></i>Category<span
@@ -431,7 +455,6 @@
                         <h2 class="section-title text-center">Edit/Delete Blog</h2>
                         <div class="section-content">
 
-
                             <div class="form-row mb-6">
                                 <div class="form-item">
                                     <label class="form-label" for="filterTitle"><i data-lucide="type"
@@ -442,6 +465,27 @@
                                     <label class="form-label" for="filterCategory"><i data-lucide="tag"
                                             class="w-4 h-4 inline mr-2"></i>Filter by Category</label>
                                     <input type="text" id="filterCategory" class="form-input" placeholder="Enter category...">
+                                </div>
+                            </div>
+
+                            <div class="form-row mb-6">
+                                <div class="form-item">
+                                    <label class="form-label" for="filterType"><i data-lucide="tag"
+                                            class="w-4 h-4 inline mr-2"></i>Filter by Type</label>
+                                    <div class="toggle-switch-container w-full">
+                                        <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5">
+                                            <button type="button" id="filterBlogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md bg-white text-black transition-colors active" data-type="ALL">
+                                                ALL
+                                            </button>
+                                            <button type="button" id="filterBlogsTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="BLOG">
+                                                BLOGS
+                                            </button>
+                                            <button type="button" id="filterCaseStudiesTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="CASE STUDY">
+                                                CASE STUDIES
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="filterContentType" name="filterContentType" value="ALL" />
+                                    </div>
                                 </div>
                             </div>
 

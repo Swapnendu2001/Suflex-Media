@@ -1013,6 +1013,8 @@ function handleFormSubmit(event) {
     data.labels = labelsResult.labels;
     data.labelsNotMandatory = labelsResult.labelsNotMandatory;
 
+    // Add content type to the data
+    data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     if (!data.blogDate) {
         const today = new Date().toISOString().split('T')[0];
@@ -1122,6 +1124,9 @@ async function handleSaveDraft() {
     data.dynamicSections = dynamicSections;
 
     data.blogStatus = 'draft';
+    
+    // Add content type to the data
+    data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
         const saveDraftBtn = document.getElementById('saveDraftBtn');
@@ -1203,6 +1208,9 @@ async function handleSavePublish() {
     data.dynamicSections = dynamicSections;
 
     data.blogStatus = 'published';
+    
+    // Add content type to the data
+    data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
         const savePublishBtn = document.getElementById('savePublishBtn');
@@ -1608,18 +1616,23 @@ async function fetchBlogs() {
 function applyFiltersAndRender(page = 1) {
     const filterTitleValue = document.getElementById('filterTitle').value.trim().toLowerCase();
     const filterCategoryValue = document.getElementById('filterCategory').value.trim().toLowerCase();
+    const filterContentTypeValue = document.getElementById('filterContentType').value;
 
-    console.log('🔍 Applying filters - Title:', filterTitleValue, 'Category:', filterCategoryValue);
+    console.log('🔍 Applying filters - Title:', filterTitleValue, 'Category:', filterCategoryValue, 'Type:', filterContentTypeValue);
 
     const filteredBlogs = allFetchedBlogs.filter(blog => {
         const blogData = blog.blog || {};
         const title = (blogData.blogTitle || '').toLowerCase();
         const category = (blog.category || blogData.blogCategory || '').toLowerCase();
+        const type = blog.type || 'BLOG'; // Default to 'BLOG' if type is not set
 
         const titleMatch = !filterTitleValue || title.includes(filterTitleValue);
         const categoryMatch = !filterCategoryValue || category.includes(filterCategoryValue);
+        
+        // Check type filter - if filterContentTypeValue is 'ALL', show all; otherwise match type
+        const typeMatch = filterContentTypeValue === 'ALL' || type === filterContentTypeValue;
 
-        return titleMatch && categoryMatch;
+        return titleMatch && categoryMatch && typeMatch;
     });
 
     console.log(`✓ Filtered ${filteredBlogs.length} blogs from ${allFetchedBlogs.length} total`);
@@ -1667,6 +1680,7 @@ function displayBlogs(blogs) {
         const mainImageUrl = blogData.mainImageUrl || '';
         const mainImageAlt = blogData.mainImageAlt || '';
         const category = blog.category || blogData.blogCategory || '';
+        const type = blog.type || 'BLOG';
 
         return `
             <div class="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
@@ -1686,6 +1700,8 @@ function displayBlogs(blogs) {
                             </span>
                             <span>•</span>
                             <span class="px-2 py-1 rounded-full text-xs ${status === 'published' ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}">${status}</span>
+                            <span>•</span>
+                            <span class="px-2 py-1 rounded-full text-xs ${type === 'CASE STUDY' ? 'bg-purple-600/20 text-purple-400' : 'bg-blue-600/20 text-blue-400'}">${type}</span>
                         </p>
                     </div>
                     ${mainImageUrl ? `
@@ -1814,6 +1830,31 @@ function populateEditForm(blog) {
     document.getElementById('dynamicSections').innerHTML = '';
     sectionCounter = 0;
 
+    // Set the content type if it exists in the blog data
+    if (blogData.contentType) {
+        const contentType = blogData.contentType;
+        document.getElementById('contentType').value = contentType;
+        
+        // Update the UI to reflect the saved type
+        if (contentType === 'BLOG') {
+            document.getElementById('blogTypeBtn').classList.add('active');
+            document.getElementById('blogTypeBtn').classList.remove('bg-white/10', 'text-white');
+            document.getElementById('blogTypeBtn').classList.add('bg-white', 'text-black');
+            
+            document.getElementById('caseStudyTypeBtn').classList.remove('active');
+            document.getElementById('caseStudyTypeBtn').classList.add('bg-white/10', 'text-white');
+            document.getElementById('caseStudyTypeBtn').classList.remove('bg-white', 'text-black');
+        } else if (contentType === 'CASE STUDY') {
+            document.getElementById('caseStudyTypeBtn').classList.add('active');
+            document.getElementById('caseStudyTypeBtn').classList.remove('bg-white/10', 'text-white');
+            document.getElementById('caseStudyTypeBtn').classList.add('bg-white', 'text-black');
+            
+            document.getElementById('blogTypeBtn').classList.remove('active');
+            document.getElementById('blogTypeBtn').classList.add('bg-white/10', 'text-white');
+            document.getElementById('blogTypeBtn').classList.remove('bg-white', 'text-black');
+        }
+    }
+
     if (blogData.dynamicSections && Array.isArray(blogData.dynamicSections)) {
         blogData.dynamicSections.forEach(section => {
             const sectionElement = createDynamicSection(section.type, section.content);
@@ -1914,6 +1955,9 @@ async function handleUpdateBlog() {
     data.blog_id = currentEditingBlog.id;
     data.base_url = window.location.origin;
     data.reason = 'update';
+    
+    // Add content type to the data
+    data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
         const updateBlogBtn = document.getElementById('updateBlogBtn');
@@ -1998,6 +2042,96 @@ document.addEventListener('DOMContentLoaded', function () {
         addBlogForm.addEventListener('submit', handleFormSubmit);
     }
 
+    // Initialize toggle switch functionality
+    const blogTypeBtn = document.getElementById('blogTypeBtn');
+    const caseStudyTypeBtn = document.getElementById('caseStudyTypeBtn');
+    const contentTypeInput = document.getElementById('contentType');
+
+    if (blogTypeBtn && caseStudyTypeBtn && contentTypeInput) {
+        blogTypeBtn.addEventListener('click', function() {
+            blogTypeBtn.classList.add('active');
+            blogTypeBtn.classList.remove('bg-white/10', 'text-white');
+            blogTypeBtn.classList.add('bg-white', 'text-black');
+            
+            caseStudyTypeBtn.classList.remove('active');
+            caseStudyTypeBtn.classList.add('bg-white/10', 'text-white');
+            caseStudyTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            contentTypeInput.value = 'BLOG';
+        });
+
+        caseStudyTypeBtn.addEventListener('click', function() {
+            caseStudyTypeBtn.classList.add('active');
+            caseStudyTypeBtn.classList.remove('bg-white/10', 'text-white');
+            caseStudyTypeBtn.classList.add('bg-white', 'text-black');
+            
+            blogTypeBtn.classList.remove('active');
+            blogTypeBtn.classList.add('bg-white/10', 'text-white');
+            blogTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            contentTypeInput.value = 'CASE STUDY';
+        });
+    }
+    
+    // Initialize filter toggle switch functionality
+    const filterBlogTypeBtn = document.getElementById('filterBlogTypeBtn');
+    const filterBlogsTypeBtn = document.getElementById('filterBlogsTypeBtn');
+    const filterCaseStudiesTypeBtn = document.getElementById('filterCaseStudiesTypeBtn');
+    const filterContentTypeInput = document.getElementById('filterContentType');
+
+    if (filterBlogTypeBtn && filterBlogsTypeBtn && filterCaseStudiesTypeBtn && filterContentTypeInput) {
+        filterBlogTypeBtn.addEventListener('click', function() {
+            filterBlogTypeBtn.classList.add('active');
+            filterBlogTypeBtn.classList.remove('bg-white/10', 'text-white');
+            filterBlogTypeBtn.classList.add('bg-white', 'text-black');
+            
+            filterBlogsTypeBtn.classList.remove('active');
+            filterBlogsTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterBlogsTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterCaseStudiesTypeBtn.classList.remove('active');
+            filterCaseStudiesTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterCaseStudiesTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterContentTypeInput.value = 'ALL';
+            applyFiltersAndRender(1); // Re-apply filters
+        });
+
+        filterBlogsTypeBtn.addEventListener('click', function() {
+            filterBlogsTypeBtn.classList.add('active');
+            filterBlogsTypeBtn.classList.remove('bg-white/10', 'text-white');
+            filterBlogsTypeBtn.classList.add('bg-white', 'text-black');
+            
+            filterBlogTypeBtn.classList.remove('active');
+            filterBlogTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterBlogTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterCaseStudiesTypeBtn.classList.remove('active');
+            filterCaseStudiesTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterCaseStudiesTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterContentTypeInput.value = 'BLOG';
+            applyFiltersAndRender(1); // Re-apply filters
+        });
+
+        filterCaseStudiesTypeBtn.addEventListener('click', function() {
+            filterCaseStudiesTypeBtn.classList.add('active');
+            filterCaseStudiesTypeBtn.classList.remove('bg-white/10', 'text-white');
+            filterCaseStudiesTypeBtn.classList.add('bg-white', 'text-black');
+            
+            filterBlogTypeBtn.classList.remove('active');
+            filterBlogTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterBlogTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterBlogsTypeBtn.classList.remove('active');
+            filterBlogsTypeBtn.classList.add('bg-white/10', 'text-white');
+            filterBlogsTypeBtn.classList.remove('bg-white', 'text-black');
+            
+            filterContentTypeInput.value = 'CASE STUDY';
+            applyFiltersAndRender(1); // Re-apply filters
+        });
+    }
+
 
     const loadPreviewBtn = document.getElementById('loadPreviewBtn');
     if (loadPreviewBtn) {
@@ -2056,9 +2190,26 @@ document.addEventListener('DOMContentLoaded', function () {
             searchTimeout = setTimeout(func, delay);
         };
 
-        console.log('✓ Setting up filter listeners (Title and Category text inputs)');
+        console.log('✓ Setting up filter listeners (Title, Category and Type text inputs)');
         filterTitleInput.addEventListener('input', () => debounce(applyFilters, 300));
         filterCategoryInput.addEventListener('input', () => debounce(applyFilters, 300));
+        
+        // Add listener for type filter buttons
+        const filterBlogTypeBtn = document.getElementById('filterBlogTypeBtn');
+        const filterBlogsTypeBtn = document.getElementById('filterBlogsTypeBtn');
+        const filterCaseStudiesTypeBtn = document.getElementById('filterCaseStudiesTypeBtn');
+        
+        if (filterBlogTypeBtn) {
+            filterBlogTypeBtn.addEventListener('click', () => applyFiltersAndRender(1));
+        }
+        
+        if (filterBlogsTypeBtn) {
+            filterBlogsTypeBtn.addEventListener('click', () => applyFiltersAndRender(1));
+        }
+        
+        if (filterCaseStudiesTypeBtn) {
+            filterCaseStudiesTypeBtn.addEventListener('click', () => applyFiltersAndRender(1));
+        }
     }
 
     setupFilterListeners();
