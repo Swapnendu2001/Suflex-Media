@@ -472,7 +472,7 @@ body {
 }
 
 .stat-icon-right {
-    width: 8vh;
+    width: 16vh;
     height: 8vh;
     background: url('/icons/open-book.png') no-repeat center;
     background-size: contain;
