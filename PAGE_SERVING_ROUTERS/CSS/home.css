@@ -472,8 +472,8 @@ body {
 }
 
 .stat-icon-right {
-    width: 4vh;
-    height: 4vh;
+    width: 8vh;
+    height: 8vh;
     background: url('/icons/open-book.png') no-repeat center;
     background-size: contain;
 }
