@@ -51,13 +51,13 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
         
         if include_deleted:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, redirect_url, isDeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
                 FROM blogs
                 ORDER BY date DESC
             """
         else:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, redirect_url, isDeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
                 FROM blogs
                 WHERE isDeleted = FALSE
                 ORDER BY date DESC
@@ -75,6 +75,7 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
                 "keyword": blog['keyword'],
                 "category": blog['category'],
                 "slug": blog['slug'],
+                "type": blog['type'],
                 "redirect_url": blog['redirect_url'],
                 "isDeleted": blog['isDeleted'],
                 "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
@@ -108,17 +109,22 @@ async def create_blog(blog_data: CreateBlogRequest):
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
+        # Extract the type from blog data if it exists
+        blog_content = blog_data.blog.copy() if blog_data.blog else {}
+        content_type = blog_content.get('contentType', 'BLOG')
+        
         new_blog = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, category, slug, redirect_url, isDeleted)
-            VALUES ($1, $2, $3, $4, $5, $6, FALSE)
-            RETURNING id, blog, status, date, keyword, category, slug, redirect_url, isDeleted, created_at, updated_at
+            INSERT INTO blogs (blog, status, keyword, category, slug, type, redirect_url, isDeleted)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
+            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
             """,
-            blog_data.blog,
+            blog_content,
             blog_data.status,
             blog_data.keyword,
             blog_data.category,
             blog_data.slug,
+            content_type,
             blog_data.redirect_url
         )
         
@@ -136,6 +142,7 @@ async def create_blog(blog_data: CreateBlogRequest):
                 "keyword": new_blog['keyword'],
                 "category": new_blog['category'],
                 "slug": new_blog['slug'],
+                "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
                 "isDeleted": new_blog['isDeleted'],
                 "created_at": new_blog['created_at'].isoformat() if new_blog['created_at'] else None,
@@ -220,7 +227,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
             UPDATE blogs
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, blog, status, date, keyword, category, slug, redirect_url, isDeleted, created_at, updated_at
+            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
         """
         
         updated_blog = await conn.fetchrow(query, *update_values)
@@ -238,6 +245,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
                 "keyword": updated_blog['keyword'],
                 "category": updated_blog['category'],
                 "slug": updated_blog['slug'],
+                "type": updated_blog['type'],  # Added type field
                 "redirect_url": updated_blog['redirect_url'],
                 "isDeleted": updated_blog['isDeleted'],
                 "created_at": updated_blog['created_at'].isoformat() if updated_blog['created_at'] else None,
@@ -388,58 +396,107 @@ async def admin_save_blog(request: Request):
         if not blog_title:
             raise HTTPException(status_code=400, detail="Blog title is required")
         
+        # Check if this is an update request
+        blog_id = data.get('blog_id')
+        reason = data.get('reason', 'create')  # 'create' or 'update'
+        
         slug = generate_slug(blog_title)
         blog_status = data.get('blogStatus', 'draft')
         blog_category = data.get('blogCategory', None)
+        content_type = data.get('contentType', 'BLOG')
+        
+        # Add the content type to the blog data for storage
+        data['contentType'] = content_type
         
         conn = await asyncpg.connect(DATABASE_URL)
         
         try:
-            existing_blog = await conn.fetchrow(
-                "SELECT id FROM blogs WHERE slug = $1",
-                slug
-            )
-            
-            if existing_blog:
-                original_slug = slug
-                counter = 1
-                while existing_blog:
-                    slug = f"{original_slug}-{counter}"
-                    existing_blog = await conn.fetchrow(
-                        "SELECT id FROM blogs WHERE slug = $1",
-                        slug
-                    )
-                    counter += 1
-                print(f"✓ Generated unique slug: {slug}")
-            
-            new_blog = await conn.fetchrow(
-                """
-                INSERT INTO blogs (blog, status, category, slug, isDeleted)
-                VALUES ($1, $2, $3, $4, FALSE)
-                RETURNING id, blog, status, date, keyword, category, slug, redirect_url, isDeleted, created_at, updated_at
-                """,
-                json.dumps(data),
-                blog_status,
-                blog_category,
-                slug
-            )
-            
-            blog_id = str(new_blog['id'])
-            blog_url = f"http://localhost:5000/blog/{slug}"
-            
-            print(f"✓ Blog saved successfully with ID: {blog_id}")
-            print(f"✓ Blog slug: {slug}")
-            print(f"✓ Blog status: {blog_status}")
-            print(f"✓ Blog URL: {blog_url}")
-            print("=" * 80)
-            
-            return {
-                "status": "success",
-                "message": f"Blog {'published' if blog_status == 'published' else 'saved as draft'} successfully",
-                "blog_id": blog_id,
-                "slug": slug,
-                "url": blog_url
-            }
+            if reason == 'update' and blog_id:
+                # Update existing blog
+                updated_blog = await conn.fetchrow(
+                    """
+                    UPDATE blogs
+                    SET blog = $1, status = $2, category = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $6
+                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                    """,
+                    json.dumps(data),
+                    blog_status,
+                    blog_category,
+                    slug,
+                    content_type,
+                    blog_id
+                )
+                
+                if not updated_blog:
+                    raise HTTPException(status_code=404, detail="Blog not found for update")
+                
+                blog_id = str(updated_blog['id'])
+                blog_url = f"http://localhost:5000/blog/{slug}"
+                
+                print(f"✓ Blog updated successfully with ID: {blog_id}")
+                print(f"✓ Blog slug: {slug}")
+                print(f"✓ Blog status: {blog_status}")
+                print(f"✓ Blog type: {content_type}")
+                print(f"✓ Blog URL: {blog_url}")
+                print("=" * 80)
+                
+                return {
+                    "status": "success",
+                    "message": f"Blog {'published' if blog_status == 'published' else 'updated'} successfully",
+                    "blog_id": blog_id,
+                    "slug": slug,
+                    "url": blog_url
+                }
+            else:
+                # Create new blog
+                existing_blog = await conn.fetchrow(
+                    "SELECT id FROM blogs WHERE slug = $1",
+                    slug
+                )
+                
+                if existing_blog:
+                    original_slug = slug
+                    counter = 1
+                    while existing_blog:
+                        slug = f"{original_slug}-{counter}"
+                        existing_blog = await conn.fetchrow(
+                            "SELECT id FROM blogs WHERE slug = $1",
+                            slug
+                        )
+                        counter += 1
+                    print(f"✓ Generated unique slug: {slug}")
+                
+                new_blog = await conn.fetchrow(
+                    """
+                    INSERT INTO blogs (blog, status, category, slug, type, isDeleted)
+                    VALUES ($1, $2, $3, $4, $5, FALSE)
+                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                    """,
+                    json.dumps(data),
+                    blog_status,
+                    blog_category,
+                    slug,
+                    content_type
+                )
+                
+                blog_id = str(new_blog['id'])
+                blog_url = f"http://localhost:5000/blog/{slug}"
+                
+                print(f"✓ Blog saved successfully with ID: {blog_id}")
+                print(f"✓ Blog slug: {slug}")
+                print(f"✓ Blog status: {blog_status}")
+                print(f"✓ Blog type: {content_type}")
+                print(f"✓ Blog URL: {blog_url}")
+                print("=" * 80)
+                
+                return {
+                    "status": "success",
+                    "message": f"Blog {'published' if blog_status == 'published' else 'saved as draft'} successfully",
+                    "blog_id": blog_id,
+                    "slug": slug,
+                    "url": blog_url
+                }
             
         finally:
             await conn.close()

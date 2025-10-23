@@ -41,6 +41,7 @@ async def getHeader():
         z-index: 1000;
         margin: 0;
         position: relative;
+        box-shadow: 0 0.68vw 4.83vw 0 #017AFF;
       }
 
       .header .logo img {
@@ -226,7 +227,7 @@ async def getHeader():
         <a href="/services">Services</a>
         <a href="/portfolio">Portfolio</a>
         <a href="/blogs">Blog</a>
-        <a href="/careers">Careers</a>
+        <!-- <a href="/careers">Careers</a> -->
         <a href="/contact" class="contact-us">
           <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
           <span>Contact Us</span>
@@ -464,7 +465,7 @@ async def getFooter():
       <div class="footer-content">
         <div class="footer-section cta">
           <h2>Ready to grow your<br>business?</h2>
-          <a href="#" class="button">Book a free strategy call</a>
+          <a href="/contact" class="button">Book a free strategy call</a>
         </div>
         <div class="footer-section">
           <h3>Quick Links</h3>
@@ -472,7 +473,7 @@ async def getFooter():
           <a href="/about">About Us</a>
           <a href="/services">Services</a>
           <a href="/blogs">Blog</a>
-          <a href="/careers">Careers</a>
+          <!-- <a href="/careers">Careers</a> -->
         </div>
         <div class="footer-section">
           <h3>Services</h3>
@@ -572,7 +573,7 @@ async def get_faq_section():
     }
     
     .faq-cta:hover {
-        border-color: #3533CD;
+        border-color: #017AFF;
         background: #fafbff;
     }
     
@@ -917,7 +918,7 @@ async def get_more_blogs_section(data: dict):
         }
         .see-more-btn {
             transition: all 0.3s ease;
-            background-color: #3533CD;
+            background-color: #017AFF;
         }
         .see-more-btn:hover {
             background-color: #2821a8;
@@ -983,7 +984,7 @@ async def get_blog_hero_section(data: dict):
         }}
     </style>
     <article>
-    <nav class="mb-4 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-4" aria-label="Breadcrumb">
+    <nav class="mb-4 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-4 md:mt-32" aria-label="Breadcrumb">
         <div class="text-sm text-gray-600">
             <span class="font-jakarta font-medium flex items-center flex-wrap">
                 <a href="/blogs" class="flex items-center">blogs</a>
@@ -1037,16 +1038,16 @@ async def generate_mobile_toc(data):
 
     complete_toc = f"""<div class="block lg:hidden px-4 mt-8">
             <div class="relative toc-container p-5 bg-white rounded-xl border-gray-100">
-                <h2 class="text-xl font-bold text-[#3533CD] mb-4 border-b pb-3">Table of Contents</h2>
+                <h2 class="text-xl font-bold text-[#017AFF] mb-4 border-b pb-3">Table of Contents</h2>
                 {toc_sections}
                 <div class="mt-6 space-y-4 border-t pt-5">
                     <button
-                        class="w-full h-[45px] bg-[#3533CD] rounded-xl flex items-center justify-center text-white font-jakarta font-medium text-[16px] leading-[120%] hover:bg-opacity-90 transition-colors shadow-md">
+                        class="w-full h-[45px] bg-[#017AFF] rounded-xl flex items-center justify-center text-white font-jakarta font-medium text-[16px] leading-[120%] hover:bg-opacity-90 transition-colors shadow-md">
                         <i class="ph ph-download mr-2"></i>Download Article as PDF
                     </button>
                     <div class="flex items-center flex-wrap">
                         <div
-                            class="relative inline-flex items-center justify-center gap-2 bg-[#3533CD] rounded-xl h-[45px] px-4 cursor-pointer hover:bg-opacity-90 transition-colors shadow-md">
+                            class="relative inline-flex items-center justify-center gap-2 bg-[#017AFF] rounded-xl h-[45px] px-4 cursor-pointer hover:bg-opacity-90 transition-colors shadow-md">
                             <span class="text-white font-jakarta font-medium text-[16px] leading-[120%] text-center"
                                 style="width: 7rem">
                                 <i class="ph ph-share-network mr-2"></i>Share
@@ -1099,7 +1100,7 @@ async def _generate_toc_sections(data):
             base_template = f"""<div class="mb-3 toc-section" data-section-id="{item['id']}">
                         <a href="#{item['id']}"
                             data-toggle-target="#sub-{item['id']}"
-                            class="toc-h2-link flex items-center justify-between mt-1 mb-3 no-underline text-gray-800 hover:text-[#3533CD] transition-colors duration-200 toc-link">
+                            class="toc-h2-link flex items-center justify-between mt-1 mb-3 no-underline text-gray-800 hover:text-[#017AFF] transition-colors duration-200 toc-link">
                             <div class="text-base font-medium">{item['content']}</div>
                             <i class="ph ph-caret-down text-xs ml-1 toc-arrow transition-transform duration-300"></i>
                         </a>
@@ -1112,7 +1113,7 @@ async def _generate_toc_sections(data):
         elif item["type"] == "h2":
             # Add h2 as subcategory
             sub_template = f"""                            <a href="#{item['id']}"
-                                class="flex items-center mt-1 no-underline text-gray-600 hover:text-[#3533CD] transition-colors duration-200 toc-link border-l-2 border-gray-200 pl-3 hover:border-[#3533CD]">
+                                class="flex items-center mt-1 no-underline text-gray-600 hover:text-[#017AFF] transition-colors duration-200 toc-link border-l-2 border-gray-200 pl-3 hover:border-[#017AFF]">
                                 <div class="text-sm">{item['content']}</div>
                             </a>"""
             sub_list.append(sub_template)
@@ -1141,16 +1142,16 @@ async def generate_desktop_toc(data):
     complete_toc = f"""<aside class="sticky top-8 h-8rem lg:order-1 self-start md:mt-[0rem] mt-[-57rem]">
                 <div class="p-6 flex flex-col w-full rounded-xl bg-white max-w-[20rem] border-gray-100 hidden lg:block overflow-y- max-h-[calc(100vh-4rem)]"
                     style="scroll-behavior: smooth">
-                    <h2 class="text-2xl font-bold text-[#3533CD] mb-6 border-b pb-3">Table of Contents</h2>
+                    <h2 class="text-2xl font-bold text-[#017AFF] mb-6 border-b pb-3">Table of Contents</h2>
                     {toc_sections}
                     <div class="mt-6 space-y-4 border-t pt-5">
                         <button
-                            class="w-full h-[45px] bg-[#3533CD] rounded-xl flex items-center justify-center text-white font-jakarta font-medium text-[16px] leading-[120%] hover:bg-opacity-90 transition-colors shadow-md">
+                            class="w-full h-[45px] bg-[#017AFF] rounded-xl flex items-center justify-center text-white font-jakarta font-medium text-[16px] leading-[120%] hover:bg-opacity-90 transition-colors shadow-md">
                             <i class="ph ph-download mr-2"></i>Download Article as PDF
                         </button>
                         <div class="flex items-center flex-wrap">
                             <div
-                                class="relative inline-flex items-center justify-center gap-2 bg-[#3533CD] rounded-xl h-[45px] px-4 cursor-pointer hover:bg-opacity-90 transition-colors shadow-md">
+                                class="relative inline-flex items-center justify-center gap-2 bg-[#017AFF] rounded-xl h-[45px] px-4 cursor-pointer hover:bg-opacity-90 transition-colors shadow-md">
                                 <span class="text-white font-jakarta font-medium text-[16px] leading-[120%] text-center"
                                     style="width: 7rem">
                                     <i class="ph ph-share-network mr-2"></i>Share
@@ -1517,14 +1518,14 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
         /* TOC container enhancements */
         aside .p-6 {
             scrollbar-width: thin;
-            scrollbar-color: #3533cd #f5f5f5;
+            scrollbar-color: #017AFF #f5f5f5;
             scroll-behavior: smooth;
             transition: all 0.3s ease;
         }
 
         .toc-container {
             scrollbar-width: thin;
-            scrollbar-color: #3533cd #f5f5f5;
+            scrollbar-color: #017AFF #f5f5f5;
             scroll-behavior: smooth;
             transition: all 0.3s ease;
         }
@@ -1554,11 +1555,11 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
         }
 
         /* Active indicator animation */
-        .toc-link.text-\[\#3533CD\] {
+        .toc-link.text-\[\#017AFF\] {
             position: relative;
         }
 
-        .toc-link.text-\[\#3533CD\]::after {
+        .toc-link.text-\[\#017AFF\]::after {
             content: "";
             position: absolute;
             right: 0;
@@ -1632,7 +1633,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
 
         .dropdown-item:hover .ph-arrow-right {
             transform: translateX(2px);
-            color: #3533CD;
+            color: #017AFF;
         }
 
         /* --- MOBILE ACCORDION STYLES --- */
@@ -1717,11 +1718,11 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                 console.log("Section:", section.tagName, section.id);
             });
             // Colors and styles for active/inactive states
-            const activeColorClass = "text-[#3533CD]";
+            const activeColorClass = "text-[#017AFF]";
             const inactiveColorClass = "text-gray-800";
             const activeFontWeightClass = "font-bold";
             const inactiveFontWeightClass = "font-medium";
-            const activeBorderClass = "border-[#3533CD]";
+            const activeBorderClass = "border-[#017AFF]";
             const inactiveBorderClass = "border-gray-200";        // Collapsible TOC functionality - different behavior for mobile and desktop
             const tocToggleLinks = document.querySelectorAll(
                 "a[data-toggle-target]"
@@ -1973,7 +1974,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                             body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
                                             img { max-width: 100%; height: auto; margin: 20px 0; }
                                             .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
-                                            h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
+                                            h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
                                             .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                             h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                             h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -1982,7 +1983,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                         body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
                                         img { max-width: 100%; height: auto; margin: 20px 0; }
                                         .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
-                                        h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
+                                        h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
                                         .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                         h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                         h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -2029,7 +2030,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                                 body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
                                 img { max-width: 100%; height: auto; margin: 20px 0; }
                                 .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
-                                h1 { color: #3533CD; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #3533CD; }
+                                h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
                                 .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
                                 h2 { color: #333; margin-top: 30px; font-size: 24px; }
                                 h3 { color: #333; margin-top: 20px; font-size: 20px; }
@@ -2114,7 +2115,7 @@ EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
                     position: fixed;
                     top: 20px;
                     right: 20px;
-                    background: #3533CD;
+                    background: #017AFF;
                     color: white;
                     padding: 10px 20px;
                     border-radius: 5px;
