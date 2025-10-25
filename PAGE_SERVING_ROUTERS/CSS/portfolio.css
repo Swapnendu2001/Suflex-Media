@@ -326,8 +326,8 @@ body {
 
 @media (max-width: 768px) {
     .portfolio-hero-section {
-        padding: 8vh 5vw;
-        margin-top: -14vh;
+        padding: 0vh 5vw 8vh;
+        margin-top: -5vh;
     }
 
     .portfolio-hero-heading {
@@ -335,6 +335,11 @@ body {
     }
 
     .portfolio-hero-heading h1 {
+        font-size: 8vw;
+        max-width: 70vw;
+        margin-left: 65vw;
+    }
+    .portfolio-hero-heading span{
         font-size: 8vw;
     }
 
@@ -519,9 +524,10 @@ body {
     background-color: #017AFF;
     color: #fff;
     border-color: #017AFF;
-    padding: 1vh 2vw;
+    padding: 1.5vh 2vw;
     min-width: auto;
     height: auto;
+    margin-left: 3vw;
 }
 
 .pagination-dots {
@@ -591,17 +597,18 @@ body {
     }
 
     .pagination-btn {
-        min-width: 10vw;
-        height: 10vw;
+        min-width: 8vw;
+        height: 8vw;
         font-size: 3.5vw;
         border-radius: 2vw;
         border-width: 0.3vw;
     }
 
     .next-btn {
-        padding: 2vh 6vw;
+        padding: 1vh 2vw;
         min-width: auto;
         height: auto;
+        margin-left: 5vw;
     }
 
     .pagination-dots {

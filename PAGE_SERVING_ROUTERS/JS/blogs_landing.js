@@ -165,11 +165,13 @@ function createBlogCard(blog) {
                 </div>
                 <h3 class="blog-title">${blog.title}</h3>
                 <p class="blog-date">${blog.date}</p>
-                <p class="blog-description">${blog.description}</p>
-                <div class="blog-arrow">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                <div class="blog-footer">
+                    <p class="blog-description">${blog.description}</p>
+                    <div class="blog-arrow">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         `;
