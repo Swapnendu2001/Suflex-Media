@@ -267,16 +267,16 @@ body {
 }
 
 .filter-btn:hover {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
-    border-color: #007bff;
+    border-color: #017AFF;
     transform: translateY(-0.3vh);
 }
 
 .filter-btn.active {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
-    border-color: #007bff;
+    border-color: #017AFF;
 }
 
 @media (max-width: 768px) {
@@ -343,7 +343,7 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #017AFF;
 }
 
 .search-input::placeholder {
@@ -371,7 +371,7 @@ body {
 
 .blog-card {
     background-color: #fff;
-    border: 0.15vw solid #007bff;
+    border: 0.15vw solid #017AFF;
     border-radius: 1.5vw;
     padding: 2vw;
     display: flex;
@@ -442,8 +442,8 @@ body {
 }
 
 .blog-card:hover .blog-arrow {
-    border-color: #007bff;
-    background-color: #007bff;
+    border-color: #017AFF;
+    background-color: #017AFF;
     transform: scale(1.1);
 }
 
@@ -490,7 +490,7 @@ body {
 }
 
 .page-btn.active {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
 }
 
@@ -501,7 +501,7 @@ body {
 }
 
 .next-btn {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
     display: flex;
     align-items: center;
