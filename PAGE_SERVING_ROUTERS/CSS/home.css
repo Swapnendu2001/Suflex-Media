@@ -327,38 +327,43 @@ body {
 }
 
 .trusted-logos {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    gap: 1.72vw;
     position: absolute;
-    width: 48.42vw;
-    height: 3.94vh;
-    left: calc(50% - 23.71vw);
+    width: 60vw;
+    height: 8vh;
+    left: calc(50% - 30vw);
     top: 59vh;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-.trusted-logos .brandlution {
-    width: 12.90vw;
-    height: 5.67vh;
-    background: url('/images/brandlution.png') no-repeat center;
-    background-size: contain;
+.carousel-track {
+    display: flex;
+    align-items: center;
+    gap: 3vw;
+    animation: scroll 30s linear infinite;
+    width: max-content;
 }
 
-.trusted-logos .excelra {
-    width: 11.41vw;
-    height: 4.30vh;
-    background: url('/images/excelra.png') no-repeat center;
-    background-size: contain;
+.carousel-track img {
+    height: 6vh;
+    width: auto;
+    max-width: 15vw;
+    object-fit: contain;
 }
 
-.trusted-logos .decisionalgo {
-    width: 17.69vw;
-    height: 6.94vh;
-    background: url('/images/decisionalgo.png') no-repeat center;
-    background-size: contain;
+.carousel-track img.black-bg {
+    background-color: #000000;
+    padding: 1vh;
+    border-radius: 0.5vh;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .side-card-left {
@@ -581,27 +586,19 @@ body {
     .trusted-logos {
         position: static;
         width: 100%;
-        margin: 4vh 0;
-        flex-wrap: nowrap;
-        gap: 3vw;
-        height: auto;
-        justify-content: space-between;
+        margin-top: 4vh;
+        height: 10vh;
         grid-column: 1 / 3;
+        overflow: hidden;
     }
 
-    .trusted-logos .brandlution {
-        width: 28vw;
-        height: 6vh;
+    .carousel-track {
+        gap: 6vw;
     }
 
-    .trusted-logos .excelra {
-        width: 26vw;
-        height: 5vh;
-    }
-
-    .trusted-logos .decisionalgo {
-        width: 32vw;
-        height: 7vh;
+    .carousel-track img {
+        height: 8vh;
+        max-width: 25vw;
     }
 
     .side-card-left,
@@ -1805,6 +1802,12 @@ body {
     z-index: 1;
     border: none;
     box-shadow: none;
+    overflow: hidden;
+}
+
+.calendly-inline-widget iframe {
+    width: calc(100% + 20px) !important;
+    margin-right: -20px !important;
 }
 
 .calendar-nav {
@@ -2043,13 +2046,18 @@ body {
 
     .calendly-inline-widget {
         max-width: 92vw;
-        border-radius: 15vw;
-        height: 107vh;
+        border-radius: 5vw;
+        height: 100vh;
         min-height: 650px;
         background-color: transparent;
         border: none;
         box-shadow: none;
-        overflow-y: hidden;
+        overflow: hidden;
+    }
+    
+    .calendly-inline-widget iframe {
+        width: calc(100% + 30px) !important;
+        margin-right: -30px !important;
     }
 
     .calendar-nav {
