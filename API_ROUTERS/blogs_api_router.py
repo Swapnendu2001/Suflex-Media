@@ -51,15 +51,15 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
         
         if include_deleted:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
                 ORDER BY date DESC
             """
         else:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
-                WHERE isDeleted = FALSE
+                WHERE isdeleted = FALSE
                 ORDER BY date DESC
             """
         
@@ -77,7 +77,7 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
                 "slug": blog['slug'],
                 "type": blog['type'],
                 "redirect_url": blog['redirect_url'],
-                "isDeleted": blog['isDeleted'],
+                "isdeleted": blog['isdeleted'],
                 "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
                 "updated_at": blog['updated_at'].isoformat() if blog['updated_at'] else None
             }
@@ -115,9 +115,9 @@ async def create_blog(blog_data: CreateBlogRequest):
         
         new_blog = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, category, slug, type, redirect_url, isDeleted)
+            INSERT INTO blogs (blog, status, keyword, category, slug, type, redirect_url, isdeleted)
             VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
-            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
             blog_content,
             blog_data.status,
@@ -144,7 +144,7 @@ async def create_blog(blog_data: CreateBlogRequest):
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
-                "isDeleted": new_blog['isDeleted'],
+                "isdeleted": new_blog['isdeleted'],
                 "created_at": new_blog['created_at'].isoformat() if new_blog['created_at'] else None,
                 "updated_at": new_blog['updated_at'].isoformat() if new_blog['updated_at'] else None
             }
@@ -170,7 +170,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
         conn = await asyncpg.connect(DATABASE_URL)
         
         existing_blog = await conn.fetchrow(
-            "SELECT id, isDeleted FROM blogs WHERE id = $1",
+            "SELECT id, isdeleted FROM blogs WHERE id = $1",
             blog_id
         )
         
@@ -178,7 +178,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
             await conn.close()
             raise HTTPException(status_code=404, detail="Blog not found")
         
-        if existing_blog['isDeleted']:
+        if existing_blog['isdeleted']:
             await conn.close()
             raise HTTPException(status_code=400, detail="Cannot update deleted blog")
         
@@ -227,7 +227,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
             UPDATE blogs
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
         """
         
         updated_blog = await conn.fetchrow(query, *update_values)
@@ -247,7 +247,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
                 "slug": updated_blog['slug'],
                 "type": updated_blog['type'],  # Added type field
                 "redirect_url": updated_blog['redirect_url'],
-                "isDeleted": updated_blog['isDeleted'],
+                "isdeleted": updated_blog['isdeleted'],
                 "created_at": updated_blog['created_at'].isoformat() if updated_blog['created_at'] else None,
                 "updated_at": updated_blog['updated_at'].isoformat() if updated_blog['updated_at'] else None
             }
@@ -275,7 +275,7 @@ async def partial_update_blog(blog_id: str, blog_data: UpdateBlogRequest):
 async def delete_blog(blog_id: str):
     """
     Soft delete a blog
-    Sets isDeleted to TRUE instead of removing from database
+    Sets isdeleted to TRUE instead of removing from database
     Cannot delete already deleted blogs
     """
     print(f"Soft deleting blog ID: {blog_id}")
@@ -284,7 +284,7 @@ async def delete_blog(blog_id: str):
         conn = await asyncpg.connect(DATABASE_URL)
         
         blog = await conn.fetchrow(
-            "SELECT id, isDeleted FROM blogs WHERE id = $1",
+            "SELECT id, isdeleted FROM blogs WHERE id = $1",
             blog_id
         )
         
@@ -292,14 +292,14 @@ async def delete_blog(blog_id: str):
             await conn.close()
             raise HTTPException(status_code=404, detail="Blog not found")
         
-        if blog['isDeleted']:
+        if blog['isdeleted']:
             await conn.close()
             raise HTTPException(status_code=400, detail="Blog is already deleted")
         
         await conn.execute(
             """
             UPDATE blogs
-            SET isDeleted = TRUE, updated_at = CURRENT_TIMESTAMP
+            SET isdeleted = TRUE, updated_at = CURRENT_TIMESTAMP
             WHERE id = $1
             """,
             blog_id
@@ -326,7 +326,7 @@ async def delete_blog(blog_id: str):
 async def restore_blog(blog_id: str):
     """
     Restore a soft-deleted blog
-    Sets isDeleted back to FALSE
+    Sets isdeleted back to FALSE
     """
     print(f"Restoring blog ID: {blog_id}")
     
@@ -334,7 +334,7 @@ async def restore_blog(blog_id: str):
         conn = await asyncpg.connect(DATABASE_URL)
         
         blog = await conn.fetchrow(
-            "SELECT id, isDeleted FROM blogs WHERE id = $1",
+            "SELECT id, isdeleted FROM blogs WHERE id = $1",
             blog_id
         )
         
@@ -342,14 +342,14 @@ async def restore_blog(blog_id: str):
             await conn.close()
             raise HTTPException(status_code=404, detail="Blog not found")
         
-        if not blog['isDeleted']:
+        if not blog['isdeleted']:
             await conn.close()
             raise HTTPException(status_code=400, detail="Blog is not deleted")
         
         await conn.execute(
             """
             UPDATE blogs
-            SET isDeleted = FALSE, updated_at = CURRENT_TIMESTAMP
+            SET isdeleted = FALSE, updated_at = CURRENT_TIMESTAMP
             WHERE id = $1
             """,
             blog_id
@@ -418,7 +418,7 @@ async def admin_save_blog(request: Request):
                     UPDATE blogs
                     SET blog = $1, status = $2, category = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $6
-                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
@@ -469,9 +469,9 @@ async def admin_save_blog(request: Request):
                 
                 new_blog = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blog, status, category, slug, type, isDeleted)
+                    INSERT INTO blogs (blog, status, category, slug, type, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, FALSE)
-                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isDeleted, created_at, updated_at
+                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
