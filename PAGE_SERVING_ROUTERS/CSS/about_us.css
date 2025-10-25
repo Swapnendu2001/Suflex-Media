@@ -554,8 +554,8 @@ body {
 
     .stats-grid .clover-icon {
         left: 0vw;
-        bottom: 0vh;
-        width: 6vw;
+        bottom: 20vh;
+        width: 9vw;
         display: block;
     }
 
@@ -1195,8 +1195,8 @@ body {
     }
 
     .about-third-section-cta img {
-        width: 4vw;
-        height: 4vw;
+        width: 6vw;
+        height: 6vw;
     }
 }
 
@@ -1234,7 +1234,7 @@ body {
 
     .about-third-section-cta {
         font-size: 4.5vw;
-        padding: 2vh 7vw;
+        padding: 1vh 6vw;
     }
 }
 
