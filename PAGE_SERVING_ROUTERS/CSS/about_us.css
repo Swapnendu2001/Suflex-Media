@@ -238,22 +238,22 @@ body {
 }
 
 .about-hero-text {
-    max-width: 38vw;
+    max-width: 45vw;
     position: relative;
     top: -4vh;
 }
 
 .about-hero-text h1 {
     font-size: 3.5vw;
-    font-weight: 500;
+    font-weight: 400;
     color: #000;
     margin: 0;
 }
 
 .about-hero-text h2 {
     font-size: 4vw;
-    font-weight: 500;
-    color: #007bff;
+    font-weight: 400;
+    color: #017AFF;
     margin: 0;
     line-height: 1.2;
 }
@@ -265,11 +265,17 @@ body {
 }
 
 .about-hero-image {
-    max-width: 45vw;
+    max-width: 42vw;
 }
 
 .about-hero-image img {
-    width: 100%;
+    width: 50vw;
+}
+
+@media (max-width: 767px) {
+    .about-hero-image img {
+        width: 90vw;
+    }
 }
 
 .mission-section {
@@ -281,7 +287,7 @@ body {
 .mission-section h3 {
     font-size: 4vw;
     font-weight: 600;
-    color: #007bff;
+    color: #017AFF;
     margin-bottom: 1vh;
 }
 
@@ -302,6 +308,22 @@ body {
     right: 2vw;
     bottom: -8vh;
     width: 2.5vw;
+}
+
+.diamonds-icon {
+    position: absolute;
+    left: 5vw;
+    top: 5vh;
+    width: 4vw;
+    z-index: 2;
+}
+
+.spring-arrow-icon {
+    position: absolute;
+    right: 5vw;
+    top: 15vh;
+    width: 6vw;
+    z-index: 2;
 }
 
 .stats-grid {
@@ -327,7 +349,7 @@ body {
 .stat-item .value {
     font-size: 2.5vw;
     font-weight: 600;
-    color: #007bff;
+    color: #017AFF;
     max-width: 55vh;
 }
 
@@ -475,9 +497,10 @@ body {
     }
 
     .about-hero-text p {
-        font-size: 4vw;
+        font-size: 3.5vw;
         margin-top: 2vh;
         line-height: 1.5;
+        width: 30vh;
     }
 
     .about-hero-text p img {
@@ -506,14 +529,32 @@ body {
     }
 
     .mission-section .star-left {
-        left: -2vw;
+        left: 9vw;
         top: -2vh;
         width: 8vw;
     }
 
     .mission-section .star-right {
-        right: -2vw;
-        bottom: -5vh;
+        right: 8vw;
+        bottom: -1vh;
+        width: 6vw;
+    }
+    
+    .mission-section .diamonds-icon {
+        left: 86vw;
+        top: -64vh;
+        width: 5vw;
+    }
+    
+    .mission-section .spring-arrow-icon {
+        right: 2vw;
+        top: 12vh;
+        width: 12vw;
+    }
+
+    .mission-section .clover-icon {
+        right: 8vw;
+        bottom: -1vh;
         width: 6vw;
     }
 
@@ -604,8 +645,8 @@ body {
 
 .feature-cluster {
     position: relative;
-    width: 72vw;
-    height: 80vh;
+    width: 74vw;
+    height: 67vh;
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
@@ -891,16 +932,17 @@ body {
 .about-third-section-top h1 {
     color: #fff;
     font-size: 3.5vw;
-    font-weight: 700;
+    font-weight: 400;
     margin: 0;
     line-height: 1.2;
 }
 
 .about-third-section-top h2 {
     color: #FFC94A;
-    font-size: 2.3vw;
-    font-weight: 400;
+    font-size: 1.8vw;
+    font-weight: 300;
     margin: 0;
+    opacity: 0.9;
 }
 
 .about-third-section-middle {
@@ -956,7 +998,7 @@ body {
 }
 
 .about-third-section-bottom {
-    background-color: #212121;
+    background-color: #383838;
     text-align: center;
     padding: 8vh 0;
 }
@@ -969,10 +1011,10 @@ body {
 }
 
 .about-third-section-cta {
-    background-color: #007BFF;
+    background-color: #017AFF;
     color: #fff;
     font-size: 1.2vw;
-    padding: 1.5vh 3vw;
+    padding: 1vh 2vw;
     border-radius: 50px;
     text-decoration: none;
     display: inline-flex;
