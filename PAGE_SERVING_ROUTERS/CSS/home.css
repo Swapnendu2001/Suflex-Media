@@ -244,7 +244,7 @@ body {
     top: 5vh;
     font-family: 'Lexend', sans-serif;
     font-style: normal;
-    font-weight: 700;
+    font-weight: normal;
     font-size: 5vw;
     line-height: 1.2;
     text-align: center;
@@ -254,7 +254,7 @@ body {
 }
 
 .hero-section .highlight {
-    font-weight: 700;
+    font-weight: normal;
     color: #017AFF;
 }
 
@@ -540,9 +540,10 @@ body {
         position: static;
         width: 100%;
         margin: 3vh 0 2vh;
-        font-size: 7vw;
+        font-size: 10vw;
         line-height: 1.3;
         grid-column: 1 / 3;
+        font-weight: normal;
     }
 
     .hero-section .sub-heading {
@@ -864,11 +865,11 @@ body {
     }
 
     .work-with-us-title h2 {
-        font-size: 6vw;
+        font-size: 9vw;
     }
 
     .work-with-us-title h3 {
-        font-size: 7vw;
+        font-size: 9vw;
     }
 
     .work-with-us-content::before {
@@ -1433,7 +1434,7 @@ body {
     }
 
     .insights-main::after {
-        background-image: url('/images/Doodles file.png');
+        background-image: url('/icons/Doodles.png');
         background-size: cover;
     }
 
@@ -1725,7 +1726,7 @@ body {
     }
 
     .brands-buttons button {
-        padding: 2.5vh 5vw;
+        padding: 1.5vh 5vw;
         border-radius: 2vw;
         font-size: 3.5vw;
         flex: 1;
@@ -1777,6 +1778,7 @@ body {
     background-size: 40vw;
     opacity: 0.5;
     z-index: 0;
+    pointer-events: none;
 }
 
 .booking-main::before {
@@ -2047,17 +2049,17 @@ body {
     .calendly-inline-widget {
         max-width: 92vw;
         border-radius: 5vw;
-        height: 100vh;
+        height: 110vh;
         min-height: 650px;
         background-color: transparent;
         border: none;
         box-shadow: none;
-        overflow: hidden;
+        overflow: visible;
     }
     
     .calendly-inline-widget iframe {
-        width: calc(100% + 30px) !important;
-        margin-right: -30px !important;
+        width: 100% !important;
+        margin-right: 0 !important;
     }
 
     .calendar-nav {
