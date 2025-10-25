@@ -240,7 +240,7 @@ body {
 }
 
 .contact-form-section {
-    padding: 8vh 12vw;
+    padding: 7vh 7vw;
     background: transparent;
     display: flex;
     flex-direction: column;
@@ -252,7 +252,7 @@ body {
     color: #1a1a1a;
     margin-bottom: 4vh;
     line-height: 1.5;
-    font-weight: 600;
+    font-weight: normal;
 }
 
 .form-group {
@@ -378,23 +378,23 @@ body {
 }
 
 .contact-info-section h3 {
-    font-size: 2.2vh;
+    font-size: 5vh;
     color: #1a1a1a;
     margin-bottom: 1vh;
-    font-weight: 500;
+    font-weight: normal;
 }
 
 .contact-info-section h2 {
-    font-size: 4.5vh;
+    font-size: 7.5vh;
     color: #1a1a1a;
     margin-bottom: 3vh;
-    font-weight: 700;
+    font-weight: normal;
 }
 
 .phone-number {
-    font-size: 4.5vh;
+    font-size: 7vh;
     color: #0d6efd;
-    font-weight: 700;
+    font-weight: normal;
     margin-bottom: 2vh;
     text-decoration: none;
     display: block;
@@ -402,11 +402,11 @@ body {
 }
 
 .email-address {
-    font-size: 2.2vh;
+    font-size: 3.2vh;
     color: #1a1a1a;
     text-decoration: none;
     display: block;
-    font-weight: 400;
+    font-weight: 300;
 }
 
 .email-address:hover,
@@ -439,7 +439,7 @@ body {
     }
 
     .illustration {
-        max-width: 60vw;
+        max-width: 90vw;
     }
 
     .contact-form-section h2 {
@@ -457,6 +457,7 @@ body {
     .contact-form-section,
     .contact-info-section {
         padding: 5vh 6vw;
+        margin-top: -10vh;
     }
 }
 

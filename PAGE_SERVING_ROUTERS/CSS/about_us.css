@@ -899,7 +899,8 @@ body {
     }
 
     .best-section-title p {
-        font-size: 5.5vw;
+        font-size: 8.5vw;
+        font-weight: bold;
     }
 
     .feature-cluster {

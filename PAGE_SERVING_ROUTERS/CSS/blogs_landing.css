@@ -255,7 +255,7 @@ body {
 .filter-btn {
     background-color: #fff;
     color: #000;
-    border: 0.15vw solid #e0e0e0;
+    border: none;
     border-radius: 5vw;
     padding: 1.2vh 2vw;
     font-size: 1.1vw;
@@ -420,12 +420,20 @@ body {
     margin: 0;
 }
 
+.blog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5vw;
+    width: 100%;
+}
+
 .blog-description {
     font-size: 1vw;
     color: #333;
     line-height: 1.5;
     margin: 0;
-    flex-grow: 1;
+    flex: 1;
 }
 
 .blog-arrow {
@@ -437,7 +445,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    align-self: flex-end;
+    flex-shrink: 0;
     transition: all 0.3s ease;
 }
 
@@ -577,6 +585,10 @@ body {
         font-size: 3vw;
     }
 
+    .blog-footer {
+        gap: 3vw;
+    }
+
     .blog-description {
         font-size: 3.5vw;
     }
@@ -600,7 +612,7 @@ body {
     }
 
     .page-btn {
-        padding: 1.5vh 4vw;
+        padding: 1vh 3vw;
         font-size: 3.5vw;
         border-radius: 2vw;
     }
@@ -610,8 +622,9 @@ body {
     }
 
     .next-btn {
-        padding: 1.5vh 5vw;
+        padding: 1.5vh 2vw;
         gap: 2vw;
+        margin-left: 6vw;
     }
 
     .next-btn svg {
