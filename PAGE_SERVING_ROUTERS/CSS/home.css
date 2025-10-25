@@ -766,12 +766,14 @@ body {
 .work-with-us-title h3 {
     font-size: 4vw;
     font-weight: normal;
-    color: #007bff;
+    color: #017aff;
     margin: 0;
 }
 
 .work-with-us-content {
-    background-color: #007bff;
+    background-color: #017AFF;
+    background-image: url('/icons/Doodles.png');
+    background-size: cover;
     padding: 5vh 5vw;
     display: flex;
     flex-direction: column;
@@ -932,6 +934,16 @@ body {
     font-size: 4.5vw;
     font-weight: normal;
     margin-bottom: 5vh;
+.scaling-blue {
+    color: #017AFF;
+}
+
+.scaling-blue-full {
+    color: #017AFF;
+}
+
+.mobile-heading {
+    display: none;
 }
 
 .scaling-heading .scaling-blue {
@@ -971,7 +983,7 @@ body {
 .scaling-card h3 {
     font-size: 2vw;
     font-weight: normal;
-    color: #007bff;
+    color: #017aff;
     margin-bottom: 3vh;
 }
 
@@ -1076,7 +1088,7 @@ body {
 .care-heading h1 span {
     font-size: 3vw;
     font-weight: normal;
-    color: #007bff;
+    color: #017aff;
     margin-top: 1vh;
 }
 
@@ -1105,7 +1117,7 @@ body {
 .care-card:hover {
     transform: translateY(-10px) scale(1.05);
     box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.4);
-    background-color: #007bff;
+    background-color: #017AFF;
 }
 
 .care-card:hover .card-left p {
@@ -1146,7 +1158,7 @@ body {
     font-size: 1.2vw;
     font-weight: normal;
     color: #fff;
-    background-color: #007bff;
+    background-color: #017AFF;
     border: none;
     border-radius: 0.5vw;
     cursor: pointer;
@@ -1238,7 +1250,7 @@ body {
 .insights-header h1 span {
     font-size: 3vw;
     font-weight: normal;
-    color: #007bff;
+    color: #017aff;
     margin-top: 1vh;
 }
 
@@ -1263,7 +1275,7 @@ body {
 }
 
 .insights-main {
-    background-color: #007bff;
+    background-color: #017aff;
     padding: 15vh 5vw 10vh 5vw;
     position: relative;
 }
@@ -1382,7 +1394,7 @@ body {
     font-weight: 600;
     color: #333;
     background-color: #fff;
-    border: 1px solid #007bff;
+    border: 1px solid #017AFF;
     border-radius: 0.5vw;
     cursor: pointer;
 }
@@ -1510,7 +1522,7 @@ body {
 }
 
 .brands-heading .blue-text {
-    color: #007bff;
+    color: #017AFF;
 }
 
 .mobile-heading {
@@ -1627,9 +1639,9 @@ body {
 }
 
 .brands-buttons .read-more-btn {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
-    border-color: #007bff;
+    border-color: #017AFF;
 }
 
 .brands-buttons .view-all-btn {
@@ -1744,11 +1756,11 @@ body {
 }
 
 .booking-header h2 span {
-    color: #007bff;
+    color: #017AFF;
 }
 
 .booking-main {
-    background-color: #007bff;
+    background-color: #017aff;
     padding: 15vh 5vw;
     position: relative;
 }
@@ -1854,7 +1866,7 @@ body {
 }
 
 .date-cell.selected {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
 }
 
@@ -1901,7 +1913,7 @@ body {
 
 .time-slot-btn {
     background-color: #fff;
-    border: 1px solid #007bff;
+    border: 1px solid #017AFF;
     color: #000;
     padding: 1.5vh 2vw;
     border-radius: 5vw;
@@ -1966,7 +1978,7 @@ body {
 }
 
 .cta-btn {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
     border: none;
     padding: 2vh 2vw;
@@ -2011,7 +2023,7 @@ body {
 }
 
 .year-selector li.selected-year {
-    background-color: #007bff;
+    background-color: #017AFF;
     color: #fff;
 }
 
