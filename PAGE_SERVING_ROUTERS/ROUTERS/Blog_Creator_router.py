@@ -51,7 +51,7 @@ async def getHeader():
       /* Navigation Links */
       .header .nav-links {
         display: flex;
-        gap: 1.25vw;
+        gap: 3.25vw;
       }
 
       .header .nav-links a {
