@@ -48,7 +48,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 1.25vw;
+    gap: 3.25vw;
 }
 
 .nav-links a {
@@ -758,15 +758,15 @@ body {
 
 .work-with-us-title h2 {
     font-size: 4.5vw;
-    font-weight: bold;
+    font-weight: normal;
     color: #000000;
     margin: 0;
 }
 
 .work-with-us-title h3 {
-    font-size: 3vw;
-    font-weight: bold;
-    color: #017AFF;
+    font-size: 4vw;
+    font-weight: normal;
+    color: #017aff;
     margin: 0;
 }
 
@@ -779,29 +779,48 @@ body {
     flex-direction: column;
     gap: 2vh;
     align-items: center;
+    position: relative;
+}
+
+.work-with-us-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/icons/Doodles.png');
+    background-size: auto;
+    background-repeat: repeat;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.work-with-us-content > * {
+    position: relative;
+    z-index: 1;
 }
 
 .card-row-top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2vw;
     width: 100%;
 }
 
 .card-row-bottom {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2vw;
     width: 66%;
 }
 
 .card {
     background-color: white;
     border-radius: 2vw;
-    padding: 2vw;
+    padding: 1vw;
     box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    max-width: 23vw;
 }
 
 .work-with-us-content .card img {
@@ -814,7 +833,7 @@ body {
 
 .work-with-us-content .card h4 {
     font-size: 1.5vw;
-    font-weight: bold;
+    font-weight: normal;
     color: #000000;
     margin: 0 0 1vh 0;
 }
@@ -825,10 +844,22 @@ body {
     margin: 0.5vh 0;
 }
 
+.scaling-intro h2 {
+    font-size: 4.5vw;
+    font-weight: normal;
+    margin-bottom: 5vh;
+}
+
 @media (max-width: 768px) {
     .work-with-us {
         padding-top: 5vh;
         padding-bottom: 5vh;
+    }
+
+    .scaling-intro h2 {
+        font-size: 8.5vw;
+        font-weight: normal;
+        margin-bottom: 2vh;
     }
 
     .work-with-us-title {
@@ -843,8 +874,7 @@ body {
         font-size: 7vw;
     }
 
-    .work-with-us-content {
-        padding: 5vh 6vw;
+    .work-with-us-content::before {
         background-image: url('/images/handdrawn_doodle.png');
         background-size: auto;
         background-repeat: repeat;
@@ -865,6 +895,7 @@ body {
         padding: 5vw;
         border-radius: 5vw;
         aspect-ratio: auto;
+        max-width: 100vw;
     }
 
     .work-with-us-content .card img {
@@ -894,14 +925,15 @@ body {
     max-width: 100vw;
     box-sizing: border-box;
     overflow-x: hidden;
+    scale: 0.9;
 }
 
-.scaling-intro h2 {
+
+
+.scaling-heading {
     font-size: 4.5vw;
-    font-weight: bold;
-    margin-bottom: 3vh;
-}
-
+    font-weight: normal;
+    margin-bottom: 5vh;
 .scaling-blue {
     color: #017AFF;
 }
@@ -914,15 +946,15 @@ body {
     display: none;
 }
 
-.desktop-heading {
-    display: block;
+.scaling-heading .scaling-blue {
+    color: #007bff;
 }
 
 .scaling-intro p {
     font-size: 1.3vw;
     color: #333;
     line-height: 1.6;
-    margin-bottom: 6vh;
+    margin-bottom: 2vh;
 }
 
 .scaling-cards {
@@ -941,7 +973,7 @@ body {
 }
 
 .card-image {
-    width: 32vh;
+    width: 40vh;
     height: 30vh;
     margin-bottom: 3vh;
     aspect-ratio: 1 / 1;
@@ -950,8 +982,8 @@ body {
 
 .scaling-card h3 {
     font-size: 2vw;
-    font-weight: bold;
-    color: #017AFF;
+    font-weight: normal;
+    color: #017aff;
     margin-bottom: 3vh;
 }
 
@@ -961,21 +993,21 @@ body {
     line-height: 1.7;
 }
 
+.image-1 {
+    width: 30vh;
+}
+
 @media (max-width: 768px) {
     .scaling-section {
         padding: 6vh 4vw;
-        border-top: 2px solid #e0e0e0;
+        scale: 1;
     }
 
-    .desktop-heading {
-        display: none;
-    }
-
-    .mobile-heading {
-        display: block;
-        font-size: 6.5vw;
+    .scaling-heading {
+        font-size: 7.5vw;
         margin-bottom: 3vh;
         line-height: 1.3;
+        font-weight: normal;
     }
 
     .scaling-intro p {
@@ -1000,6 +1032,10 @@ body {
         padding: 2.5vh 2.5vw;
         border-radius: 3vw;
         border: 1px solid #e0e0e0;
+    }
+
+    .image-1 {
+        width: 100%;
     }
 
     .card-image {
@@ -1039,19 +1075,20 @@ body {
 .care-heading {
     text-align: center;
     margin-bottom: 8vh;
+    max-width: 45vw;
 }
 
 .care-heading h1 {
     font-size: 3vw;
-    font-weight: bold;
+    font-weight: normal;
     color: #000;
     margin: 0;
 }
 
-.care-heading h2 {
-    font-size: 2.5vw;
-    font-weight: bold;
-    color: #017AFF;
+.care-heading h1 span {
+    font-size: 3vw;
+    font-weight: normal;
+    color: #017aff;
     margin-top: 1vh;
 }
 
@@ -1119,7 +1156,7 @@ body {
     margin-top: 8vh;
     padding: 2vh 3vw;
     font-size: 1.2vw;
-    font-weight: bold;
+    font-weight: normal;
     color: #fff;
     background-color: #017AFF;
     border: none;
@@ -1134,14 +1171,15 @@ body {
 
     .care-heading {
         margin-bottom: 6vh;
+        max-width: 75vw;
     }
 
     .care-heading h1 {
-        font-size: 6vw;
+        font-size: 7vw;
     }
 
-    .care-heading h2 {
-        font-size: 6.5vw;
+    .care-heading h1 span {
+        font-size: 7vw;
         margin-top: 1vh;
     }
 
@@ -1198,20 +1236,21 @@ body {
 
 .insights-header {
     background-color: #fff;
-    padding: 0 5vw 15vh 5vw;
+    padding: 0 5vw 5vh 5vw;
 }
 
 .insights-header h1 {
-    font-size: 4.5vw;
-    font-weight: bold;
+    font-size: 5vw;
+    font-weight: normal;
     color: #000;
-    margin: 0;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.insights-header h2 {
+.insights-header h1 span {
     font-size: 3vw;
-    font-weight: bold;
-    color: #017AFF;
+    font-weight: normal;
+    color: #017aff;
     margin-top: 1vh;
 }
 
@@ -1221,25 +1260,54 @@ body {
 
 .desktop-header {
     display: block;
+    max-width: 50vw;
+    margin: 0 auto;
+    font-size: 3vw !important;
+    text-align: center;
 }
 
 .insights-header p {
     font-size: 1.2vw;
     color: #333;
-    width: 50vw;
+    width: 65vw;
     margin: 5vh auto 0 auto;
     line-height: 1.6;
 }
 
 .insights-main {
-    background-color: #017AFF;
-    background-image: url('/icons/Doodles-2.png');
-    background-size: cover;
+    background-color: #017aff;
     padding: 15vh 5vw 10vh 5vw;
     position: relative;
-    border-top-left-radius: 50% 10%;
-    border-top-right-radius: 50% 10%;
-    margin-top: -10vh;
+}
+
+.insights-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/icons/Doodles-2.png');
+    background-size: cover;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.insights-main > * {
+    position: relative;
+    z-index: 1;
+}
+
+.insights-main::before {
+    content: '';
+    position: absolute;
+    top: -1;
+    left: 0;
+    width: 100%;
+    height: 5vh;
+    background-color: #fff;
+    border-bottom-left-radius: 50vw 5vh;
+    border-bottom-right-radius: 50vw 5vh;
 }
 
 .insights-cards {
@@ -1254,7 +1322,7 @@ body {
     background-color: #fff;
     border-radius: 2vw;
     box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.1);
-    padding: 2.5vw;
+    padding: 1vw;
     width: 22vw;
     text-align: left;
     position: relative;
@@ -1291,25 +1359,32 @@ body {
 }
 
 .insight-card h3 {
-    font-size: 1.5vw;
-    font-weight: bold;
+    font-size: 1.4vw;
+    font-weight: normal;
     color: #000;
     margin: 0 0 2vh 0;
     line-height: 1.3;
+}
+
+.card-content-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1vw;
 }
 
 .insight-card p {
     font-size: 1vw;
     color: #555;
     line-height: 1.5;
-    margin-bottom: 4vh;
+    margin: 0;
+    flex: 1;
 }
 
 .card-arrow-icon {
     width: 3vw;
-    position: absolute;
-    bottom: 2.5vh;
-    right: 2.5vw;
+    height: 3vw;
+    flex-shrink: 0;
 }
 
 .insights-cta {
@@ -1333,17 +1408,23 @@ body {
         padding: 0 6vw 10vh 6vw;
     }
 
+    .insights-header h1 {
+        font-size: 7vw !important;
+        max-width: 90vw;
+        margin: 0 auto;
+        text-align: center;
+    }
+
     .desktop-header {
-        display: none;
+        display: block;
+        max-width: 90vw;
+        font-size: 6vw !important;
+        margin: 0 auto;
+        text-align: center;
     }
 
     .mobile-header {
-        display: block;
-        font-size: 6vw;
-        font-weight: bold;
-        color: #000;
-        margin: 0;
-        line-height: 1.3;
+        display: none;
     }
 
     .insights-header p {
@@ -1353,12 +1434,7 @@ body {
         line-height: 1.6;
     }
 
-    .insights-main {
-        padding: 10vh 5vw 8vh 5vw;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        margin-top: 0;
-        background-color: #017AFF;
+    .insights-main::after {
         background-image: url('/images/Doodles file.png');
         background-size: cover;
     }
@@ -1395,16 +1471,19 @@ body {
         line-height: 1.4;
     }
 
+    .card-content-bottom {
+        gap: 2vw;
+    }
+
     .insight-card p {
         font-size: 3.5vw;
         line-height: 1.6;
-        margin-bottom: 5vh;
+        margin: 0;
     }
 
     .card-arrow-icon {
-        width: 8vw;
-        bottom: 4vw;
-        right: 6vw;
+        width: 10vw;
+        height: 10vw;
     }
 
     .insights-cta {
@@ -1435,8 +1514,8 @@ body {
 }
 
 .brands-heading h1 {
-    font-size: 4.2vw;
-    font-weight: 700;
+    font-size: 4vw;
+    font-weight: normal;
     color: #000;
     margin: 0;
     line-height: 1.2;
@@ -1478,10 +1557,26 @@ body {
     justify-content: center;
     position: relative;
     overflow: hidden;
+}
+
+.brands-left .image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-image: url('/icons/Doodles.png');
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: 10% 20%;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.brands-left .image-container > * {
+    position: relative;
+    z-index: 1;
 }
 
 .brands-left .brands-image {
@@ -1652,9 +1747,10 @@ body {
     overflow-x: hidden;
 }
 
+
 .booking-header h2 {
-    font-size: 3vw;
-    font-weight: 700;
+    font-size: 4vw;
+    font-weight: normal;
     color: #000;
     margin-bottom: 5vh;
 }
@@ -1664,18 +1760,35 @@ body {
 }
 
 .booking-main {
-    background-color: #017AFF;
+    background-color: #017aff;
+    padding: 15vh 5vw;
+    position: relative;
+}
+
+.booking-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-image: url('/icons/Doodles.png');
     background-repeat: repeat;
     background-size: 40vw;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.booking-main > * {
     padding: 15vh 5vw 20vh 5vw;
     position: relative;
+    z-index: 1;
 }
 
 .booking-main::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: -1;
     left: 0;
     width: 100%;
     height: 10vh;
@@ -1921,8 +2034,9 @@ body {
     }
 
     .booking-header h2 {
-        font-size: 6vw;
+        font-size: 7vw;
         margin-bottom: 4vh;
+        font-weight: normal;
     }
 
     .booking-main {
@@ -1986,6 +2100,14 @@ body {
         max-height: 35vh;
     }
 
+    .brands-heading h1 {
+        font-size: 10vw;
+        font-weight: normal;
+        color: #000;
+        margin: 0;
+        line-height: 1.2;
+    }
+
     .time-slot-btn {
         padding: 2vh 4vw;
         border-radius: 10vw;
@@ -2005,6 +2127,21 @@ body {
     .details-form {
         gap: 2vh;
         margin-bottom: 3vh;
+    }
+
+    .insights-header h1 {
+        font-size: 7vw;
+        font-weight: normal;
+        color: #000;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .insights-header h1 span {
+        font-size: 7vw;
+        font-weight: normal;
+        color: #007bff;
+        margin-top: 1vh;
     }
 
     .details-form input {
@@ -2051,7 +2188,7 @@ body {
 
 .faq-title {
     font-size: 3vw;
-    font-weight: 600;
+    font-weight: normal;
     position: relative;
     top: 30%;
     text-align: center;
@@ -2072,8 +2209,8 @@ body {
 .faq-question {
     display: flex;
     align-items: center;
-    font-weight: bold;
-    color: #4B0082;
+    font-weight: normal;
+    color: #000;
     font-size: 1.5vw;
 }
 
@@ -2177,6 +2314,7 @@ body {
 .footer-section h3 {
     font-size: 1.5vw;
     margin-bottom: 1vh;
+    font-weight: normal;
 }
 
 .footer-section a,
@@ -2194,6 +2332,8 @@ body {
 .footer-section.cta h2 {
     font-size: 2vw;
     color: #017AFF;
+    text-align: center;
+    font-weight: normal;
 }
 
 .footer-section.cta .button {
