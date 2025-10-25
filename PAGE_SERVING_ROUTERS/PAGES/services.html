@@ -263,16 +263,17 @@
 
         .services-hero h1 {
             font-size: 5vw;
-            font-weight: 700;
+            font-weight: 400;
             color: #1a1a1a;
             margin-bottom: 3vh;
             line-height: 1.2;
             font-family: 'Lexend', sans-serif;
+            max-width: 80vw;
         }
 
         .services-hero h1 .highlight {
             color: #017AFF;
-            display: block;
+            display: inline;
         }
 
         .services-hero .tagline {
@@ -550,27 +551,24 @@
             }
 
             .services-stats {
-                padding: 6vh 6vw;
+                padding: 8vh 6vw;
+                margin-top: 7.8vh;
             }
 
-            .services-stats h2 {
+            .services-stats::before {
                 display: none;
             }
 
-            .mobile-book-header {
+            .services-stats h2 {
                 display: block;
-                background: white;
-                padding: 4vh 6vw;
-                text-align: center;
-                margin-top: 9vh;
+                font-size: 9vw;
+                font-weight: 400;
+                color: #fff;
+                margin-bottom: 6vh;
             }
 
-            .mobile-book-header h2 {
-                font-size: 9vw;
-                font-weight: 300;
-                color: #017AFF;
-                margin: 0;
-                font-family: 'Lexend', sans-serif;
+            .mobile-book-header {
+                display: none;
             }
 
             .stats-grid {
@@ -624,7 +622,7 @@
 
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap');
 
         .suflex-media-intro {
             padding: 8vh 5vw;
@@ -1053,16 +1051,17 @@
 
         .perfect-fit-content h2 {
             font-size: 3.5vw;
-            font-weight: 700;
+            font-weight: 400;
             color: #1A1A1A;
             margin-bottom: 3vh;
             line-height: 1.3;
             font-family: 'Lexend', sans-serif;
+            letter-spacing: -0.04em;
         }
 
         .perfect-fit-content h2 .highlight {
             color: #017AFF;
-            display: block;
+            display: inline;
         }
 
         .perfect-fit-content p {
@@ -1156,7 +1155,7 @@
 
         .philosophy-quote {
             font-size: 3vw;
-            font-weight: 700;
+            font-weight: 400;
             color: white;
             margin-bottom: 3vh;
             line-height: 1.4;
@@ -1238,6 +1237,7 @@
                 font-size: 7.5vw;
                 margin-bottom: 2vh;
                 line-height: 1.3;
+                letter-spacing: normal;
             }
 
             .perfect-fit-content p {
@@ -1302,10 +1302,11 @@
 
         .services-faq-title {
             font-size: 3.5vw;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 1.3;
             margin-bottom: 2vh;
             font-family: 'Lexend', sans-serif;
+            text-align: center;
         }
 
         .services-faq-subtitle {
@@ -1313,6 +1314,9 @@
             font-weight: 400;
             color: #E0E0E0;
             font-family: 'Lexend', sans-serif;
+            width: 70vh;
+            text-align: center;
+            padding-left: 15vh;
         }
 
         .services-faq-accordion {
@@ -1523,7 +1527,7 @@
 
         .book-strategy-cta-title {
             font-size: 4vw;
-            font-weight: 700;
+            font-weight: 600;
             color: white;
             margin-bottom: 4vh;
             line-height: 1.2;
@@ -1681,6 +1685,8 @@
         .footer-section.cta h2 {
             font-size: 2vw;
             color: #017AFF;
+            text-align: center;
+            font-weight: normal;
         }
 
         .footer-section.cta .button {
@@ -1847,8 +1853,9 @@
 
         <section class="services-hero">
             <h1>
-                Books Don't Write Themselves,
-                <span class="highlight">But We Can Write Yours</span>
+                Books Don't Write
+                Themselves, <span class="highlight">But We
+                    Can Write Yours</span>
             </h1>
             <p class="tagline">Book Ghostwriting Services Transforming Ideas Into Bestsellers since 2020</p>
             <button class="cta-button" onclick="window.location.href='/contact'">
@@ -1880,7 +1887,7 @@
             <h2>What Goes Into a Book?</h2>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="number">04</div>
+                    <div class="number">04+</div>
                     <div class="description">Months of Content<br />Creation</div>
                 </div>
                 <div class="stat-card">
@@ -1970,10 +1977,7 @@
         <section class="perfect-fit-section">
             <div class="perfect-fit-container">
                 <div class="perfect-fit-content">
-                    <h2>
-                        Not Seeing the Perfect Fit?
-                        <span class="highlight">We've Got You.</span>
-                    </h2>
+                    <h2>Not Seeing the Perfect<br>Fit? <span class="highlight">We've Got You.</span></h2>
                     <p>If your book falls within our listed categories, great! We have a proven process to bring it to
                         life. However, as our services are fully customisable, we would be delighted to welcome the
                         challenge and take on this voyage together.</p>

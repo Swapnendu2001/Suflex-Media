@@ -582,15 +582,11 @@ async function confirmDeleteBlog() {
         confirmDeleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Deleting...';
         confirmDeleteBtn.disabled = true;
 
-        const response = await fetch('/delete_blog', {
-            method: 'POST',
+        const response = await fetch(`/api/blogs/${currentDeleteBlogId}`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                blog_id: currentDeleteBlogId,
-                redirect_url: redirectUrl || null
-            })
+            }
         });
 
         confirmDeleteBtn.innerHTML = originalText;
@@ -1965,12 +1961,17 @@ async function handleUpdateBlog() {
         updateBlogBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Updating...';
         updateBlogBtn.disabled = true;
 
-        const response = await fetch('/admin_save_blog', {
-            method: 'POST',
+        const response = await fetch(`/api/blogs/${currentEditingBlog.id}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify({
+                blog: data,
+                status: data.status,
+                category: data.blogCategory,
+                keyword: data.labels
+            })
         });
 
         updateBlogBtn.innerHTML = originalText;
@@ -1992,8 +1993,9 @@ async function handleUpdateBlog() {
 
         if (result.status === 'success') {
             let message = 'Blog updated successfully!';
-            if (result.url) {
-                message += `\n\nBlog URL: ${result.url}`;
+            if (result.blog && result.blog.slug) {
+                const blogUrl = `${window.location.origin}/blog/${result.blog.slug}`;
+                message += `\n\nBlog URL: ${blogUrl}`;
             }
             showModal('Success', message, 'success');
 

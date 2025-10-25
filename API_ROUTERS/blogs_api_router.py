@@ -412,6 +412,38 @@ async def admin_save_blog(request: Request):
         
         try:
             if reason == 'update' and blog_id:
+                # Check if the blog exists and is not deleted
+                existing_blog = await conn.fetchrow(
+                    "SELECT id, slug FROM blogs WHERE id = $1 AND isdeleted = FALSE",
+                    blog_id
+                )
+                
+                if not existing_blog:
+                    raise HTTPException(status_code=404, detail="Blog not found for update")
+                
+                # Check if the slug is being changed and if the new slug already exists
+                existing_slug = existing_blog['slug']
+                if slug != existing_slug:
+                    # Check if the new slug already exists for a different blog
+                    existing_slug_record = await conn.fetchrow(
+                        "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
+                        slug,
+                        blog_id
+                    )
+                    
+                    if existing_slug_record:
+                        original_slug = slug
+                        counter = 1
+                        while existing_slug_record:
+                            slug = f"{original_slug}-{counter}"
+                            existing_slug_record = await conn.fetchrow(
+                                "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
+                                slug,
+                                blog_id
+                            )
+                            counter += 1
+                        print(f"✓ Generated unique slug: {slug}")
+                
                 # Update existing blog
                 updated_blog = await conn.fetchrow(
                     """
@@ -449,9 +481,9 @@ async def admin_save_blog(request: Request):
                     "url": blog_url
                 }
             else:
-                # Create new blog
+                # Create new blog - check for existing slug to ensure uniqueness
                 existing_blog = await conn.fetchrow(
-                    "SELECT id FROM blogs WHERE slug = $1",
+                    "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE",
                     slug
                 )
                 
@@ -461,7 +493,7 @@ async def admin_save_blog(request: Request):
                     while existing_blog:
                         slug = f"{original_slug}-{counter}"
                         existing_blog = await conn.fetchrow(
-                            "SELECT id FROM blogs WHERE slug = $1",
+                            "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE",
                             slug
                         )
                         counter += 1
