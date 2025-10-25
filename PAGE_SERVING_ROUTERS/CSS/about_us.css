@@ -47,7 +47,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 1.25vw;
+    gap: 3.25vw;
 }
 
 .nav-links a {
@@ -620,7 +620,7 @@ body {
     background-image: url('/icons/Doodles.png');
     background-size: cover;
     background-position: center;
-    opacity: 0.3;
+    opacity: 0.5;
     z-index: 0;
 }
 
@@ -1275,6 +1275,7 @@ body {
 .footer-section h3 {
     font-size: 1.5vw;
     margin-bottom: 1vh;
+    font-weight: normal;
 }
 
 .footer-section a,
@@ -1292,6 +1293,8 @@ body {
 .footer-section.cta h2 {
     font-size: 2vw;
     color: #017AFF;
+    text-align: center;
+    font-weight: normal;
 }
 
 .footer-section.cta .button {
