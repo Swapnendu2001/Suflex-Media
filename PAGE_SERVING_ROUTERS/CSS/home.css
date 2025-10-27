@@ -291,7 +291,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 80%;
+    height: 90%;
     background: #017AFF;
     border-radius: 3vh;
     text-decoration: none;
@@ -323,7 +323,7 @@ body {
 
 .cta-icon img {
     width: 2.0vh;
-    height: 2.0vh;
+    height: 1.5vh;
 }
 
 .trusted-logos {
@@ -533,6 +533,7 @@ body {
         grid-template-rows: auto auto auto auto 18vh 18vh 18vh 18vh;
         gap: 2vh;
         padding: 0 5vw;
+        margin-top: 5vh;
     }
 
     .hero-section h1 {
@@ -548,22 +549,31 @@ body {
     .hero-section .sub-heading {
         position: static;
         width: 100%;
-        margin: 2vh 0;
+        margin: -1vh 0vw 2vh 0vw;
         font-size: 4vw;
         grid-column: 1 / 3;
     }
 
+    .hero-section .cta-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 65vw;
+    height: 5vh;
+    background: #017AFF;
+    border-radius: 3vh;
+    text-decoration: none;
+}
+
     .cta-container {
         position: static;
         width: 100%;
-        margin: 3vh 0;
-        height: 9vh;
+        height: 2vh;
         grid-column: 1 / 3;
     }
 
     .cta-inner {
-        gap: 3vw;
-        margin-left: 10vw;
+        gap: 2vw;
     }
 
     .cta-text {
@@ -571,11 +581,10 @@ body {
     }
 
     .cta-icon {
-        width: 4vh;
-        height: 4vh;
+        width: 3vh;
+        height: 3vh;
         margin-top: 1vh;
         margin-bottom: 1vh;
-        margin-left: 2vh;
     }
 
     .cta-icon img {
@@ -736,6 +745,48 @@ body {
     .side-card-right {
         grid-row: 7 / 9;
         grid-column: 2 / 3;
+    }
+    
+    /* Mobile-only icons for hero section */
+    .mobile-hero-icons {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .mobile-icon {
+        position: absolute;
+        max-width: 15vw;
+        height: auto;
+    }
+    
+    .bulb-icon {
+        top: -3vh;
+        left: 2vh;
+        width: 11vw;
+    }
+    
+    .curved-arrow-icon {
+        top: 22vh;
+        right: 2vw;
+        width: 14vw;
+        transform: rotate(20deg);
+    }
+    
+    .doodle-arrow-icon {
+        bottom: 72vh;
+        left: 4vh;
+        width: 10vw;
+    }
+    
+    .doodle-icon {
+        top: 3.5vh;
+        right: 3.5vh;
+        width: 5vw;
     }
 }
 
@@ -2436,5 +2487,12 @@ body {
     .copyright {
         font-size: 3.5vw;
         text-align: center;
+    }
+}
+
+/* Hide mobile icons on desktop */
+@media (min-width: 769px) {
+    .mobile-hero-icons {
+        display: none;
     }
 }
