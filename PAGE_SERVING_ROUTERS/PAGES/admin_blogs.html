@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigation Dashboard</title>
+    <title>Admin Blogs • Suflex Media | Manage Blog Content</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -774,6 +774,18 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script>
+        const originalTitle = "Admin Blogs • Suflex Media | Manage Blog Content";
+        const awayTitle = "Missing you already! 👋 - Suflex Media";
+        
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = awayTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+    </script>
     <script src="/js/admin_blogs.js"></script>
 </body>
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
+    <title>404 - Page Not Found | Suflex Media</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/404.css">
 </head>
@@ -37,6 +37,18 @@
         </div>
     </section>
 
+    <script>
+        const originalTitle = "404 - Page Not Found | Suflex Media";
+        const awayTitle = "Missing you already! 👋 - Suflex Media";
+        
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = awayTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+    </script>
     <script src="/js/404.js"></script>
 </body>
 

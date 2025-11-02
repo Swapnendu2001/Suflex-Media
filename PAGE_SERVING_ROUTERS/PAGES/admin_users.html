@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Users Management • Suflex Media</title>
+  <title>Admin Users Management • Suflex Media | Manage User Accounts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
@@ -113,6 +113,18 @@
 
   <div class="toast" id="toast" aria-live="polite"></div>
 
+  <script>
+    const originalTitle = "Admin Users Management • Suflex Media | Manage User Accounts";
+    const awayTitle = "Missing you already! 👋 - Suflex Media";
+    
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            document.title = awayTitle;
+        } else {
+            document.title = originalTitle;
+        }
+    });
+  </script>
   <script src="/js/admin_users.js"></script>
 </body>
 
