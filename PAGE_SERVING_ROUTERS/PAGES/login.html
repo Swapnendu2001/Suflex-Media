@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login • Suflex Media</title>
+  <title>Login • Suflex Media | Access Admin Dashboard</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +36,18 @@
     </div>
   </div>
   <div class="toast" id="toast" aria-live="polite"></div>
+  <script>
+    const originalTitle = "Login • Suflex Media | Access Admin Dashboard";
+    const awayTitle = "Missing you already! 👋 - Suflex Media";
+    
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            document.title = awayTitle;
+        } else {
+            document.title = originalTitle;
+        }
+    });
+  </script>
   <script src="/js/login.js"></script>
 </body>
 
