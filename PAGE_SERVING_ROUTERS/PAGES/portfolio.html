@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Suflex Media</title>
+    <title>Portfolio - Suflex Media | Success Stories & Case Studies</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
@@ -267,6 +267,18 @@
         </div>
     </footer>
 
+    <script>
+        const originalTitle = "Portfolio - Suflex Media | Success Stories & Case Studies";
+        const awayTitle = "Missing you already! 👋 - Suflex Media";
+        
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = awayTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+    </script>
     <script src="/js/portfolio.js"></script>
 
 </body>
