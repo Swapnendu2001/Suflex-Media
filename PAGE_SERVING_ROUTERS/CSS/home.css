@@ -2331,10 +2331,11 @@ body {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease-in-out, padding-top 0.4s ease-in-out;
-    color: #6a5acd;
+    color: #363049;
     font-size: 1.2vw;
-    padding-left: 3vw;
+    padding-left: 1.8vw;
     padding-top: 0;
+    opacity: 0.7;
 }
 
 .faq-item.active .faq-answer {
