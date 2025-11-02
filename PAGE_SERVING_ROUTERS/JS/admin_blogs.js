@@ -652,17 +652,17 @@ document.addEventListener('keydown', function (event) {
 
 let currentBlogUrl = '';
 
-function showBlogUrl(blogId, blogTitle) {
-    blogId = blogId.replace("[quotetation_here]", "'");
+function showBlogUrl(blogSlug, blogTitle) {
+    blogSlug = blogSlug.replace("[quotetation_here]", "'");
     blogTitle = blogTitle.replace("[quotetation_here]", "'");
 
-    if (!blogId) {
-        showModal('Error', 'Blog ID not found', 'error');
+    if (!blogSlug) {
+        showModal('Error', 'Blog slug not found', 'error');
         return;
     }
 
     const baseUrl = window.location.origin;
-    const blogUrl = `${baseUrl}/blog/${blogId}`;
+    const blogUrl = `${baseUrl}/blog/${blogSlug}`;
     currentBlogUrl = blogUrl;
 
     const urlModal = document.getElementById('blogUrlModal');
@@ -1590,15 +1590,31 @@ async function fetchBlogs() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        console.log('✓ API Response:', result);
-        console.log(`✓ Retrieved ${result.count || 0} blogs`);
+        console.log('✓ API Response received');
+        console.log(`✓ Total blogs in database: ${result.count || 0}`);
         
         blogsLoading.classList.add('hidden');
-        if (result.status === 'success' && result.blogs) {
+        if (result.status === 'success' && result.blogs && Array.isArray(result.blogs)) {
             allFetchedBlogs = result.blogs;
-            console.log('✓ Sample blog structure:', result.blogs[0]);
+            console.log(`✓ Stored ${allFetchedBlogs.length} blogs in allFetchedBlogs array`);
+            
+            if (result.blogs.length > 0) {
+                console.log('✓ First blog structure:', {
+                    id: result.blogs[0].id,
+                    status: result.blogs[0].status,
+                    type: result.blogs[0].type,
+                    category: result.blogs[0].category,
+                    blogType: typeof result.blogs[0].blog,
+                    blogSample: typeof result.blogs[0].blog === 'string' ? result.blogs[0].blog.substring(0, 100) + '...' : result.blogs[0].blog
+                });
+            }
+            
+            console.log(`📊 Blogs per page: ${blogsPerPage}`);
+            console.log(`📊 Expected pages: ${Math.ceil(result.blogs.length / blogsPerPage)}`);
+            
             applyFiltersAndRender(1);
         } else {
+            console.warn('⚠️ No blogs returned from API or invalid response format');
             allFetchedBlogs = [];
             applyFiltersAndRender(1);
         }
@@ -1610,28 +1626,56 @@ async function fetchBlogs() {
 }
 
 function applyFiltersAndRender(page = 1) {
-    const filterTitleValue = document.getElementById('filterTitle').value.trim().toLowerCase();
-    const filterCategoryValue = document.getElementById('filterCategory').value.trim().toLowerCase();
-    const filterContentTypeValue = document.getElementById('filterContentType').value;
+    const filterTitleInput = document.getElementById('filterTitle');
+    const filterCategoryInput = document.getElementById('filterCategory');
+    const filterContentTypeInput = document.getElementById('filterContentType');
+    
+    const filterTitleValue = filterTitleInput ? filterTitleInput.value.trim().toLowerCase() : '';
+    const filterCategoryValue = filterCategoryInput ? filterCategoryInput.value.trim().toLowerCase() : '';
+    const filterContentTypeValue = filterContentTypeInput ? filterContentTypeInput.value : 'ALL';
 
-    console.log('🔍 Applying filters - Title:', filterTitleValue, 'Category:', filterCategoryValue, 'Type:', filterContentTypeValue);
+    console.log('🔍 Applying filters:');
+    console.log(`  - Title filter: "${filterTitleValue}" (${filterTitleValue ? 'ACTIVE' : 'INACTIVE'})`);
+    console.log(`  - Category filter: "${filterCategoryValue}" (${filterCategoryValue ? 'ACTIVE' : 'INACTIVE'})`);
+    console.log(`  - Type filter: "${filterContentTypeValue}"`);
+    console.log(`  - Total blogs before filtering: ${allFetchedBlogs.length}`);
 
     const filteredBlogs = allFetchedBlogs.filter(blog => {
-        const blogData = blog.blog || {};
-        const title = (blogData.blogTitle || '').toLowerCase();
+        if (!blog) {
+            console.warn('⚠️ Null blog encountered in filter');
+            return false;
+        }
+
+        let blogData = {};
+        try {
+            if (typeof blog.blog === 'string') {
+                blogData = JSON.parse(blog.blog);
+            } else if (typeof blog.blog === 'object' && blog.blog !== null) {
+                blogData = blog.blog;
+            }
+        } catch (e) {
+            console.error('Failed to parse blog.blog in filter:', e);
+            blogData = {};
+        }
+
+        const title = (blogData.blogTitle || blog.title || '').toLowerCase();
         const category = (blog.category || blogData.blogCategory || '').toLowerCase();
-        const type = blog.type || 'BLOG'; // Default to 'BLOG' if type is not set
+        const type = blog.type || 'BLOG';
 
         const titleMatch = !filterTitleValue || title.includes(filterTitleValue);
         const categoryMatch = !filterCategoryValue || category.includes(filterCategoryValue);
-        
-        // Check type filter - if filterContentTypeValue is 'ALL', show all; otherwise match type
         const typeMatch = filterContentTypeValue === 'ALL' || type === filterContentTypeValue;
 
-        return titleMatch && categoryMatch && typeMatch;
+        const matches = titleMatch && categoryMatch && typeMatch;
+        
+        if (filterTitleValue || filterCategoryValue || filterContentTypeValue !== 'ALL') {
+            console.log(`  Blog "${title}": titleMatch=${titleMatch}, categoryMatch=${categoryMatch}, typeMatch=${typeMatch}, result=${matches}`);
+        }
+
+        return matches;
     });
 
-    console.log(`✓ Filtered ${filteredBlogs.length} blogs from ${allFetchedBlogs.length} total`);
+    console.log(`✅ Filtered result: ${filteredBlogs.length} blogs from ${allFetchedBlogs.length} total`);
 
     const noBlogsFound = document.getElementById('noBlogsFound');
     const blogsList = document.getElementById('blogsList');
@@ -1647,13 +1691,20 @@ function applyFiltersAndRender(page = 1) {
         const endIndex = startIndex + blogsPerPage;
         const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex);
 
+        console.log(`📄 Pagination info:`);
+        console.log(`  - Current page: ${currentPage} of ${totalPages}`);
+        console.log(`  - Showing blogs ${startIndex + 1}-${Math.min(endIndex, filteredBlogs.length)} of ${filteredBlogs.length}`);
+        console.log(`  - Displaying ${paginatedBlogs.length} blogs on this page`);
+
         displayBlogs(paginatedBlogs);
 
         if (totalPages > 1) {
             updatePaginationControls();
             paginationControls.classList.remove('hidden');
+            console.log(`✓ Pagination controls shown (${totalPages} pages total)`);
         } else {
             paginationControls.classList.add('hidden');
+            console.log(`✓ Single page - pagination controls hidden`);
         }
     } else {
         blogsList.innerHTML = '';
@@ -1668,15 +1719,40 @@ function displayBlogs(blogs) {
 
     console.log('📄 Displaying', blogs.length, 'blogs');
 
-    blogsList.innerHTML = blogs.map(blog => {
-        const blogData = blog.blog || {};
-        const title = blogData.blogTitle || 'Untitled';
-        const date = blogData.blogDate || blog.date;
+    blogsList.innerHTML = blogs.map((blog, index) => {
+        let blogData = {};
+        
+        try {
+            if (typeof blog.blog === 'string') {
+                blogData = JSON.parse(blog.blog);
+            } else if (typeof blog.blog === 'object' && blog.blog !== null) {
+                blogData = blog.blog;
+            }
+        } catch (e) {
+            console.error(`Failed to parse blog.blog for blog ${index + 1}:`, e);
+            blogData = {};
+        }
+
+        console.log(`📝 Blog ${index + 1}:`, {
+            id: blog.id,
+            status: blog.status,
+            type: blog.type,
+            category: blog.category,
+            date: blog.date,
+            blogDataType: typeof blog.blog,
+            parsedBlogData: blogData
+        });
+
+        const title = blogData.blogTitle || blog.title || 'Untitled';
+        const date = blogData.blogDate || blog.date || new Date().toISOString();
         const status = blog.status || 'draft';
         const mainImageUrl = blogData.mainImageUrl || '';
-        const mainImageAlt = blogData.mainImageAlt || '';
-        const category = blog.category || blogData.blogCategory || '';
+        const mainImageAlt = blogData.mainImageAlt || title;
+        const category = blog.category || blogData.blogCategory || 'Uncategorized';
         const type = blog.type || 'BLOG';
+        const slug = blog.slug || '';
+
+        console.log(`  Title: "${title}", Slug: "${slug}", Date: "${date}", Status: "${status}", Type: "${type}", Category: "${category}"`);
 
         return `
             <div class="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
@@ -1714,7 +1790,7 @@ function displayBlogs(blogs) {
                             <p>Edit</p>
                         </div>
                     </button>
-                    <button class="form-button text-xs px-4 py-2 min-w-[60px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="showBlogUrl('${blog.id.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}')">
+                    <button class="form-button text-xs px-4 py-2 min-w-[60px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="showBlogUrl('${slug.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}')">
                         <div class="flex items-center gap-2">
                             <i data-lucide="external-link" class="w-3 h-3"></i>
                             <p>URL</p>
@@ -1788,10 +1864,21 @@ async function editBlog(blogId) {
         isEditing = true;
         populateEditForm(blog);
         switchToEditMode();
-        const addBlogsTab = Array.from(document.querySelectorAll('#navbarTabs .tab-button')).find(btn => btn.textContent.includes('Add Blogs'));
-        if (addBlogsTab) {
-            addBlogsTab.click();
+        
+        const navbarTabs = document.querySelectorAll('#navbarTabs .tab-button');
+        const createBlogTab = Array.from(navbarTabs).find(btn => {
+            const text = btn.textContent.trim();
+            return text.includes('Create Blog') || text.includes('Add Blog');
+        });
+        
+        if (createBlogTab) {
+            console.log('✓ Clicking Create Blog tab');
+            createBlogTab.click();
+        } else {
+            console.warn('⚠️ Create Blog tab not found, available tabs:', Array.from(navbarTabs).map(t => t.textContent.trim()));
+            showContentSection('Add Blogs');
         }
+        
         isEditing = false;
     } else {
         showModal('Error', 'Blog not found in the list. Please refresh.', 'error');
@@ -1800,7 +1887,18 @@ async function editBlog(blogId) {
 
 function populateEditForm(blog) {
     currentEditingBlog = blog;
-    const blogData = blog.blog || {};
+    
+    let blogData = {};
+    try {
+        if (typeof blog.blog === 'string') {
+            blogData = JSON.parse(blog.blog);
+        } else if (typeof blog.blog === 'object' && blog.blog !== null) {
+            blogData = blog.blog;
+        }
+    } catch (e) {
+        console.error('Failed to parse blog.blog in populateEditForm:', e);
+        blogData = {};
+    }
     
     console.log('📝 Populating form with blog data:', blogData);
 
@@ -2044,93 +2142,66 @@ document.addEventListener('DOMContentLoaded', function () {
         addBlogForm.addEventListener('submit', handleFormSubmit);
     }
 
-    // Initialize toggle switch functionality
     const blogTypeBtn = document.getElementById('blogTypeBtn');
     const caseStudyTypeBtn = document.getElementById('caseStudyTypeBtn');
     const contentTypeInput = document.getElementById('contentType');
 
     if (blogTypeBtn && caseStudyTypeBtn && contentTypeInput) {
+        const toggleContainer = blogTypeBtn.closest('.toggle-switch-buttons');
+
+        function updateTogglePosition(activeBtn, inactiveBtn, index) {
+            activeBtn.classList.add('active');
+            inactiveBtn.classList.remove('active');
+            
+            if (toggleContainer) {
+                toggleContainer.style.setProperty('--active-index', index.toString());
+            }
+        }
+
         blogTypeBtn.addEventListener('click', function() {
-            blogTypeBtn.classList.add('active');
-            blogTypeBtn.classList.remove('bg-white/10', 'text-white');
-            blogTypeBtn.classList.add('bg-white', 'text-black');
-            
-            caseStudyTypeBtn.classList.remove('active');
-            caseStudyTypeBtn.classList.add('bg-white/10', 'text-white');
-            caseStudyTypeBtn.classList.remove('bg-white', 'text-black');
-            
+            updateTogglePosition(blogTypeBtn, caseStudyTypeBtn, 0);
             contentTypeInput.value = 'BLOG';
         });
 
         caseStudyTypeBtn.addEventListener('click', function() {
-            caseStudyTypeBtn.classList.add('active');
-            caseStudyTypeBtn.classList.remove('bg-white/10', 'text-white');
-            caseStudyTypeBtn.classList.add('bg-white', 'text-black');
-            
-            blogTypeBtn.classList.remove('active');
-            blogTypeBtn.classList.add('bg-white/10', 'text-white');
-            blogTypeBtn.classList.remove('bg-white', 'text-black');
-            
+            updateTogglePosition(caseStudyTypeBtn, blogTypeBtn, 1);
             contentTypeInput.value = 'CASE STUDY';
         });
     }
     
-    // Initialize filter toggle switch functionality
     const filterBlogTypeBtn = document.getElementById('filterBlogTypeBtn');
     const filterBlogsTypeBtn = document.getElementById('filterBlogsTypeBtn');
     const filterCaseStudiesTypeBtn = document.getElementById('filterCaseStudiesTypeBtn');
     const filterContentTypeInput = document.getElementById('filterContentType');
 
     if (filterBlogTypeBtn && filterBlogsTypeBtn && filterCaseStudiesTypeBtn && filterContentTypeInput) {
+        const filterToggleContainer = filterBlogTypeBtn.closest('.toggle-switch-buttons');
+
+        function updateFilterTogglePosition(activeBtn, index, ...inactiveBtns) {
+            activeBtn.classList.add('active');
+            inactiveBtns.forEach(btn => btn.classList.remove('active'));
+            
+            if (filterToggleContainer) {
+                filterToggleContainer.style.setProperty('--active-index', index.toString());
+            }
+        }
+
         filterBlogTypeBtn.addEventListener('click', function() {
-            filterBlogTypeBtn.classList.add('active');
-            filterBlogTypeBtn.classList.remove('bg-white/10', 'text-white');
-            filterBlogTypeBtn.classList.add('bg-white', 'text-black');
-            
-            filterBlogsTypeBtn.classList.remove('active');
-            filterBlogsTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterBlogsTypeBtn.classList.remove('bg-white', 'text-black');
-            
-            filterCaseStudiesTypeBtn.classList.remove('active');
-            filterCaseStudiesTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterCaseStudiesTypeBtn.classList.remove('bg-white', 'text-black');
-            
+            updateFilterTogglePosition(filterBlogTypeBtn, 0, filterBlogsTypeBtn, filterCaseStudiesTypeBtn);
             filterContentTypeInput.value = 'ALL';
-            applyFiltersAndRender(1); // Re-apply filters
+            applyFiltersAndRender(1);
         });
 
         filterBlogsTypeBtn.addEventListener('click', function() {
-            filterBlogsTypeBtn.classList.add('active');
-            filterBlogsTypeBtn.classList.remove('bg-white/10', 'text-white');
-            filterBlogsTypeBtn.classList.add('bg-white', 'text-black');
-            
-            filterBlogTypeBtn.classList.remove('active');
-            filterBlogTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterBlogTypeBtn.classList.remove('bg-white', 'text-black');
-            
-            filterCaseStudiesTypeBtn.classList.remove('active');
-            filterCaseStudiesTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterCaseStudiesTypeBtn.classList.remove('bg-white', 'text-black');
-            
+            updateFilterTogglePosition(filterBlogsTypeBtn, 1, filterBlogTypeBtn, filterCaseStudiesTypeBtn);
             filterContentTypeInput.value = 'BLOG';
-            applyFiltersAndRender(1); // Re-apply filters
+            applyFiltersAndRender(1);
         });
 
         filterCaseStudiesTypeBtn.addEventListener('click', function() {
-            filterCaseStudiesTypeBtn.classList.add('active');
-            filterCaseStudiesTypeBtn.classList.remove('bg-white/10', 'text-white');
-            filterCaseStudiesTypeBtn.classList.add('bg-white', 'text-black');
-            
-            filterBlogTypeBtn.classList.remove('active');
-            filterBlogTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterBlogTypeBtn.classList.remove('bg-white', 'text-black');
-            
-            filterBlogsTypeBtn.classList.remove('active');
-            filterBlogsTypeBtn.classList.add('bg-white/10', 'text-white');
-            filterBlogsTypeBtn.classList.remove('bg-white', 'text-black');
-            
+            updateFilterTogglePosition(filterCaseStudiesTypeBtn, 2, filterBlogTypeBtn, filterBlogsTypeBtn);
             filterContentTypeInput.value = 'CASE STUDY';
-            applyFiltersAndRender(1); // Re-apply filters
+            applyFiltersAndRender(1);
         });
     }
 

@@ -149,7 +149,7 @@
             <div class="right-section">
                 <section id="addBlogs" class="content-section active">
                     <div class="form-container">
-                        <h2 class="section-title text-center">Add New Blog</h2>
+                        <h2 class="section-title text-center">Add New Blog/Case Study</h2>
                         <form id="addBlogForm">
 
                             <div
@@ -162,11 +162,11 @@
                                 <div class="form-row">
                                     <div class="form-item">
                                         <div class="toggle-switch-container w-full">
-                                            <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5">
-                                                <button type="button" id="blogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md bg-white text-black transition-colors active" data-type="BLOG">
+                                            <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5 gap-1 btn-count-2" style="--active-index: 0;">
+                                                <button type="button" id="blogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md transition-all duration-300 active" data-type="BLOG">
                                                     BLOG
                                                 </button>
-                                                <button type="button" id="caseStudyTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="CASE STUDY">
+                                                <button type="button" id="caseStudyTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md transition-all duration-300" data-type="CASE STUDY">
                                                     CASE STUDY
                                                 </button>
                                             </div>
@@ -473,14 +473,14 @@
                                     <label class="form-label" for="filterType"><i data-lucide="tag"
                                             class="w-4 h-4 inline mr-2"></i>Filter by Type</label>
                                     <div class="toggle-switch-container w-full">
-                                        <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5">
-                                            <button type="button" id="filterBlogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md bg-white text-black transition-colors active" data-type="ALL">
+                                        <div class="toggle-switch-buttons flex border border-white/20 rounded-lg p-1 bg-white/5 gap-1 btn-count-3" style="--active-index: 0;">
+                                            <button type="button" id="filterBlogTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md transition-all duration-300 active" data-type="ALL">
                                                 ALL
                                             </button>
-                                            <button type="button" id="filterBlogsTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="BLOG">
+                                            <button type="button" id="filterBlogsTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md transition-all duration-300" data-type="BLOG">
                                                 BLOGS
                                             </button>
-                                            <button type="button" id="filterCaseStudiesTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md text-white transition-colors" data-type="CASE STUDY">
+                                            <button type="button" id="filterCaseStudiesTypeBtn" class="toggle-btn flex-1 py-2 px-4 text-center rounded-md transition-all duration-300" data-type="CASE STUDY">
                                                 CASE STUDIES
                                             </button>
                                         </div>
@@ -496,7 +496,7 @@
 
                             <div id="noBlogsFound" class="text-center py-8 hidden">
                                 <i data-lucide="file-x" class="w-12 h-12 mx-auto mb-4 text-white/40"></i>
-                                <h3 class="text-lg font-semibold mb-2 text-white/80">No blogs found</h3>
+                                <h3 class="text-lg font-semibold mb-2 text-white/80">Nothing Was Found</h3>
                                 <p class="text-white/60">Try adjusting your search terms or check back later.</p>
                             </div>
 
