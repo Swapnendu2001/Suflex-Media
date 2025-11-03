@@ -53,8 +53,17 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #000;
+    color: #808080;
     font-size: 1.25vw;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #000;
+}
+
+.nav-links a.active {
+    color: #000;
 }
 
 .contact-us {
@@ -164,6 +173,16 @@ body {
         padding: 2vh 0 !important;
         width: 80% !important;
         text-align: center !important;
+        color: #808080 !important;
+        transition: color 0.3s ease !important;
+    }
+
+    .nav-links a:hover {
+        color: #000 !important;
+    }
+
+    .nav-links a.active {
+        color: #000 !important;
     }
 
     .nav-links .contact-us {
@@ -228,6 +247,8 @@ body {
     font-family: 'Lexend', sans-serif;
     overflow-x: hidden;
     box-sizing: border-box;
+    scale: 0.82;
+    margin-top: -20vh;
 }
 
 .hero-content {
@@ -331,7 +352,7 @@ body {
     width: 60vw;
     height: 8vh;
     left: calc(50% - 30vw);
-    top: 75vh;
+    top: 72vh;
     overflow: hidden;
     pointer-events: none;
 }
@@ -425,18 +446,18 @@ body {
     position: absolute;
     display: flex;
     flex-direction: row;
-    gap: 1.13vw;
+    gap: 14vw;
     width: 44vw;
     height: 20vh;
     left: 28vw;
-    top: 88vh;
+    top: 84vh;
 }
 
 .stat-box-left,
 .stat-box-right {
     box-sizing: border-box;
-    width: 21.435vw;
-    height: 20vh;
+    width: 15vw;
+    height: 27vh;
     background: #2D91FF;
     box-shadow: 0.16vw -0.25vh 0.28vw rgba(0, 0, 0, 0.25);
     border-radius: 2.98vh;
@@ -450,6 +471,7 @@ body {
 .stat-inner-right {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1vw;
     width: 100%;
 }
@@ -460,27 +482,32 @@ body {
 }
 
 .stat-icon-left {
-    width: 8vw;
-    height: 11vh;
-    background: url('/icons/brand-asset-management.png') no-repeat center;
-    background-size: contain;
+    width: 14vw;
+    height: auto;
+    object-fit: contain;
 }
 
 .stat-text-left,
 .stat-text-right {
     font-family: 'Lexend', sans-serif;
     font-weight: 500;
-    font-size: 1.2vw;
+    font-size: 1.5vw;
     line-height: 1.2;
     color: #FFFFFF;
-    text-align: center;
+    text-align: left;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2.5vw;
+    font-weight: 600;
 }
 
 .stat-icon-right {
-    width: 16vh;
-    height: 8vh;
-    background: url('/icons/open-book.png') no-repeat center;
-    background-size: contain;
+    width: 14vw;
+    height: auto;
+    object-fit: contain;
+    margin-left: -8vw;
 }
 
 .center-main-card {
@@ -525,6 +552,7 @@ body {
         min-height: 155vh;
         margin-top: -10vh;
         overflow-y: hidden;
+        scale: 1;
     }
 
     .hero-content {
@@ -652,6 +680,7 @@ body {
         margin: 0;
         grid-row: 5 / 6;
         grid-column: 2 / 3;
+        background: #2D91FF;
     }
 
     .stat-box-right {
@@ -661,30 +690,51 @@ body {
         margin: 0;
         grid-row: 6 / 7;
         grid-column: 2 / 3;
+        background: #2D91FF;
     }
 
-    .stat-inner-left,
+    .stat-inner-left {
+        gap: 2vw;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+
     .stat-inner-right {
         gap: 2vw;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        text-align: center;
+        justify-content: space-between;
+        text-align: left;
     }
 
     .stat-icon-left {
-        width: 15vw;
-        height: 8vh;
+        width: 20vw;
+        height: auto;
+        object-fit: contain;
+        flex-shrink: 0;
     }
 
     .stat-icon-right {
-        width: 6vh;
-        height: 6vh;
+        width: 25vw;
+        height: auto;
+        object-fit: contain;
+        flex-shrink: 0;
     }
 
     .stat-text-left,
     .stat-text-right {
         font-size: 3.5vw;
-        text-align: center;
+        text-align: left;
+        color: #FFFFFF;
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .stat-number {
+        font-size: 5.5vw;
+        font-weight: 600;
     }
 
     .center-main-card {
@@ -851,13 +901,17 @@ body {
 .card-row-top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+    width: 85%;
+    justify-items: center;
+    gap: 1vw;
 }
 
 .card-row-bottom {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    width: 66%;
+    width: 56%;
+    justify-items: center;
+    gap: 1vw;
 }
 
 .card {
