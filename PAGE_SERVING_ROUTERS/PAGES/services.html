@@ -67,8 +67,17 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #000;
+            color: #808080;
             font-size: 1.25vw;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #000;
+        }
+
+        .nav-links a.active {
+            color: #000;
         }
 
         .contact-us {
@@ -182,6 +191,16 @@
                 padding: 2vh 0 !important;
                 width: 80% !important;
                 text-align: center !important;
+                color: #808080 !important;
+                transition: color 0.3s ease !important;
+            }
+
+            .nav-links a:hover {
+                color: #000 !important;
+            }
+
+            .nav-links a.active {
+                color: #000 !important;
             }
 
             /* Show Contact Us inside nav-links on mobile */
@@ -1812,7 +1831,7 @@
         <nav class="nav-links">
             <a href="/">Home</a>
             <a href="/about">About Us</a>
-            <a href="/services">Services</a>
+            <a href="/services" class="active">Services</a>
             <a href="/portfolio">Portfolio</a>
             <a href="/blogs">Blog</a>
             <!-- <a href="/careers">Careers</a> -->
