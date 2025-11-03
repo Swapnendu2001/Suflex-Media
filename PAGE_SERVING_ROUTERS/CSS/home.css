@@ -552,6 +552,7 @@ body {
         min-height: 155vh;
         margin-top: -10vh;
         overflow-y: hidden;
+        scale: 1;
     }
 
     .hero-content {
@@ -900,13 +901,17 @@ body {
 .card-row-top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+    width: 85%;
+    justify-items: center;
+    gap: 1vw;
 }
 
 .card-row-bottom {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    width: 66%;
+    width: 56%;
+    justify-items: center;
+    gap: 1vw;
 }
 
 .card {
