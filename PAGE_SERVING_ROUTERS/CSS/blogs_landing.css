@@ -27,7 +27,7 @@ body {
     padding: 2.25vw 4.75vw;
     background-color: #fff;
     font-family: 'Lexend', sans-serif;
-    height: 15vh;
+    height: 10vh;
     box-shadow: 0 0.68vw 4.83vw 0 #017AFF;
     gap: 0.625vw;
     top: 0;
@@ -51,8 +51,17 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #000;
+    color: #808080;
     font-size: 1.25vw;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #000;
+}
+
+.nav-links a.active {
+    color: #000;
 }
 
 .contact-us {
@@ -162,6 +171,16 @@ body {
         padding: 2vh 0 !important;
         width: 80% !important;
         text-align: center !important;
+        color: #808080 !important;
+        transition: color 0.3s ease !important;
+    }
+
+    .nav-links a:hover {
+        color: #000 !important;
+    }
+
+    .nav-links a.active {
+        color: #000 !important;
     }
 
     .nav-links .contact-us {
