@@ -1,3 +1,13 @@
+const originalTitle = "Our Services - Suflex Media | Ghostwriting, LinkedIn Branding & More";
+const awayTitle = "😢 Missing you already!";
+
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        document.title = awayTitle;
+    } else {
+        document.title = originalTitle;
+    }
+});
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
