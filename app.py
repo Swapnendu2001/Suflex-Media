@@ -8,7 +8,6 @@ from contextlib import asynccontextmanager
 from DATABASE_HANDLER import initialize_database
 from PAGE_SERVING_ROUTERS.ROUTERS.homepage_router import router as homepage_router
 from PAGE_SERVING_ROUTERS.ROUTERS.about_router import router as about_router
-from PAGE_SERVING_ROUTERS.ROUTERS.services_router import router as services_router
 from PAGE_SERVING_ROUTERS.ROUTERS.contact_router import router as contact_router
 from PAGE_SERVING_ROUTERS.ROUTERS.portfolio_router import router as portfolio_router
 from PAGE_SERVING_ROUTERS.ROUTERS.blogs_router import router as blogs_router
@@ -19,6 +18,11 @@ from PAGE_SERVING_ROUTERS.ROUTERS.admin_users_router import router as admin_user
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_blogs_router import router as admin_blogs_router
 from PAGE_SERVING_ROUTERS.ROUTERS.Blog_Creator_router import router as blog_creator_router
 from PAGE_SERVING_ROUTERS.ROUTERS.ghostwriting_router import router as ghostwriting_router
+from PAGE_SERVING_ROUTERS.ROUTERS.linkedin_branding_router import router as linkedin_branding_router
+from PAGE_SERVING_ROUTERS.ROUTERS.content_writing_router import router as content_writing_router
+from PAGE_SERVING_ROUTERS.ROUTERS.performance_marketing_router import router as performance_marketing_router
+from PAGE_SERVING_ROUTERS.ROUTERS.website_development_router import router as website_development_router
+from PAGE_SERVING_ROUTERS.ROUTERS.seo_router import router as seo_router
 from API_ROUTERS.login_api_router import router as login_api_router
 from API_ROUTERS.admin_users_api_router import router as admin_users_api_router
 from API_ROUTERS.serve_images_api_router import router as serve_images_api_router
@@ -42,7 +46,6 @@ app.mount("/fonts", StaticFiles(directory="PAGE_SERVING_ROUTERS/FONTS"), name="f
 
 app.include_router(homepage_router)
 app.include_router(about_router)
-app.include_router(services_router)
 app.include_router(contact_router)
 app.include_router(portfolio_router)
 app.include_router(blogs_router)
@@ -53,6 +56,11 @@ app.include_router(admin_users_router)
 app.include_router(admin_blogs_router)
 app.include_router(blog_creator_router)
 app.include_router(ghostwriting_router)
+app.include_router(linkedin_branding_router)
+app.include_router(content_writing_router)
+app.include_router(performance_marketing_router)
+app.include_router(website_development_router)
+app.include_router(seo_router)
 app.include_router(login_api_router)
 app.include_router(admin_users_api_router)
 app.include_router(serve_images_api_router)
