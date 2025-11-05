@@ -41,7 +41,7 @@ async def getHeader():
         z-index: 1000;
         margin: 0;
         position: relative;
-        box-shadow: 0 0.68vw 4.83vw 0 #017AFF;
+        box-shadow: 0 0.68vw 4.83vw 0 #a2a2a2;
       }
 
       .header .logo img {
@@ -368,7 +368,7 @@ async def getFooter():
         flex-direction: column;
         align-items: center;
         gap: 2vh;
-        border-top: 1px solid #ddd;
+    
         padding-top: 3vh;
         width: 100%;
       }
