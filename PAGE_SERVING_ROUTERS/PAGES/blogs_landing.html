@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/blogs_landing.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -19,10 +20,19 @@
         <nav class="nav-links">
             <a href="/">Home</a>
             <a href="/about">About Us</a>
-            <a href="/services">Services</a>
+            <div class="dropdown">
+                <span class="dropdown-toggle">Services <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                <div class="dropdown-menu">
+                    <a href="/ghostwriting">Book Writing</a>
+                    <a href="/linkedin-branding">LinkedIn Branding</a>
+                    <a href="/content-writing">Content Writing</a>
+                    <a href="/performance-marketing">Performance Marketing</a>
+                    <a href="/website-development">Website Development</a>
+                    <a href="/seo">Search Engine Optimisation</a>
+                </div>
+            </div>
             <a href="/portfolio">Portfolio</a>
-            <a href="/blogs">Blog</a>
-            <!-- <a href="/careers">Careers</a> -->
+            <a href="/blogs" class="active">Blog</a>
             <a href="/contact" class="contact-us">
                 <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
                 <span>Contact Us</span>
@@ -145,7 +155,7 @@
 
     <script>
         const originalTitle = "Blogs - Suflex Media | Insights & Strategies for Marketing Success";
-        const awayTitle = "Missing you already! 👋 - Suflex Media";
+        const awayTitle = "😢 Missing you already!";
         
         document.addEventListener("visibilitychange", function() {
             if (document.hidden) {
