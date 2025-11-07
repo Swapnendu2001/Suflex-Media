@@ -68,6 +68,7 @@ app.include_router(login_api_router)
 app.include_router(admin_users_api_router)
 app.include_router(serve_images_api_router)
 app.include_router(blogs_api_router)
+app.include_router(landing_page_router)
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: HTTPException):
