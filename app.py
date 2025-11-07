@@ -18,11 +18,12 @@ from PAGE_SERVING_ROUTERS.ROUTERS.admin_homepage_router import router as admin_h
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_users_router import router as admin_users_router
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_blogs_router import router as admin_blogs_router
 from PAGE_SERVING_ROUTERS.ROUTERS.Blog_Creator_router import router as blog_creator_router
-from PAGE_SERVING_ROUTERS.ROUTERS.ghostwriting_router import router as ghostwriting_router
+from PAGE_SERVING_ROUTERS.ROUTERS.landing_page import router as landing_page_router
 from API_ROUTERS.login_api_router import router as login_api_router
 from API_ROUTERS.admin_users_api_router import router as admin_users_api_router
 from API_ROUTERS.serve_images_api_router import router as serve_images_api_router
 from API_ROUTERS.blogs_api_router import router as blogs_api_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,7 +53,7 @@ app.include_router(admin_homepage_router)
 app.include_router(admin_users_router)
 app.include_router(admin_blogs_router)
 app.include_router(blog_creator_router)
-app.include_router(ghostwriting_router)
+app.include_router(landing_page_router)
 app.include_router(login_api_router)
 app.include_router(admin_users_api_router)
 app.include_router(serve_images_api_router)
