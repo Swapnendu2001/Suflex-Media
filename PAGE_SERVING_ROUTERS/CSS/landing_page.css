@@ -394,7 +394,7 @@ body {
     }
 
     .main-illustration {
-        max-width: 85vw !important;
+        width: 100vw !important;
         top: 2vh;
     }
 
@@ -402,9 +402,6 @@ body {
         top: 40%;
     }
 
-    .doodle {
-        display: none;
-    }
 }
 
 .hero-section {
@@ -413,14 +410,14 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 5vh 2vw;
+    padding: 5vh 1vw;
     background-color: #FFFFFF;
     overflow: hidden;
 }
 
 .hero-title {
     font-family: 'Lexend', sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: clamp(30px, 4.5vw, 61px);
     line-height: 1.25;
     text-align: center;
@@ -428,7 +425,6 @@ body {
     color: #017AFF;
     max-width: 100vw;
     margin-top: 0vh;
-    margin-bottom: vh;
 }
 
 .hero-subtitle {
@@ -490,7 +486,7 @@ body {
 .main-illustration {
     position: inherit;
     z-index: 1;
-    max-width: 68vw;
+    width: 68vw;
     height: auto;
     top: 5vh;
 }
@@ -504,6 +500,9 @@ body {
 .doodle-star {
     top: -12vh;
     left: -12vw;
+}
+.doodle-star {
+    display: none;
 }
 
 .doodle-arrow-right {
@@ -644,7 +643,10 @@ body {
     .footer {
         padding: 15vh 8vw 8vw 8vw;
     }
-
+    .main-illustration {
+        width: 100vw !important;
+        top: 5vh;
+    }
     .footer-content {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -856,5 +858,53 @@ body {
     .unique-service-text p {
         font-size: 3.2vw;
         line-height: 1.6;
+    }
+}
+
+@media (max-width: 480px) {
+    .doodle-star {
+        top: -18vh;
+        left: 1vh;
+        width: 7vw;
+    }
+    .doodle-star-2 {
+        top: -18vh;
+        left: 1vh;
+        width: 7vw;
+    }
+    .doodle-arrow-right {
+        top: -9vh;
+        left: 8vw;
+        width: 9vw;
+        transform: rotate(-30deg);
+    }
+    .doodle-arrow-left {
+        top: -25vh;
+        right: 1vh;
+        width: 9vw;
+        transform: rotate(0deg);
+    }
+    .doodle-chat {
+        top: 8vh;
+        left: 18vw;
+        width: 17vw;
+    }
+    .doodle-crown {
+        top: 8vh;
+        right: 37vw;
+        width: 11vw;
+        transform: rotate(15deg);
+    }
+    .doodle-lightning {
+        bottom: 0vh;
+        right: 17vw;
+        width: 9vw;
+        transform: rotate(5deg);
+    }
+    .doodle-spring {
+        bottom: 11vh;
+        right: 5vw;
+        width: 16vw;
+        transform: rotate(15deg);
     }
 }
