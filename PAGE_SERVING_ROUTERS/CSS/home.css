@@ -1069,7 +1069,7 @@ body {
     width: 100%;
     margin: 0 auto;
     position: relative;
-    height: 130vh;
+    min-height: 130vh;
     box-sizing: border-box;
 }
 
@@ -1193,7 +1193,6 @@ body {
         grid-template-rows: auto;
         gap: 4vh;
         max-width: 100%;
-        min-height: 325vh;
         padding: 5vh 5vw;
     }
 
@@ -1222,6 +1221,7 @@ body {
     .work-with-us-content .card img {
         border-radius: 3vw;
         margin-bottom: 2vh;
+        aspect-ratio: 1 / 1;
     }
 
     .work-with-us-content .card h4 {
