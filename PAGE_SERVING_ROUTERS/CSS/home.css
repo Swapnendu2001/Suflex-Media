@@ -741,7 +741,7 @@ body {
     .hero-content {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto auto auto auto 18vh 18vh 18vh 18vh;
+        grid-template-rows: auto 0vh 0vh 18vh 18vh 18vh 18vh;
         gap: 2vh;
         padding: 0 5vw;
         margin-top: 5vh;
@@ -758,11 +758,12 @@ body {
     }
 
     .hero-section .sub-heading {
-        position: static;
+        position: inherit;
         width: 100%;
-        margin: -1vh 0vw 2vh 0vw;
         font-size: 4vw;
         grid-column: 1 / 3;
+        top: 10vh;
+        left: 0vw;
     }
 
     .hero-section .cta-button {
@@ -777,10 +778,12 @@ body {
     }
 
     .cta-container {
-        position: static;
+        position: inherit;
         width: 100%;
         height: 2vh;
         grid-column: 1 / 3;
+        top: -19vh;
+        left: 0vw;
     }
 
     .cta-inner {
@@ -804,12 +807,13 @@ body {
     }
 
     .trusted-logos {
-        position: static;
+        position: inherit;
         width: 100%;
-        margin-top: 4vh;
         height: 10vh;
         grid-column: 1 / 3;
         overflow: hidden;
+        top: -10vh;
+        left: 0vw;
     }
 
     .carousel-track {
@@ -1014,8 +1018,8 @@ body {
     }
 
     .doodle-arrow-icon {
-        top: 13vh;
-        left: 4vh;
+        top: 20vh;
+        left: 2vh;
         width: 10vw;
     }
 
