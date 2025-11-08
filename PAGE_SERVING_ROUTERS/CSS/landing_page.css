@@ -1023,3 +1023,111 @@ body {
         padding: 3vh 1.5vw;
     }
 }
+.schedule-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10vh 5vw;
+    font-family: 'Lexend', sans-serif;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.schedule-decoration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2vw;
+    width: 100%;
+    margin-bottom: 2vh;
+}
+
+.schedule-decoration .line {
+    width: 15vw;
+    height: 1px;
+    background-color: #000;
+}
+
+.schedule-decoration .star-doodle {
+    width: 4vw;
+    height: auto;
+    max-width: 50px;
+}
+
+.schedule-heading {
+    font-weight: 600;
+    font-size: 3vw;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+    color: #000000;
+    margin-bottom: 2vh;
+}
+
+.schedule-blue-text {
+    color: #017AFF;
+    position: relative;
+    display: inline-block;
+}
+
+.scribble-line {
+    position: absolute;
+    bottom: -15%;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+
+.curved-arrow {
+    width: 10vw;
+    max-width: 100px;
+    height: auto;
+    margin-top: -1vh;
+    margin-bottom: 4vh;
+    left: -14vw;
+    top: 3vh;
+    position: inherit;
+}
+
+.calendly-widget-container {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .schedule-section {
+        padding: 8vh 8vw;
+    }
+
+    .schedule-decoration .line {
+        width: 25vw;
+    }
+
+    .schedule-decoration .star-doodle {
+        width: 8vw;
+    }
+
+    .schedule-heading {
+        font-size: 5vw;
+    }
+
+    .curved-arrow {
+        width: 15vw;
+        margin-top: 1vh;
+        margin-bottom: 3vh;
+        position: inherit;
+        left: -27vw;
+        top: -1vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .schedule-heading {
+        font-size: 5vw;
+    }
+    .scribble-line {
+        bottom: -10%;
+    }
+}
