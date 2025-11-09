@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter
+from fastapi.responses import FileResponse
 
 router = APIRouter()
-templates = Jinja2Templates(directory="PAGE_SERVING_ROUTERS/PAGES")
 
-@router.get("/landing_page", response_class=HTMLResponse)
-async def get_landing_page(request: Request):
-    return templates.TemplateResponse("landing_page.html", {"request": request})
+@router.get("/landing_page")
+async def get_landing_page():
+    return FileResponse("PAGE_SERVING_ROUTERS/PAGES/landing_page.html")
