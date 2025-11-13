@@ -41,27 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-
-            this.classList.add('active');
-
-            const filterValue = this.getAttribute('data-filter');
-
-            console.log('Filter selected:', filterValue);
-
-            const filterEvent = new CustomEvent('blogFilterChanged', {
-                detail: { filter: filterValue }
-            });
-            document.dispatchEvent(filterEvent);
-        });
-    });
-});
-
 const blogColors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
 
 const sampleBlogs = [
@@ -175,104 +154,119 @@ const sampleBlogs = [
     }
 ];
 
-let currentFilter = 'all';
-let currentPage = 1;
-const blogsPerPage = 9;
+const blogsPerPage = 3;
 
 function createBlogCard(blog) {
     return `
-            <div class="blog-card" data-category="${blog.category}" onclick="window.location.href='/blog/${blog.id}'">
-                <div class="blog-card-header">
-                    <div class="blog-dot" style="background-color: ${blogColors[blog.colorIndex % blogColors.length]}"></div>
-                    <span class="blog-read-time">${blog.readTime}</span>
-                </div>
-                <h3 class="blog-title">${blog.title}</h3>
-                <p class="blog-date">${blog.date}</p>
-                <div class="blog-footer">
-                    <p class="blog-description">${blog.description}</p>
-                    <div class="blog-arrow">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
+        <div class="blog-card" data-category="${blog.category}" onclick="window.location.href='/blog/${blog.id}'">
+            <div class="blog-card-header">
+                <div class="blog-dot" style="background-color: ${blogColors[blog.colorIndex % blogColors.length]}"></div>
+                <span class="blog-read-time">${blog.readTime}</span>
+            </div>
+            <h3 class="blog-title">${blog.title}</h3>
+            <p class="blog-date">${blog.date}</p>
+            <div class="blog-footer">
+                <p class.blog-description">${blog.description}</p>
+                <div class="blog-arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
             </div>
-        `;
+        </div>
+    `;
 }
 
-function renderBlogs(filter = 'all', page = 1) {
-    const blogsGrid = document.getElementById('blogsGrid');
-    if (!blogsGrid) return;
+function renderSection(sectionId, paginationId, blogs, page) {
+    const grid = document.getElementById(sectionId);
+    const pagination = document.getElementById(paginationId);
 
-    let filteredBlogs = sampleBlogs;
-    if (filter !== 'all') {
-        filteredBlogs = sampleBlogs.filter(blog => blog.category === filter);
-    }
+    if (!grid || !pagination) return;
 
     const startIndex = (page - 1) * blogsPerPage;
     const endIndex = startIndex + blogsPerPage;
-    const paginatedBlogs = filteredBlogs.slice(startIndex, endIndex);
+    const paginatedBlogs = blogs.slice(startIndex, endIndex);
 
-    blogsGrid.innerHTML = paginatedBlogs.map(blog => createBlogCard(blog)).join('');
-}
+    grid.innerHTML = paginatedBlogs.map(blog => createBlogCard(blog)).join('');
 
-function updatePagination(currentPage) {
-    const pageButtons = document.querySelectorAll('.page-number');
-    pageButtons.forEach(btn => {
-        const page = parseInt(btn.getAttribute('data-page'));
-        if (page === currentPage) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
+    const totalPages = Math.ceil(blogs.length / blogsPerPage);
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+
+    let paginationHTML = '';
+
+    if (totalPages <= 5) {
+        for (let i = 1; i <= totalPages; i++) {
+            paginationHTML += `<button class="page-btn page-number ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
         }
-    });
+    } else {
+        if (page > 1) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page - 1}"><</button>`;
+        }
+
+        paginationHTML += `<button class="page-btn page-number ${1 === page ? 'active' : ''}" data-page="1">1</button>`;
+
+        if (page > 3) {
+            paginationHTML += `<span class="page-dots">...</span>`;
+        }
+
+        if (page === totalPages && totalPages > 3) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page - 2}">${page - 2}</button>`;
+        }
+
+        if (page > 2) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page - 1}">${page - 1}</button>`;
+        }
+
+        if (page !== 1 && page !== totalPages) {
+            paginationHTML += `<button class="page-btn page-number active" data-page="${page}">${page}</button>`;
+        }
+
+        if (page < totalPages - 1) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page + 1}">${page + 1}</button>`;
+        }
+        
+        if (page === 1 && totalPages > 3) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page + 2}">${page + 2}</button>`;
+        }
+
+        if (page < totalPages - 2) {
+            paginationHTML += `<span class="page-dots">...</span>`;
+        }
+
+        paginationHTML += `<button class="page-btn page-number ${totalPages === page ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
+
+        if (page < totalPages) {
+            paginationHTML += `<button class="page-btn page-number" data-page="${page + 1}">></button>`;
+        }
+    }
+
+    pagination.innerHTML = paginationHTML;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    renderBlogs('all', 1);
+    const latestGossipsBlogs = sampleBlogs.slice(0, 10);
+    const editorsChoiceBlogs = sampleBlogs.slice(10, 12);
 
-    document.addEventListener('blogFilterChanged', function (e) {
-        currentFilter = e.detail.filter;
-        currentPage = 1;
-        renderBlogs(currentFilter, currentPage);
-        updatePagination(currentPage);
+    let latestGossipsPage = 1;
+    let editorsChoicePage = 1;
+
+    renderSection('latest-gossips-grid', 'latest-gossips-pagination', latestGossipsBlogs, latestGossipsPage);
+    renderSection('editors-choice-grid', 'editors-choice-pagination', editorsChoiceBlogs, editorsChoicePage);
+
+    document.getElementById('latest-gossips-pagination').addEventListener('click', function (e) {
+        if (e.target.classList.contains('page-btn')) {
+            latestGossipsPage = parseInt(e.target.dataset.page);
+            renderSection('latest-gossips-grid', 'latest-gossips-pagination', latestGossipsBlogs, latestGossipsPage);
+        }
     });
 
-    const searchInput = document.getElementById('blogSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function (e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const blogCards = document.querySelectorAll('.blog-card');
-
-            blogCards.forEach(card => {
-                const title = card.querySelector('.blog-title').textContent.toLowerCase();
-                const description = card.querySelector('.blog-description').textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    }
-
-    const pageButtons = document.querySelectorAll('.page-number');
-    pageButtons.forEach(btn => {
-        btn.addEventListener('click', function () {
-            currentPage = parseInt(this.getAttribute('data-page'));
-            renderBlogs(currentFilter, currentPage);
-            updatePagination(currentPage);
-        });
+    document.getElementById('editors-choice-pagination').addEventListener('click', function (e) {
+        if (e.target.classList.contains('page-btn')) {
+            editorsChoicePage = parseInt(e.target.dataset.page);
+            renderSection('editors-choice-grid', 'editors-choice-pagination', editorsChoiceBlogs, editorsChoicePage);
+        }
     });
-
-    const nextBtn = document.getElementById('nextPageBtn');
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function () {
-            currentPage++;
-            if (currentPage > 7) currentPage = 7;
-            renderBlogs(currentFilter, currentPage);
-            updatePagination(currentPage);
-        });
-    }
 });
