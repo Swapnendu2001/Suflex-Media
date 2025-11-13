@@ -51,59 +51,22 @@
 
     <div class="content-wrapper">
 
-        <section class="blogs-filter-section">
-            <div class="filter-heading">
-                <h1>The Latest Gossip</h1>
+        <section class="blogs-section">
+            <div class="section-heading">
+                <h1>The latest Gossips</h1>
             </div>
-            <div class="filter-buttons-container">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="linkedin-prospecting">LinkedIn Prospecting</button>
-                <button class="filter-btn" data-filter="linkedin-scraping">LinkedIn Scraping</button>
-                <button class="filter-btn" data-filter="linkedin-plans">LinkedIn Plans</button>
-                <button class="filter-btn" data-filter="sales-tools">Sales Tools</button>
-                <button class="filter-btn" data-filter="cold-email">Cold Email</button>
-                <button class="filter-btn" data-filter="linkedin-sales-navigator">LinkedIn Sales Navigator</button>
-                <button class="filter-btn" data-filter="linkedin-networking">LinkedIn Networking</button>
-                <button class="filter-btn" data-filter="linkedin-marketing">LinkedIn Marketing</button>
-                <button class="filter-btn" data-filter="linkedin-automation">LinkedIn Automation</button>
-                <button class="filter-btn" data-filter="email-deliverability">Email Deliverability</button>
-                <button class="filter-btn" data-filter="b2b-lead-generation">B2B Lead Generation Tools</button>
+            <div class="blogs-grid" id="latest-gossips-grid">
             </div>
+            <div class="pagination-container" id="latest-gossips-pagination"></div>
         </section>
 
-
-        <section class="blogs-list-section">
-            <div class="search-wrapper">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search" id="blogSearch">
-                    <svg class="search-icon" width="18" height="18" viewBox="0 0 20 20" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </div>
+        <section class="blogs-section">
+            <div class="section-heading">
+                <h1>Editor's choice</h1>
             </div>
-
-            <div class="blogs-grid" id="blogsGrid">
+            <div class="blogs-grid" id="editors-choice-grid">
             </div>
-
-            <div class="pagination-container">
-                <div class="pagination-buttons">
-                    <button class="page-btn page-number active" data-page="1">1</button>
-                    <button class="page-btn page-number" data-page="2">2</button>
-                    <button class="page-btn page-number" data-page="3">3</button>
-                    <button class="page-btn page-number" data-page="4">4</button>
-                    <span class="page-dots">...</span>
-                    <button class="page-btn page-number" data-page="7">7</button>
-                    <button class="page-btn next-btn" id="nextPageBtn">
-                        Next page
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.5 15l5-5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+            <div class="pagination-container" id="editors-choice-pagination"></div>
         </section>
 
     </div>
