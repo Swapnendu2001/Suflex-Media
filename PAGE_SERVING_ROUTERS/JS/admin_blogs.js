@@ -1870,7 +1870,7 @@ async function editBlog(blogId) {
         const navbarTabs = document.querySelectorAll('#navbarTabs .tab-button');
         const createBlogTab = Array.from(navbarTabs).find(btn => {
             const text = btn.textContent.trim();
-            return text.includes('Create Blog') || text.includes('Add Blog');
+            return text.includes('Add Blogs') || text.includes('Add Blog');
         });
         
         if (createBlogTab) {
@@ -2347,12 +2347,12 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Navbar tab changed:', index);
             if (index !== null && navbarTabs[index]) {
                 console.log('Selected tab:', navbarTabs[index].title);
-                if (navbarTabs[index].title === "Create Blog") {
+                if (navbarTabs[index].title === "Add Blogs") {
                     if (!isEditing) {
                         switchToAddMode();
                     }
                     showContentSection('Add Blogs');
-                } else if (navbarTabs[index].title === "Edit Blog") {
+                } else if (navbarTabs[index].title === "Edit/Delete Blog") {
                     showContentSection('Edit/Delete Blog');
                 }
             }

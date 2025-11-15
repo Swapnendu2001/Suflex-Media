@@ -68,7 +68,7 @@ async def list_images():
                 "last_modified": obj.last_modified.isoformat() if obj.last_modified else None
             })
         
-        print(f"✓ Found {len(images)} images in bucket")
+        print(f"Found {len(images)} images in bucket")
         
         return ImageListResponse(
             status="success",
@@ -77,10 +77,10 @@ async def list_images():
         )
             
     except S3Error as e:
-        print(f"✗ MinIO error: {e}")
+        print(f"MinIO error: {e}")
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -114,7 +114,7 @@ async def upload_image(file: UploadFile = File(...)):
         
         public_url = f"{MINIO_PUBLIC_ENDPOINT}/{MINIO_BUCKET_NAME}/{object_name}"
         
-        print(f"✓ Image uploaded successfully - Object: {object_name}")
+        print(f"Image uploaded successfully - Object: {object_name}")
         
         return ImageUploadResponse(
             status="success",
@@ -126,10 +126,10 @@ async def upload_image(file: UploadFile = File(...)):
         )
             
     except S3Error as e:
-        print(f"✗ MinIO error: {e}")
+        print(f"MinIO error: {e}")
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.delete("/delete-image/{object_name}")
@@ -148,7 +148,7 @@ async def delete_image(object_name: str):
             object_name=object_name
         )
         
-        print(f"✓ Image deleted successfully - Object: {object_name}")
+        print(f"Image deleted successfully - Object: {object_name}")
         
         return ImageDeleteResponse(
             status="success",
@@ -157,10 +157,10 @@ async def delete_image(object_name: str):
         )
             
     except S3Error as e:
-        print(f"✗ MinIO error: {e}")
+        print(f"MinIO error: {e}")
         if e.code == 'NoSuchKey':
             raise HTTPException(status_code=404, detail="Image not found")
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")

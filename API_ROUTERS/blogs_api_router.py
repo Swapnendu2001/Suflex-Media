@@ -89,10 +89,10 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
         return {"status": "success", "blogs": blogs_list, "count": len(blogs_list)}
         
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -121,9 +121,9 @@ async def create_blog(blog_data: CreateBlogRequest):
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
             RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
-            blog_content,
+            json.dumps(blog_content),
             blog_data.status,
-            blog_data.keyword,
+            json.dumps(blog_data.keyword),
             blog_data.category,
             blog_data.editors_choice,
             blog_data.slug,
@@ -133,7 +133,7 @@ async def create_blog(blog_data: CreateBlogRequest):
         
         await conn.close()
         
-        print(f"✓ Blog created successfully with ID: {new_blog['id']}")
+        print(f"Blog created successfully with ID: {new_blog['id']}")
         return {
             "status": "success",
             "message": "Blog created successfully",
@@ -154,10 +154,10 @@ async def create_blog(blog_data: CreateBlogRequest):
         }
         
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.put("/blogs/{blog_id}")
@@ -191,7 +191,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
         
         if blog_data.blog is not None:
             update_fields.append(f"blog = ${param_count}")
-            update_values.append(blog_data.blog)
+            update_values.append(json.dumps(blog_data.blog))
             param_count += 1
         
         if blog_data.status is not None:
@@ -201,7 +201,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
         
         if blog_data.keyword is not None:
             update_fields.append(f"keyword = ${param_count}")
-            update_values.append(blog_data.keyword)
+            update_values.append(json.dumps(blog_data.keyword))
             param_count += 1
         
         if blog_data.category is not None:
@@ -241,7 +241,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
         updated_blog = await conn.fetchrow(query, *update_values)
         await conn.close()
         
-        print(f"✓ Blog updated successfully: {blog_id}")
+        print(f"Blog updated successfully: {blog_id}")
         return {
             "status": "success",
             "message": "Blog updated successfully",
@@ -264,10 +264,10 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.patch("/blogs/{blog_id}")
@@ -315,7 +315,7 @@ async def delete_blog(blog_id: str):
         
         await conn.close()
         
-        print(f"✓ Blog soft deleted successfully: {blog_id}")
+        print(f"Blog soft deleted successfully: {blog_id}")
         return {
             "status": "success",
             "message": "Blog deleted successfully"
@@ -324,10 +324,10 @@ async def delete_blog(blog_id: str):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/blogs/{blog_id}/restore")
@@ -365,7 +365,7 @@ async def restore_blog(blog_id: str):
         
         await conn.close()
         
-        print(f"✓ Blog restored successfully: {blog_id}")
+        print(f"Blog restored successfully: {blog_id}")
         return {
             "status": "success",
             "message": "Blog restored successfully"
@@ -374,10 +374,10 @@ async def restore_blog(blog_id: str):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/admin_save_blog")
@@ -450,7 +450,7 @@ async def admin_save_blog(request: Request):
                                 blog_id
                             )
                             counter += 1
-                        print(f"✓ Generated unique slug: {slug}")
+                        print(f"Generated unique slug: {slug}")
                 
                 # Update existing blog
                 updated_blog = await conn.fetchrow(
@@ -475,11 +475,11 @@ async def admin_save_blog(request: Request):
                 blog_id = str(updated_blog['id'])
                 blog_url = f"http://localhost:5000/blog/{slug}"
                 
-                print(f"✓ Blog updated successfully with ID: {blog_id}")
-                print(f"✓ Blog slug: {slug}")
-                print(f"✓ Blog status: {blog_status}")
-                print(f"✓ Blog type: {content_type}")
-                print(f"✓ Blog URL: {blog_url}")
+                print(f"Blog updated successfully with ID: {blog_id}")
+                print(f"Blog slug: {slug}")
+                print(f"Blog status: {blog_status}")
+                print(f"Blog type: {content_type}")
+                print(f"Blog URL: {blog_url}")
                 print("=" * 80)
                 
                 return {
@@ -506,8 +506,8 @@ async def admin_save_blog(request: Request):
                             slug
                         )
                         counter += 1
-                    print(f"✓ Generated unique slug: {slug}")
-                
+                    print(f"Generated unique slug: {slug}")
+            
                 new_blog = await conn.fetchrow(
                     """
                     INSERT INTO blogs (blog, status, category, editors_choice, slug, type, isdeleted)
@@ -525,11 +525,11 @@ async def admin_save_blog(request: Request):
                 blog_id = str(new_blog['id'])
                 blog_url = f"http://localhost:5000/blog/{slug}"
                 
-                print(f"✓ Blog saved successfully with ID: {blog_id}")
-                print(f"✓ Blog slug: {slug}")
-                print(f"✓ Blog status: {blog_status}")
-                print(f"✓ Blog type: {content_type}")
-                print(f"✓ Blog URL: {blog_url}")
+                print(f"Blog saved successfully with ID: {blog_id}")
+                print(f"Blog slug: {slug}")
+                print(f"Blog status: {blog_status}")
+                print(f"Blog type: {content_type}")
+                print(f"Blog URL: {blog_url}")
                 print("=" * 80)
                 
                 return {
@@ -546,12 +546,12 @@ async def admin_save_blog(request: Request):
     except HTTPException:
         raise
     except asyncpg.UniqueViolationError:
-        print(f"✗ Slug already exists")
+        print(f"Slug already exists")
         raise HTTPException(status_code=400, detail="A blog with this title already exists")
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error in admin_save_blog: {e}")
+        print(f"Unexpected error in admin_save_blog: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
