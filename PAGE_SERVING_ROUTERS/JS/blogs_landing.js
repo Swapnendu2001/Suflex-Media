@@ -41,208 +41,117 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-const blogColors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
-
-const sampleBlogs = [
-    {
-        id: 1,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'all',
-        colorIndex: 0
-    },
-    {
-        id: 2,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-prospecting',
-        colorIndex: 1
-    },
-    {
-        id: 3,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-scraping',
-        colorIndex: 2
-    },
-    {
-        id: 4,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'sales-tools',
-        colorIndex: 3
-    },
-    {
-        id: 5,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'cold-email',
-        colorIndex: 4
-    },
-    {
-        id: 6,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-plans',
-        colorIndex: 5
-    },
-    {
-        id: 7,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-networking',
-        colorIndex: 6
-    },
-    {
-        id: 8,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-marketing',
-        colorIndex: 7
-    },
-    {
-        id: 9,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'linkedin-automation',
-        colorIndex: 8
-    },
-    {
-        id: 10,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'email-deliverability',
-        colorIndex: 9
-    },
-    {
-        id: 11,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'b2b-lead-generation',
-        colorIndex: 10
-    },
-    {
-        id: 12,
-        title: 'What happened to Zomato Losses?',
-        date: 'mediamuscle, March 5, 2025',
-        description: 'Marketing is the art of connecting products with people. It involves understanding...',
-        readTime: '5 mins read',
-        category: 'all',
-        colorIndex: 11
-    }
-];
+const blogColors = ['#22c55e', '#ef4444', '#06b6d4', '#2c55e', '#eab308', '#3b82f6', '#22c55e', '#ec489', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
 
 const blogsPerPage = 3;
 
-function createBlogCard(blog) {
-    return `
-        <div class="blog-card" data-category="${blog.category}" onclick="window.location.href='/blog/${blog.id}'">
-            <div class="blog-card-header">
-                <div class="blog-dot" style="background-color: ${blogColors[blog.colorIndex % blogColors.length]}"></div>
-                <span class="blog-read-time">${blog.readTime}</span>
-            </div>
-            <h3 class="blog-title">${blog.title}</h3>
-            <p class="blog-date">${blog.date}</p>
-            <div class="blog-footer">
-                <p class.blog-description">${blog.description}</p>
-                <div class="blog-arrow">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function renderSection(sectionId, paginationId, blogs, page) {
+// Function to handle pagination for server-rendered content
+function setupPagination(sectionId, paginationId) {
     const grid = document.getElementById(sectionId);
     const pagination = document.getElementById(paginationId);
+    const allBlogs = grid.querySelectorAll('.blog-card');
+    const totalBlogs = allBlogs.length;
+    const totalPages = Math.ceil(totalBlogs / blogsPerPage);
+    let currentPage = 1;
 
-    if (!grid || !pagination) return;
-
-    const startIndex = (page - 1) * blogsPerPage;
-    const endIndex = startIndex + blogsPerPage;
-    const paginatedBlogs = blogs.slice(startIndex, endIndex);
-
-    grid.innerHTML = paginatedBlogs.map(blog => createBlogCard(blog)).join('');
-
-    const totalPages = Math.ceil(blogs.length / blogsPerPage);
-    if (totalPages <= 1) {
+    // If there are no blogs or only 3 or fewer, hide pagination
+    if (totalBlogs <= blogsPerPage) {
         pagination.innerHTML = '';
         return;
     }
+
+    // Show first 3 blogs initially, hide the rest
+    showPage(currentPage);
+
+    // Create pagination controls
+    createPaginationControls(paginationId, totalPages, currentPage);
+}
+
+function showPage(page) {
+    const latestGrid = document.getElementById('latest-gossips-grid');
+    const editorsGrid = document.getElementById('editors-choice-grid');
+    const allLatestBlogs = latestGrid.querySelectorAll('.blog-card');
+    const allEditorsBlogs = editorsGrid.querySelectorAll('.blog-card');
+
+    // Show/hide blogs for latest gossips section
+    allLatestBlogs.forEach((blog, index) => {
+        const startIndex = (page - 1) * blogsPerPage;
+        const endIndex = startIndex + blogsPerPage;
+        if (index >= startIndex && index < endIndex) {
+            blog.style.display = 'flex';
+        } else {
+            blog.style.display = 'none';
+        }
+    });
+
+    // Show/hide blogs for editor's choice section
+    allEditorsBlogs.forEach((blog, index) => {
+        const startIndex = (page - 1) * blogsPerPage;
+        const endIndex = startIndex + blogsPerPage;
+        if (index >= startIndex && index < endIndex) {
+            blog.style.display = 'flex';
+        } else {
+            blog.style.display = 'none';
+        }
+    });
+}
+
+function createPaginationControls(paginationId, totalPages, currentPage) {
+    const pagination = document.getElementById(paginationId);
+    if (!pagination) return;
 
     let paginationHTML = '';
 
     if (totalPages <= 4) {
         for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `<button class="page-btn page-number ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            paginationHTML += `<button class="page-btn page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
         }
     } else {
-        paginationHTML += `<button class="page-btn page-number ${1 === page ? 'active' : ''}" data-page="1">1</button>`;
+        paginationHTML += `<button class="page-btn page-number ${1 === currentPage ? 'active' : ''}" data-page="1">1</button>`;
 
-        if (page > 2) {
+        if (currentPage > 2) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
-        if (page > 1 && page < totalPages) {
-            paginationHTML += `<button class="page-btn page-number active" data-page="${page}">${page}</button>`;
+        if (currentPage > 1 && currentPage < totalPages) {
+            paginationHTML += `<button class="page-btn page-number ${currentPage === currentPage ? 'active' : ''}" data-page="${currentPage}">${currentPage}</button>`;
         }
 
-        if (page < totalPages - 1) {
+        if (currentPage < totalPages - 1) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
-        paginationHTML += `<button class="page-btn page-number ${totalPages === page ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
+        paginationHTML += `<button class="page-btn page-number ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
     }
 
     pagination.innerHTML = paginationHTML;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const latestGossipsBlogs = sampleBlogs.slice(0, 12);
-    const editorsChoiceBlogs = sampleBlogs.slice(0, 12);
+    // Set up pagination for both sections after the page loads
+    setupPagination('latest-gossips-grid', 'latest-gossips-pagination');
+    setupPagination('editors-choice-grid', 'editors-choice-pagination');
 
-    let latestGossipsPage = 1;
-    let editorsChoicePage = 1;
-
-    renderSection('latest-gossips-grid', 'latest-gossips-pagination', latestGossipsBlogs, latestGossipsPage);
-    renderSection('editors-choice-grid', 'editors-choice-pagination', editorsChoiceBlogs, editorsChoicePage);
-
+    // Add event listeners for pagination buttons
     document.getElementById('latest-gossips-pagination').addEventListener('click', function (e) {
-        if (e.target.classList.contains('page-btn')) {
-            latestGossipsPage = parseInt(e.target.dataset.page);
-            renderSection('latest-gossips-grid', 'latest-gossips-pagination', latestGossipsBlogs, latestGossipsPage);
+        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
+            const page = parseInt(e.target.dataset.page);
+            updatePage('latest-gossips-grid', 'latest-gossips-pagination', page);
         }
     });
 
     document.getElementById('editors-choice-pagination').addEventListener('click', function (e) {
-        if (e.target.classList.contains('page-btn')) {
-            editorsChoicePage = parseInt(e.target.dataset.page);
-            renderSection('editors-choice-grid', 'editors-choice-pagination', editorsChoiceBlogs, editorsChoicePage);
+        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
+            const page = parseInt(e.target.dataset.page);
+            updatePage('editors-choice-grid', 'editors-choice-pagination', page);
         }
     });
 });
+
+function updatePage(gridId, paginationId, page) {
+    showPage(page);
+    const allBlogs = document.getElementById(gridId).querySelectorAll('.blog-card');
+    const totalBlogs = allBlogs.length;
+    const totalPages = Math.ceil(totalBlogs / blogsPerPage);
+    createPaginationControls(paginationId, totalPages, page);
+}
