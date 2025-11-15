@@ -876,11 +876,12 @@ function showContentSection(tabTitle) {
     let sectionId = '';
     switch (tabTitle) {
         case 'Add Blogs':
+        case 'Add Case Study':
             sectionId = 'addBlogs';
             break;
         case 'Edit/Delete Blog':
+        case 'Edit/Delete Case Study':
             sectionId = 'editBlogs';
-            break;
             break;
     }
 
@@ -1003,7 +1004,14 @@ function handleFormSubmit(event) {
     const formData = new FormData(event.target);
     const data = {};
     for (let [key, value] of formData.entries()) {
-        data[key] = value;
+        if (key === 'editors_choice') {
+            data[key] = value === 'on' ? 'Y' : 'N';
+        } else {
+            data[key] = value;
+        }
+    }
+    if (!data.editors_choice) {
+        data.editors_choice = 'N';
     }
 
     data.labels = labelsResult.labels;
@@ -1053,7 +1061,10 @@ async function handleLoadPreview() {
         loadPreviewBtn.disabled = true;
 
 
-        const response = await fetch('/api/admin_blog_preview', {
+        const contentType = document.getElementById('contentType').value;
+        const endpoint = contentType === 'CASE STUDY' ? '/api/admin_case_study_preview' : '/api/admin_blog_preview';
+
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1130,7 +1141,8 @@ async function handleSaveDraft() {
         saveDraftBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Saving...';
         saveDraftBtn.disabled = true;
 
-        const response = await fetch('/api/admin_save_blog', {
+        const endpoint = data.contentType === 'CASE STUDY' ? '/api/admin_save_case_study' : '/api/admin_save_blog';
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1214,7 +1226,8 @@ async function handleSavePublish() {
         savePublishBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Publishing...';
         savePublishBtn.disabled = true;
 
-        const response = await fetch('/api/admin_save_blog', {
+        const endpoint = data.contentType === 'CASE STUDY' ? '/api/admin_save_case_study' : '/api/admin_save_blog';
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1585,39 +1598,28 @@ async function fetchBlogs() {
 
     try {
         console.log('📡 Fetching blogs from /api/blogs...');
-        const response = await fetch('/api/blogs');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        console.log('✓ API Response received');
-        console.log(`✓ Total blogs in database: ${result.count || 0}`);
+        const response_blogs = await fetch('/api/blogs');
+        const result_blogs = await response_blogs.json();
         
+        const response_case_studies = await fetch('/api/case_studies');
+        const result_case_studies = await response_case_studies.json();
+
         blogsLoading.classList.add('hidden');
-        if (result.status === 'success' && result.blogs && Array.isArray(result.blogs)) {
-            allFetchedBlogs = result.blogs;
-            console.log(`✓ Stored ${allFetchedBlogs.length} blogs in allFetchedBlogs array`);
-            
-            if (result.blogs.length > 0) {
-                console.log('✓ First blog structure:', {
-                    id: result.blogs[0].id,
-                    status: result.blogs[0].status,
-                    type: result.blogs[0].type,
-                    category: result.blogs[0].category,
-                    blogType: typeof result.blogs[0].blog,
-                    blogSample: typeof result.blogs[0].blog === 'string' ? result.blogs[0].blog.substring(0, 100) + '...' : result.blogs[0].blog
-                });
-            }
-            
-            console.log(`📊 Blogs per page: ${blogsPerPage}`);
-            console.log(`📊 Expected pages: ${Math.ceil(result.blogs.length / blogsPerPage)}`);
-            
-            applyFiltersAndRender(1);
-        } else {
-            console.warn('⚠️ No blogs returned from API or invalid response format');
-            allFetchedBlogs = [];
-            applyFiltersAndRender(1);
+        
+        let blogs = [];
+        if (result_blogs.status === 'success' && Array.isArray(result_blogs.blogs)) {
+            blogs = result_blogs.blogs;
         }
+
+        let case_studies = [];
+        if (result_case_studies.status === 'success' && Array.isArray(result_case_studies.case_studies)) {
+            case_studies = result_case_studies.case_studies;
+        }
+
+        allFetchedBlogs = [...blogs, ...case_studies];
+        console.log(`✓ Stored ${allFetchedBlogs.length} items in allFetchedBlogs array`);
+        
+        applyFiltersAndRender(1);
     } catch (error) {
         console.error('✗ Error fetching blogs:', error);
         blogsLoading.classList.add('hidden');
@@ -1914,6 +1916,7 @@ function populateEditForm(blog) {
     });
 
     document.getElementById('blogCategory').value = blogData.blogCategory || '';
+    document.getElementById('editorsChoice').checked = blogData.editors_choice === 'Y';
 
     populateLabelsFromData(blog.keyword || {});
 
@@ -2059,17 +2062,28 @@ async function handleUpdateBlog() {
         updateBlogBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Updating...';
         updateBlogBtn.disabled = true;
 
-        const response = await fetch(`/api/blogs/${currentEditingBlog.id}`, {
+        const endpoint = data.contentType === 'CASE STUDY'
+            ? `/api/case_studies/${currentEditingBlog.id}`
+            : `/api/blogs/${currentEditingBlog.id}`;
+
+        const payload = {
+            status: data.status,
+            category: data.blogCategory,
+            keyword: data.labels
+        };
+
+        if (data.contentType === 'CASE STUDY') {
+            payload.case_study = data;
+        } else {
+            payload.blog = data;
+        }
+
+        const response = await fetch(endpoint, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                blog: data,
-                status: data.status,
-                category: data.blogCategory,
-                keyword: data.labels
-            })
+            body: JSON.stringify(payload)
         });
 
         updateBlogBtn.innerHTML = originalText;
@@ -2322,8 +2336,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const navbarTabs = [
-        { title: "Create Blog", icon: "plus-circle" },
-        { title: "Edit Blog", icon: "edit" },
+        { title: "Add Blogs", icon: "plus-circle" },
+        { title: "Edit/Delete Blog", icon: "edit" },
     ];
     const navbarContainer = document.getElementById('navbarTabs');
     const expandableTabs = new ExpandableTabs(navbarContainer, {
