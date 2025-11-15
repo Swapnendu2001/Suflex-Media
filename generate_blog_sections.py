@@ -19,9 +19,8 @@ async def get_blog_data():
         latest_gossips_query = """
             SELECT id, blog, date, category, created_at, editors_choice
             FROM blogs
-            WHERE isdeleted = FALSE AND status = 'published'
+            WHERE isdeleted = FALSE
             ORDER BY created_at DESC
-            LIMIT 12
         """
         latest_gossips = await conn.fetch(latest_gossips_query)
         
@@ -29,9 +28,8 @@ async def get_blog_data():
         editors_choice_query = """
             SELECT id, blog, date, category, created_at, editors_choice
             FROM blogs
-            WHERE isdeleted = FALSE AND status = 'published' AND editors_choice = 'Y'
+            WHERE isdeleted = FALSE AND editors_choice = 'Y'
             ORDER BY created_at DESC
-            LIMIT 12
         """
         editors_choice = await conn.fetch(editors_choice_query)
         
@@ -45,10 +43,24 @@ async def get_blog_data():
                 blog_content = json.loads(blog_content)
             
             title = blog_content.get('blogTitle', 'Untitled Blog')
-            summary = blog_content.get('blogSubHeading', '')[:150] + '...' if len(blog_content.get('blogSubHeading', '')) > 150 else blog_content.get('blogSubHeading', '')
+            # Try to get blog summary from multiple possible fields
+            summary = blog_content.get('blogSummary', '')
+            if not summary:
+                # If blogSummary is not available, try to get first paragraph or content preview
+                content = blog_content.get('blogContent', {})
+                if isinstance(content, dict) and 'content' in content:
+                    content_items = content['content']
+                    for item in content_items:
+                        if item.get('type') == 'paragraph' and item.get('data', {}).get('content'):
+                            summary = item['data']['content'][:150] + '...' if len(item['data']['content']) > 150 else item['data']['content']
+                            break
+                elif isinstance(content, str):
+                    summary = content[:150] + '...' if len(content) > 150 else content
+            else:
+                summary = summary[:150] + '...' if len(summary) > 150 else summary
             created_at = blog['created_at'].strftime('%B %d, %Y') if blog['created_at'] else ''
             category = blog['category'] or 'General'
-            slug = blog_content.get('slug', f"blog-{blog['id']}")
+            slug = blog.get('slug', f"{title}")
             
             latest_gossips_data.append({
                 'id': blog['id'],
@@ -66,10 +78,10 @@ async def get_blog_data():
                 blog_content = json.loads(blog_content)
             
             title = blog_content.get('blogTitle', 'Untitled Blog')
-            summary = blog_content.get('blogSubHeading', '')[:150] + '...' if len(blog_content.get('blogSubHeading', '')) > 150 else blog_content.get('blogSubHeading', '')
+            summary = blog_content.get('blogSummary', '')[:150] + '...' if len(blog_content.get('blogSummary', '')) > 150 else blog_content.get('blogSummary', '')
             created_at = blog['created_at'].strftime('%B %d, %Y') if blog['created_at'] else ''
             category = blog['category'] or 'General'
-            slug = blog_content.get('slug', f"blog-{blog['id']}")
+            slug = blog.get('slug', f"{title}")
             
             editors_choice_data.append({
                 'id': blog['id'],
@@ -97,14 +109,16 @@ def generate_blog_card_html(blog, color_index):
                 <span class="blog-read-time">5 mins read</span>
             </div>
             <h3 class="blog-title">{blog['title']}</h3>
-            <p class="blog-date">{blog['created_at']}</p>
+            <p class="blog-date">{blog['created_at']} • {blog['category']}</p>
+            <p class="blog-description">{blog['summary']}</p>
             <div class="blog-footer">
-                <p class="blog-description">{blog['summary']}</p>
-                <div class="blog-arrow">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
+                <a href="/blog/{blog['slug']}" class="blog-arrow-link">
+                    <div class="blog-arrow">
+                        <svg viewBox="0 24 24" fill="none">
+                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </a>
             </div>
         </div>
     '''
@@ -113,7 +127,7 @@ def get_blog_color(index):
     """
     Get color based on index to match existing color pattern
     """
-    colors = ['#22c55e', '#ef444', '#06b6d4', '#22c5e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e']
+    colors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e']
     return colors[index % len(colors)]
 
 async def update_blogs_html():
