@@ -50,9 +50,9 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         conn = await asyncpg.connect(DATABASE_URL)
         
         if include_deleted:
-            query = "SELECT * FROM case_studies ORDER BY date DESC"
+            query = "SELECT * FROM blogs WHERE type = 'CASE STUDY' ORDER BY date DESC"
         else:
-            query = "SELECT * FROM case_studies WHERE isdeleted = FALSE ORDER BY date DESC"
+            query = "SELECT * FROM blogs WHERE isdeleted = FALSE AND type = 'CASE STUDY' ORDER BY date DESC"
         
         records = await conn.fetch(query)
         await conn.close()
@@ -78,7 +78,7 @@ async def create_case_study(data: CreateCaseStudyRequest):
         
         new_record = await conn.fetchrow(
             """
-            INSERT INTO case_studies (blog, status, keyword, category, editors_choice, slug, type, redirect_url, isdeleted)
+            INSERT INTO blogs (blog, status, keyword, category, editors_choice, slug, type, redirect_url, isdeleted)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
             RETURNING *
             """,
@@ -114,7 +114,7 @@ async def update_case_study(case_study_id: str, data: UpdateCaseStudyRequest):
         conn = await asyncpg.connect(DATABASE_URL)
         
         existing_record = await conn.fetchrow(
-            "SELECT id, isdeleted FROM case_studies WHERE id = $1",
+            "SELECT id, isdeleted FROM blogs WHERE id = $1 AND type = 'CASE STUDY'",
             case_study_id
         )
         
@@ -173,7 +173,7 @@ async def update_case_study(case_study_id: str, data: UpdateCaseStudyRequest):
         update_values.append(case_study_id)
         
         query = f"""
-            UPDATE case_studies
+            UPDATE blogs
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
             RETURNING *
@@ -204,7 +204,7 @@ async def delete_case_study(case_study_id: str):
         conn = await asyncpg.connect(DATABASE_URL)
         
         record = await conn.fetchrow(
-            "SELECT id, isdeleted FROM case_studies WHERE id = $1",
+            "SELECT id, isdeleted FROM blogs WHERE id = $1 AND type = 'CASE STUDY'",
             case_study_id
         )
         
@@ -218,7 +218,7 @@ async def delete_case_study(case_study_id: str):
         
         await conn.execute(
             """
-            UPDATE case_studies
+            UPDATE blogs
             SET isdeleted = TRUE, updated_at = CURRENT_TIMESTAMP
             WHERE id = $1
             """,
@@ -266,7 +266,7 @@ async def admin_save_case_study(request: Request):
         try:
             if reason == 'update' and case_study_id:
                 existing_record = await conn.fetchrow(
-                    "SELECT id, slug FROM case_studies WHERE id = $1 AND isdeleted = FALSE",
+                    "SELECT id, slug FROM blogs WHERE id = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
                     case_study_id
                 )
                 
@@ -275,7 +275,7 @@ async def admin_save_case_study(request: Request):
                 
                 if slug != existing_record['slug']:
                     existing_slug_record = await conn.fetchrow(
-                        "SELECT id FROM case_studies WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
+                        "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE AND type = 'CASE STUDY'",
                         slug,
                         case_study_id
                     )
@@ -286,7 +286,7 @@ async def admin_save_case_study(request: Request):
                         while existing_slug_record:
                             slug = f"{original_slug}-{counter}"
                             existing_slug_record = await conn.fetchrow(
-                                "SELECT id FROM case_studies WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
+                                "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE AND type = 'CASE STUDY'",
                                 slug,
                                 case_study_id
                             )
@@ -294,7 +294,7 @@ async def admin_save_case_study(request: Request):
                 
                 updated_record = await conn.fetchrow(
                     """
-                    UPDATE case_studies
+                    UPDATE blogs
                     SET blog = $1, status = $2, category = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $7
                     RETURNING *
@@ -323,7 +323,7 @@ async def admin_save_case_study(request: Request):
                 }
             else:
                 existing_record = await conn.fetchrow(
-                    "SELECT id FROM case_studies WHERE slug = $1 AND isdeleted = FALSE",
+                    "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
                     slug
                 )
                 
@@ -333,14 +333,14 @@ async def admin_save_case_study(request: Request):
                     while existing_record:
                         slug = f"{original_slug}-{counter}"
                         existing_record = await conn.fetchrow(
-                            "SELECT id FROM case_studies WHERE slug = $1 AND isdeleted = FALSE",
+                            "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
                             slug
                         )
                         counter += 1
                 
                 new_record = await conn.fetchrow(
                     """
-                    INSERT INTO case_studies (blog, status, category, editors_choice, slug, type, isdeleted)
+                    INSERT INTO blogs (blog, status, category, editors_choice, slug, type, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, $6, FALSE)
                     RETURNING *
                     """,
