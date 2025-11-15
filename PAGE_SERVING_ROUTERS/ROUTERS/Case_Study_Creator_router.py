@@ -837,8 +837,8 @@ async def get_cards(category, page=1, per_page=3):
         case_studies_records = await conn.fetch(
             """
             SELECT slug, blog as case_study
-            FROM case_studies
-            WHERE category = $1 AND isDeleted = FALSE AND status = 'published'
+            FROM blogs
+            WHERE category = $1 AND isDeleted = FALSE AND status = 'published' AND type = 'CASE STUDY'
             ORDER BY date DESC
             LIMIT $2 OFFSET $3
             """,
@@ -2153,8 +2153,8 @@ async def get_case_study(slug: str):
         case_study_record = await conn.fetchrow(
             """
             SELECT id, blog as case_study, status, date, category, slug, isDeleted
-            FROM case_studies
-            WHERE slug = $1 AND isDeleted = FALSE
+            FROM blogs
+            WHERE slug = $1 AND isDeleted = FALSE AND type = 'CASE STUDY'
             """,
             slug
         )
