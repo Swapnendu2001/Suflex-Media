@@ -28,13 +28,18 @@ from API_ROUTERS.login_api_router import router as login_api_router
 from API_ROUTERS.admin_users_api_router import router as admin_users_api_router
 from API_ROUTERS.serve_images_api_router import router as serve_images_api_router
 from API_ROUTERS.blogs_api_router import router as blogs_api_router
+from PAGE_SERVING_ROUTERS.ROUTERS.Case_Study_Creator_router import router as case_study_creator_router
+from API_ROUTERS.case_studies_api_router import router as case_studies_api_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Initializing database...")
-    await initialize_database()
-    print("Database initialized successfully!")
+    try:
+        await initialize_database()
+        print("Database initialized successfully!")
+    except UnicodeEncodeError:
+        print("Database initialized successfully! (Unicode characters may not display correctly in the console)")
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -67,6 +72,8 @@ app.include_router(login_api_router)
 app.include_router(admin_users_api_router)
 app.include_router(serve_images_api_router)
 app.include_router(blogs_api_router)
+app.include_router(case_study_creator_router)
+app.include_router(case_studies_api_router)
 app.include_router(landing_page_router)
 
 @app.exception_handler(404)

@@ -28,6 +28,7 @@ class CreateBlogRequest(BaseModel):
     status: str = "draft"
     keyword: Optional[Dict[str, Any]] = None
     category: Optional[str] = None
+    editors_choice: Optional[str] = 'N'
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
@@ -36,6 +37,7 @@ class UpdateBlogRequest(BaseModel):
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
     category: Optional[str] = None
+    editors_choice: Optional[str] = None
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
@@ -115,14 +117,15 @@ async def create_blog(blog_data: CreateBlogRequest):
         
         new_blog = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, category, slug, type, redirect_url, isdeleted)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
-            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+            INSERT INTO blogs (blog, status, keyword, category, editors_choice, slug, type, redirect_url, isdeleted)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
+            RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
             blog_content,
             blog_data.status,
             blog_data.keyword,
             blog_data.category,
+            blog_data.editors_choice,
             blog_data.slug,
             content_type,
             blog_data.redirect_url
@@ -209,6 +212,11 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
         if blog_data.slug is not None:
             update_fields.append(f"slug = ${param_count}")
             update_values.append(blog_data.slug)
+            param_count += 1
+        
+        if blog_data.editors_choice is not None:
+            update_fields.append(f"editors_choice = ${param_count}")
+            update_values.append(blog_data.editors_choice)
             param_count += 1
         
         if blog_data.redirect_url is not None:
@@ -448,13 +456,14 @@ async def admin_save_blog(request: Request):
                 updated_blog = await conn.fetchrow(
                     """
                     UPDATE blogs
-                    SET blog = $1, status = $2, category = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = $6
-                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    SET blog = $1, status = $2, category = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $7
+                    RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
                     blog_category,
+                    data.get('editors_choice', 'N'),
                     slug,
                     content_type,
                     blog_id
@@ -501,13 +510,14 @@ async def admin_save_blog(request: Request):
                 
                 new_blog = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blog, status, category, slug, type, isdeleted)
-                    VALUES ($1, $2, $3, $4, $5, FALSE)
-                    RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    INSERT INTO blogs (blog, status, category, editors_choice, slug, type, isdeleted)
+                    VALUES ($1, $2, $3, $4, $5, $6, FALSE)
+                    RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
                     blog_category,
+                    data.get('editors_choice', 'N'),
                     slug,
                     content_type
                 )
