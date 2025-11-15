@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-const blogColors = ['#22c55e', '#ef4444', '#06b6d4', '#2c55e', '#eab308', '#3b82f6', '#22c55e', '#ec489', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
+const blogColors = ['#22c5e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
 
 const blogsPerPage = 3;
 
@@ -61,31 +61,17 @@ function setupPagination(sectionId, paginationId) {
     }
 
     // Show first 3 blogs initially, hide the rest
-    showPage(currentPage);
+    showPage(sectionId, currentPage);
 
     // Create pagination controls
-    createPaginationControls(paginationId, totalPages, currentPage);
+    createPaginationControls(paginationId, totalPages, currentPage, sectionId);
 }
 
-function showPage(page) {
-    const latestGrid = document.getElementById('latest-gossips-grid');
-    const editorsGrid = document.getElementById('editors-choice-grid');
-    const allLatestBlogs = latestGrid.querySelectorAll('.blog-card');
-    const allEditorsBlogs = editorsGrid.querySelectorAll('.blog-card');
+function showPage(sectionId, page) {
+    const grid = document.getElementById(sectionId);
+    const allBlogs = grid.querySelectorAll('.blog-card');
 
-    // Show/hide blogs for latest gossips section
-    allLatestBlogs.forEach((blog, index) => {
-        const startIndex = (page - 1) * blogsPerPage;
-        const endIndex = startIndex + blogsPerPage;
-        if (index >= startIndex && index < endIndex) {
-            blog.style.display = 'flex';
-        } else {
-            blog.style.display = 'none';
-        }
-    });
-
-    // Show/hide blogs for editor's choice section
-    allEditorsBlogs.forEach((blog, index) => {
+    allBlogs.forEach((blog, index) => {
         const startIndex = (page - 1) * blogsPerPage;
         const endIndex = startIndex + blogsPerPage;
         if (index >= startIndex && index < endIndex) {
@@ -96,7 +82,7 @@ function showPage(page) {
     });
 }
 
-function createPaginationControls(paginationId, totalPages, currentPage) {
+function createPaginationControls(paginationId, totalPages, currentPage, sectionId) {
     const pagination = document.getElementById(paginationId);
     if (!pagination) return;
 
@@ -104,24 +90,24 @@ function createPaginationControls(paginationId, totalPages, currentPage) {
 
     if (totalPages <= 4) {
         for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `<button class="page-btn page-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            paginationHTML += `<button class="page-btn page-number ${i === currentPage ? 'active' : ''}" data-page="${i}" data-section="${sectionId}">${i}</button>`;
         }
     } else {
-        paginationHTML += `<button class="page-btn page-number ${1 === currentPage ? 'active' : ''}" data-page="1">1</button>`;
+        paginationHTML += `<button class="page-btn page-number ${1 === currentPage ? 'active' : ''}" data-page="1" data-section="${sectionId}">1</button>`;
 
         if (currentPage > 2) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
         if (currentPage > 1 && currentPage < totalPages) {
-            paginationHTML += `<button class="page-btn page-number ${currentPage === currentPage ? 'active' : ''}" data-page="${currentPage}">${currentPage}</button>`;
+            paginationHTML += `<button class="page-btn page-number ${currentPage === currentPage ? 'active' : ''}" data-page="${currentPage}" data-section="${sectionId}">${currentPage}</button>`;
         }
 
         if (currentPage < totalPages - 1) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
-        paginationHTML += `<button class="page-btn page-number ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
+        paginationHTML += `<button class="page-btn page-number ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}" data-section="${sectionId}">${totalPages}</button>`;
     }
 
     pagination.innerHTML = paginationHTML;
@@ -136,22 +122,24 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('latest-gossips-pagination').addEventListener('click', function (e) {
         if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
             const page = parseInt(e.target.dataset.page);
-            updatePage('latest-gossips-grid', 'latest-gossips-pagination', page);
+            const sectionId = e.target.dataset.section || 'latest-gossips-grid';
+            updatePage(sectionId, 'latest-gossips-pagination', page);
         }
     });
 
     document.getElementById('editors-choice-pagination').addEventListener('click', function (e) {
         if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
             const page = parseInt(e.target.dataset.page);
-            updatePage('editors-choice-grid', 'editors-choice-pagination', page);
+            const sectionId = e.target.dataset.section || 'editors-choice-grid';
+            updatePage(sectionId, 'editors-choice-pagination', page);
         }
     });
 });
 
 function updatePage(gridId, paginationId, page) {
-    showPage(page);
+    showPage(gridId, page);
     const allBlogs = document.getElementById(gridId).querySelectorAll('.blog-card');
     const totalBlogs = allBlogs.length;
     const totalPages = Math.ceil(totalBlogs / blogsPerPage);
-    createPaginationControls(paginationId, totalPages, page);
+    createPaginationControls(paginationId, totalPages, page, gridId);
 }
