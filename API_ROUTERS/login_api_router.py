@@ -44,10 +44,10 @@ async def login(credentials: LoginRequest):
         
         if user:
             if not user['active']:
-                print(f"✗ Login failed - Account is deactivated: {user['username']}")
+                print(f"Login failed - Account is deactivated: {user['username']}")
                 raise HTTPException(status_code=403, detail="Account is deactivated. Please contact administrator.")
             
-            print(f"✓ Login successful for user: {user['username']}")
+            print(f"Login successful for user: {user['username']}")
             return {
                 "status": "success",
                 "message": "Login successful",
@@ -57,14 +57,14 @@ async def login(credentials: LoginRequest):
                 "hashed_password": hashed_password
             }
         else:
-            print("✗ Login failed - Invalid credentials")
+            print("Login failed - Invalid credentials")
             raise HTTPException(status_code=401, detail="Invalid email or password")
             
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 class AutoLoginRequest(BaseModel):
@@ -95,10 +95,10 @@ async def auto_login(credentials: AutoLoginRequest):
         
         if user:
             if not user['active']:
-                print(f"✗ Auto-login failed - Account is deactivated: {user['username']}")
+                print(f"Auto-login failed - Account is deactivated: {user['username']}")
                 raise HTTPException(status_code=403, detail="Account is deactivated. Please contact administrator.")
             
-            print(f"✓ Auto-login successful for user: {user['username']}")
+            print(f"Auto-login successful for user: {user['username']}")
             return {
                 "status": "success",
                 "message": "Auto-login successful",
@@ -107,12 +107,12 @@ async def auto_login(credentials: AutoLoginRequest):
                 "hashed_password": credentials.hashed_password
             }
         else:
-            print("✗ Auto-login failed - Invalid credentials")
+            print("Auto-login failed - Invalid credentials")
             raise HTTPException(status_code=401, detail="Invalid credentials")
             
     except asyncpg.PostgresError as e:
-        print(f"✗ Database error: {e}")
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")

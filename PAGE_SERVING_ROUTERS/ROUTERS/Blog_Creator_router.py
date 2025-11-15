@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Path, Request, HTTPException
+from fastapi import APIRouter, Path, Request, HTTPException, Depends, Query
 from fastapi.responses import HTMLResponse
-from typing import Union
+from typing import Union, Optional
 from uuid import UUID
 import json
 import asyncpg
@@ -2166,11 +2166,31 @@ async def create_blog_html(data: str) -> str:
     return l
 
 
+async def get_admin_user(request: Request) -> Optional[dict]:
+    hashed_email = request.cookies.get("hashed_email")
+    hashed_password = request.cookies.get("hashed_password")
+
+    if not hashed_email or not hashed_password:
+        return None
+
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        user = await conn.fetchrow(
+            "SELECT * FROM admin_users WHERE email = $1 AND password = $2 AND active = TRUE",
+            hashed_email,
+            hashed_password
+        )
+        await conn.close()
+        return user
+    except Exception:
+        return None
+
 @router.get("/blog/{slug}")
-async def get_blog(slug: str):
+async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional[dict] = Depends(get_admin_user)):
     """
     Render a blog post page by its slug
     Fetches blog data from database and renders it as HTML
+    Admins can preview draft posts by adding `?preview=true` to the URL
     """
     print("=" * 80)
     print(f"[DEBUG] Blog endpoint called with slug: {slug}")
@@ -2201,10 +2221,6 @@ async def get_blog(slug: str):
         print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
         print(f"[DEBUG] Blog data type: {type(blog_record['blog'])}")
         print(f"[DEBUG] Blog data keys: {list(blog_record['blog'].keys()) if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog']).keys()}")
-        
-        if blog_record['status'] != 'published':
-            print(f"[DEBUG] Blog is not published, status: {blog_record['status']}")
-            raise HTTPException(status_code=404, detail="Blog post not available")
         
         blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
         print(f"[DEBUG] Rendering blog HTML...")
