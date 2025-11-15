@@ -175,9 +175,65 @@ async def update_blogs_html():
     with open("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html", "w", encoding="utf-8") as file:
         file.write(html_content)
     
+    # Also update the home page with top 3 editor's choice blogs
+    await update_home_html(editors_choice_data[:3])
+    
     print("Successfully updated blogs_landing.html with dynamic content")
+    print("Successfully updated home.html with dynamic content")
     
     return latest_gossips_data, editors_choice_data
+
+
+async def update_home_html(editors_choice_data):
+    """
+    Update the home.html file with top 3 editor's choice blogs
+    """
+    # Generate HTML for top 3 editor's choice blogs in home page style
+    home_insights_html = ""
+    for i, blog in enumerate(editors_choice_data):
+        home_insights_html += generate_home_insight_card_html(blog, i)
+    
+    # Read the original home HTML file
+    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    
+    # Replace the placeholder with dynamic content
+    start_marker_home = '<!-- TOP EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->'
+    end_marker_home = '</div>\n            </div>'
+    
+    start_pos_home = html_content.find(start_marker_home) + len(start_marker_home)
+    end_pos_home = html_content.find(end_marker_home, start_pos_home)
+    
+    if start_pos_home != -1 and end_pos_home != -1:
+        html_content = html_content[:start_pos_home] + f"\n                    {home_insights_html}\n                " + html_content[end_pos_home:]
+    
+    # Write the updated HTML back to the file
+    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "w", encoding="utf-8") as file:
+        file.write(html_content)
+
+
+def generate_home_insight_card_html(blog, index):
+    """
+    Generate HTML for a single insight card on the home page based on the existing structure
+    """
+    # Map index to color markers: 0=green, 1=pink, 2=orange
+    colors = ['green', 'pink', 'orange']
+    color_class = colors[index % len(colors)] if index < len(colors) else 'green'
+    
+    return f'''
+                    <div class="insight-card">
+                        <div class="card-top">
+                            <span class="color-marker {color_class}"></span>
+                            <span class="read-time">5 mins read</span>
+                        </div>
+                        <h3>{blog['title']}</h3>
+                        <div class="card-content-bottom">
+                            <p>{blog['summary']}</p>
+                            <a href="/blog/{blog['slug']}">
+                                <img src="/icons/black_arrow.svg" alt="Read more" class="card-arrow-icon">
+                            </a>
+                        </div>
+                    </div>'''
 
 if __name__ == "__main__":
     import asyncio
