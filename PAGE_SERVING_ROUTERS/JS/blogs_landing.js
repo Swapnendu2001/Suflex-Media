@@ -197,58 +197,34 @@ function renderSection(sectionId, paginationId, blogs, page) {
 
     let paginationHTML = '';
 
-    if (totalPages <= 5) {
+    if (totalPages <= 4) {
         for (let i = 1; i <= totalPages; i++) {
             paginationHTML += `<button class="page-btn page-number ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
         }
     } else {
-        if (page > 1) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page - 1}"><</button>`;
-        }
-
         paginationHTML += `<button class="page-btn page-number ${1 === page ? 'active' : ''}" data-page="1">1</button>`;
 
-        if (page > 3) {
+        if (page > 2) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
-        if (page === totalPages && totalPages > 3) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page - 2}">${page - 2}</button>`;
-        }
-
-        if (page > 2) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page - 1}">${page - 1}</button>`;
-        }
-
-        if (page !== 1 && page !== totalPages) {
+        if (page > 1 && page < totalPages) {
             paginationHTML += `<button class="page-btn page-number active" data-page="${page}">${page}</button>`;
         }
 
         if (page < totalPages - 1) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page + 1}">${page + 1}</button>`;
-        }
-        
-        if (page === 1 && totalPages > 3) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page + 2}">${page + 2}</button>`;
-        }
-
-        if (page < totalPages - 2) {
             paginationHTML += `<span class="page-dots">...</span>`;
         }
 
         paginationHTML += `<button class="page-btn page-number ${totalPages === page ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
-
-        if (page < totalPages) {
-            paginationHTML += `<button class="page-btn page-number" data-page="${page + 1}">></button>`;
-        }
     }
 
     pagination.innerHTML = paginationHTML;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const latestGossipsBlogs = sampleBlogs.slice(0, 10);
-    const editorsChoiceBlogs = sampleBlogs.slice(10, 12);
+    const latestGossipsBlogs = sampleBlogs.slice(0, 12);
+    const editorsChoiceBlogs = sampleBlogs.slice(0, 12);
 
     let latestGossipsPage = 1;
     let editorsChoicePage = 1;
