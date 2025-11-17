@@ -1,31 +1,32 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import asyncpg
 import os
-import json
 from dotenv import load_dotenv
+from generate_blog_sections import get_blogs_html # Import the new function
 
 load_dotenv()
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-DATABASE_URL = os.getenv("POSTGRES_CONNECTION_URL")
-
-@router.get("/blogs")
+@router.get("/blogs", response_class=HTMLResponse)
 async def get_blogs(request: Request):
-    # Import and run the script to generate dynamic blog content
-    import subprocess
-    import sys
+    # Get dynamic blog content
+    latest_gossips_html, editors_choice_html, _ = await get_blogs_html()
 
-    try:
-        # Run the generate_blog_sections.py script to update the HTML with dynamic content
-        result = subprocess.run([sys.executable, "generate_blog_sections.py"], capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f"Error running generate_blog_sections.py: {result.stderr}")
-    except Exception as e:
-        print(f"Error running generate_blog_sections.py: {e}")
+    # Read the original HTML file
+    with open("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
 
-    # Return the updated HTML file
-    return FileResponse("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html")
+    # Replace the placeholders with dynamic content
+    html_content = html_content.replace(
+        '<div id="dynamic-latest-gossips-content"></div>',
+        latest_gossips_html
+    )
+    html_content = html_content.replace(
+        '<div id="dynamic-editors-choice-content"></div>',
+        editors_choice_html
+    )
+
+    return HTMLResponse(content=html_content)
