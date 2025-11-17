@@ -1,20 +1,20 @@
 from fastapi import APIRouter
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
+from generate_blog_sections import get_blogs_html, get_home_insights_html
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/", response_class=HTMLResponse)
 async def get_homepage():
-    # Import and run the script to generate dynamic blog content for home page
-    import subprocess
-    import sys
+    _, _, top_editors_choice_data = await get_blogs_html()
+    home_insights_html = await get_home_insights_html(top_editors_choice_data)
 
-    try:
-        # Run the generate_blog_sections.py script to update the HTML with dynamic content
-        result = subprocess.run([sys.executable, "generate_blog_sections.py"], capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f"Error running generate_blog_sections.py: {result.stderr}")
-    except Exception as e:
-        print(f"Error running generate_blog_sections.py: {e}")
+    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    
+    html_content = html_content.replace(
+        '<!-- TOP EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->',
+        home_insights_html
+    )
 
-    return FileResponse("PAGE_SERVING_ROUTERS/PAGES/home.html")
+    return HTMLResponse(content=html_content)

@@ -130,9 +130,9 @@ def get_blog_color(index):
     colors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e']
     return colors[index % len(colors)]
 
-async def update_blogs_html():
+async def get_blogs_html():
     """
-    Update the blogs_landing.html file with dynamic content
+    Generate the HTML content for the blogs_landing.html page with dynamic content
     """
     latest_gossips_data, editors_choice_data = await get_blog_data()
     
@@ -146,70 +146,18 @@ async def update_blogs_html():
     for i, blog in enumerate(editors_choice_data):
         editors_choice_html += generate_blog_card_html(blog, i)
     
-    # Read the original HTML file
-    with open("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    
-    # Replace the placeholders with dynamic content
-    # Replace latest gossips section
-    start_marker_latest = '<!-- LATEST GOSSIPS BLOGS WILL BE INSERTED HERE DYNAMICALLY -->'
-    end_marker_latest = '</div>\n            <div class="pagination-container" id="latest-gossips-pagination">'
-    
-    start_pos_latest = html_content.find(start_marker_latest) + len(start_marker_latest)
-    end_pos_latest = html_content.find(end_marker_latest)
-    
-    if start_pos_latest != -1 and end_pos_latest != -1:
-        html_content = html_content[:start_pos_latest] + f"\n                {latest_gossips_html}\n            " + html_content[end_pos_latest:]
-    
-    # Replace editor's choice section
-    start_marker_editors = '<!-- EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->'
-    end_marker_editors = '</div>\n            <div class="pagination-container" id="editors-choice-pagination">'
-    
-    start_pos_editors = html_content.find(start_marker_editors) + len(start_marker_editors)
-    end_pos_editors = html_content.find(end_marker_editors)
-    
-    if start_pos_editors != -1 and end_pos_editors != -1:
-        html_content = html_content[:start_pos_editors] + f"\n                {editors_choice_html}\n            " + html_content[end_pos_editors:]
-    
-    # Write the updated HTML back to the file
-    with open("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html", "w", encoding="utf-8") as file:
-        file.write(html_content)
-    
-    # Also update the home page with top 3 editor's choice blogs
-    await update_home_html(editors_choice_data[:3])
-    
-    print("Successfully updated blogs_landing.html with dynamic content")
-    print("Successfully updated home.html with dynamic content")
-    
-    return latest_gossips_data, editors_choice_data
+    return latest_gossips_html, editors_choice_html, editors_choice_data[:3]
 
 
-async def update_home_html(editors_choice_data):
+async def get_home_insights_html(editors_choice_data):
     """
-    Update the home.html file with top 3 editor's choice blogs
+    Generate the HTML content for the home page with top 3 editor's choice blogs
     """
     # Generate HTML for top 3 editor's choice blogs in home page style
     home_insights_html = ""
     for i, blog in enumerate(editors_choice_data):
         home_insights_html += generate_home_insight_card_html(blog, i)
-    
-    # Read the original home HTML file
-    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    
-    # Replace the placeholder with dynamic content
-    start_marker_home = '<!-- TOP EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->'
-    end_marker_home = '</div>\n            </div>'
-    
-    start_pos_home = html_content.find(start_marker_home) + len(start_marker_home)
-    end_pos_home = html_content.find(end_marker_home, start_pos_home)
-    
-    if start_pos_home != -1 and end_pos_home != -1:
-        html_content = html_content[:start_pos_home] + f"\n                    {home_insights_html}\n                " + html_content[end_pos_home:]
-    
-    # Write the updated HTML back to the file
-    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "w", encoding="utf-8") as file:
-        file.write(html_content)
+    return home_insights_html
 
 
 def generate_home_insight_card_html(blog, index):
@@ -227,8 +175,8 @@ def generate_home_insight_card_html(blog, index):
                             <span class="read-time">5 mins read</span>
                         </div>
                         <h3>{blog['title']}</h3>
+                        <p>{blog['summary']}</p>
                         <div class="card-content-bottom">
-                            <p>{blog['summary']}</p>
                             <a href="/blog/{blog['slug']}">
                                 <img src="/icons/black_arrow.svg" alt="Read more" class="card-arrow-icon">
                             </a>
@@ -237,4 +185,13 @@ def generate_home_insight_card_html(blog, index):
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(update_blogs_html())
+    
+    async def main():
+        latest_gossips_html, editors_choice_html, top_editors_choice_data = await get_blogs_html()
+        home_insights_html = await get_home_insights_html(top_editors_choice_data)
+        
+        print("Generated latest gossips HTML:\n", latest_gossips_html)
+        print("Generated editor's choice HTML:\n", editors_choice_html)
+        print("Generated home insights HTML:\n", home_insights_html)
+
+    asyncio.run(main())

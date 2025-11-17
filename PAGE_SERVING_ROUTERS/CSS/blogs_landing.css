@@ -481,6 +481,9 @@ body {
 .blog-arrow-link {
     display: block;
     text-decoration: none;
+    position: absolute;
+    right: 1vw;
+    bottom: 2vh;
 }
 
 .blog-arrow {

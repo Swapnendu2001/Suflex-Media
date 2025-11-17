@@ -1712,6 +1712,11 @@ body {
     width: 22vw;
     text-align: left;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 22vw; /* Make it square-ish */
+    padding-bottom: 2vw;
 }
 
 .card-top {
@@ -1752,22 +1757,25 @@ body {
     line-height: 1.3;
 }
 
-.card-content-bottom {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1vw;
-}
-
 .insight-card p {
     font-size: 1vw;
     color: #555;
     line-height: 1.5;
-    margin: 0;
-    flex: 1;
+    margin: 0 0 1vw 0; /* Add margin below description */
+    flex-grow: 1; /* Allow paragraph to grow */
+}
+
+.card-content-bottom {
+    display: block; /* Change to block to stack elements */
+    margin-top: auto; /* Push to the bottom */
+    position: relative; /* For positioning the arrow */
+    height: 3vw; /* Give some height for the arrow */
 }
 
 .card-arrow-icon {
+    position: absolute;
+    bottom: -2vh;
+    right: 0;
     width: 3vw;
     height: 3vw;
     flex-shrink: 0;
@@ -1835,6 +1843,8 @@ body {
         width: 85vw;
         padding: 6vw;
         border-radius: 5vw;
+        min-height: 85vw; /* Adjusted for mobile width */
+        padding-bottom: 6vw; /* Adjusted for mobile padding */
     }
 
     .card-top {
@@ -1857,17 +1867,23 @@ body {
         line-height: 1.4;
     }
 
-    .card-content-bottom {
-        gap: 2vw;
-    }
-
     .insight-card p {
         font-size: 3.5vw;
         line-height: 1.6;
-        margin: 0;
+        margin: 0 0 3vw 0; /* Adjusted for mobile margin */
+    }
+
+    .card-content-bottom {
+        display: block; /* Change to block to stack elements */
+        margin-top: auto; /* Push to the bottom */
+        position: relative; /* For positioning the arrow */
+        height: 10vw; /* Give some height for the arrow */
     }
 
     .card-arrow-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
         width: 10vw;
         height: 10vw;
     }
