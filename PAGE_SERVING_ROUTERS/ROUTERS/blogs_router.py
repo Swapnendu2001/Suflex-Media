@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 import os
 from dotenv import load_dotenv
 from generate_blog_sections import get_blogs_html # Import the new function
@@ -8,7 +7,6 @@ from generate_blog_sections import get_blogs_html # Import the new function
 load_dotenv()
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 @router.get("/blogs", response_class=HTMLResponse)
 async def get_blogs(request: Request):
