@@ -6,7 +6,7 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
 async def get_homepage():
-    _, _, top_editors_choice_data = await get_blogs_html()
+    _, _, _, top_editors_choice_data = await get_blogs_html()
     home_insights_html = await get_home_insights_html(top_editors_choice_data)
 
     with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
