@@ -991,7 +991,7 @@ async def get_blog_hero_section(data: dict):
                 <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-                <span class="flex items-center">{data['blogCategory']}</span>
+                <span class="flex items-center">{data.get('blogCategory', 'General')}</span>
                 <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -1238,7 +1238,7 @@ async def get_blog_body(data: dict):
 """
 
 
-EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
+EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en" class="scroll-smooth w-full">
 
 <head>
@@ -2204,7 +2204,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Querying for blog with slug: {slug}")
         blog_record = await conn.fetchrow(
             """
-            SELECT id, blog, status, date, category, slug, isDeleted
+            SELECT id, blog, status, date, slug, isDeleted
             FROM blogs
             WHERE slug = $1 AND isDeleted = FALSE
             """,

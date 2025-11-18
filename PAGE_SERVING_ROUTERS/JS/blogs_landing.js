@@ -43,103 +43,110 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const blogColors = ['#22c5e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
 
-const blogsPerPage = 3;
+const blogsPerPage = 9; // 9 blogs per page for the "Read More" section
 
-// Function to handle pagination for server-rendered content
-function setupPagination(sectionId, paginationId) {
-    const grid = document.getElementById(sectionId);
-    const pagination = document.getElementById(paginationId);
-    const allBlogs = grid.querySelectorAll('.blog-card');
+function setupCarousel() {
+    const carousel = document.getElementById('editors-choice-carousel');
+    if (!carousel) return;
+
+    const items = carousel.querySelectorAll('.blog-card');
+    if (items.length === 0) return;
+
+    // Clone items for a seamless loop
+    items.forEach(item => {
+        const clone = item.cloneNode(true);
+        carousel.appendChild(clone);
+    });
+
+    carousel.addEventListener('mouseenter', () => {
+        carousel.style.animationPlayState = 'paused';
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+        carousel.style.animationPlayState = 'running';
+    });
+}
+
+function setupPagination() {
+    const grid = document.getElementById('read-more-grid');
+    const pagination = document.getElementById('read-more-pagination');
+    if (!grid || !pagination) return;
+
+    const allBlogs = Array.from(grid.querySelectorAll('.blog-card'));
     const totalBlogs = allBlogs.length;
     const totalPages = Math.ceil(totalBlogs / blogsPerPage);
     let currentPage = 1;
 
-    // If there are no blogs or only 3 or fewer, hide pagination
     if (totalBlogs <= blogsPerPage) {
-        pagination.innerHTML = '';
+        pagination.style.display = 'none';
         return;
     }
 
-    // Show first 3 blogs initially, hide the rest
-    showPage(sectionId, currentPage);
-
-    // Create pagination controls
-    createPaginationControls(paginationId, totalPages, currentPage, sectionId);
-}
-
-function showPage(sectionId, page) {
-    const grid = document.getElementById(sectionId);
-    const allBlogs = grid.querySelectorAll('.blog-card');
-
-    allBlogs.forEach((blog, index) => {
-        const startIndex = (page - 1) * blogsPerPage;
-        const endIndex = startIndex + blogsPerPage;
-        if (index >= startIndex && index < endIndex) {
-            blog.style.display = 'flex';
-        } else {
-            blog.style.display = 'none';
-        }
-    });
-}
-
-function createPaginationControls(paginationId, totalPages, currentPage, sectionId) {
-    const pagination = document.getElementById(paginationId);
-    if (!pagination) return;
-
-    let paginationHTML = '';
-
-    if (totalPages <= 4) {
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `<button class="page-btn page-number ${i === currentPage ? 'active' : ''}" data-page="${i}" data-section="${sectionId}">${i}</button>`;
-        }
-    } else {
-        paginationHTML += `<button class="page-btn page-number ${1 === currentPage ? 'active' : ''}" data-page="1" data-section="${sectionId}">1</button>`;
-
-        if (currentPage > 2) {
-            paginationHTML += `<span class="page-dots">...</span>`;
-        }
-
-        if (currentPage > 1 && currentPage < totalPages) {
-            paginationHTML += `<button class="page-btn page-number ${currentPage === currentPage ? 'active' : ''}" data-page="${currentPage}" data-section="${sectionId}">${currentPage}</button>`;
-        }
-
-        if (currentPage < totalPages - 1) {
-            paginationHTML += `<span class="page-dots">...</span>`;
-        }
-
-        paginationHTML += `<button class="page-btn page-number ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}" data-section="${sectionId}">${totalPages}</button>`;
+    function showPage(page) {
+        allBlogs.forEach((blog, index) => {
+            const startIndex = (page - 1) * blogsPerPage;
+            const endIndex = startIndex + blogsPerPage;
+            if (index >= startIndex && index < endIndex) {
+                blog.style.display = 'flex';
+            } else {
+                blog.style.display = 'none';
+            }
+        });
     }
 
-    pagination.innerHTML = paginationHTML;
+    function createPaginationControls() {
+        let paginationHTML = '';
+        if (totalPages <= 5) {
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            }
+        } else {
+            if (currentPage > 1) {
+                paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}">Prev</button>`;
+            }
+
+            paginationHTML += `<button class="page-btn ${1 === currentPage ? 'active' : ''}" data-page="1">1</button>`;
+
+            if (currentPage > 3) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+
+            if (currentPage > 2 && currentPage < totalPages - 1) {
+                paginationHTML += `<button class="page-btn active" data-page="${currentPage}">${currentPage}</button>`;
+            }
+
+            if (currentPage < totalPages - 2) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+
+            paginationHTML += `<button class="page-btn ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
+
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="page-btn next-btn" data-page="${currentPage + 1}">Next page <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3.75L14.25 9L9 14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+            }
+        }
+        pagination.innerHTML = paginationHTML;
+    }
+
+    function updatePage(page) {
+        currentPage = page;
+        showPage(currentPage);
+        createPaginationControls();
+    }
+
+    pagination.addEventListener('click', function (e) {
+        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
+            const page = parseInt(e.target.dataset.page);
+            updatePage(page);
+        }
+    });
+
+    showPage(1);
+    createPaginationControls();
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Set up pagination for both sections after the page loads
-    setupPagination('latest-gossips-grid', 'latest-gossips-pagination');
-    setupPagination('editors-choice-grid', 'editors-choice-pagination');
-
-    // Add event listeners for pagination buttons
-    document.getElementById('latest-gossips-pagination').addEventListener('click', function (e) {
-        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
-            const page = parseInt(e.target.dataset.page);
-            const sectionId = e.target.dataset.section || 'latest-gossips-grid';
-            updatePage(sectionId, 'latest-gossips-pagination', page);
-        }
-    });
-
-    document.getElementById('editors-choice-pagination').addEventListener('click', function (e) {
-        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
-            const page = parseInt(e.target.dataset.page);
-            const sectionId = e.target.dataset.section || 'editors-choice-grid';
-            updatePage(sectionId, 'editors-choice-pagination', page);
-        }
-    });
+    setupCarousel();
+    setupPagination();
 });
-
-function updatePage(gridId, paginationId, page) {
-    showPage(gridId, page);
-    const allBlogs = document.getElementById(gridId).querySelectorAll('.blog-card');
-    const totalBlogs = allBlogs.length;
-    const totalPages = Math.ceil(totalBlogs / blogsPerPage);
-    createPaginationControls(paginationId, totalPages, page, gridId);
-}
