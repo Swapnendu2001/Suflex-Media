@@ -24,105 +24,164 @@ def generate_slug(title: str) -> str:
     return slug.strip('-')
 
 class CreateCaseStudyRequest(BaseModel):
-    case_study: Dict[str, Any]
+    blog: Dict[str, Any]
     status: str = "draft"
     keyword: Optional[Dict[str, Any]] = None
-    category: Optional[str] = None
+    preview: Optional[Dict[str, Any]] = None
     editors_choice: Optional[str] = 'N'
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
 class UpdateCaseStudyRequest(BaseModel):
-    case_study: Optional[Dict[str, Any]] = None
+    blog: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
-    category: Optional[str] = None
+    preview: Optional[Dict[str, Any]] = None
     editors_choice: Optional[str] = None
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
-@router.get("/case_studies")
+@router.get("/case-studies")
 async def get_case_studies(include_deleted: bool = Query(False, description="Include soft-deleted case studies")):
     """
     Get all case studies
+    By default excludes soft-deleted entries
+    Set include_deleted=true to show all case studies including deleted ones
     """
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
         if include_deleted:
-            query = "SELECT * FROM blogs WHERE type = 'CASE STUDY' ORDER BY date DESC"
+            query = """
+                SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
+                FROM case_studies
+                WHERE type = 'CASE STUDY'
+                ORDER BY date DESC
+            """
         else:
-            query = "SELECT * FROM blogs WHERE isdeleted = FALSE AND type = 'CASE STUDY' ORDER BY date DESC"
+            query = """
+                SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
+                FROM case_studies
+                WHERE isdeleted = FALSE AND type = 'CASE STUDY'
+                ORDER BY date DESC
+            """
         
-        records = await conn.fetch(query)
+        case_studies = await conn.fetch(query)
         await conn.close()
         
-        results = [dict(record) for record in records]
+        case_studies_list = [
+            {
+                "id": str(case_study['id']),
+                "blog": case_study['blog'],
+                "status": case_study['status'],
+                "date": case_study['date'].isoformat() if case_study['date'] else None,
+                "keyword": case_study['keyword'],
+                "preview": case_study['preview'],
+                "slug": case_study['slug'],
+                "type": case_study['type'],
+                "redirect_url": case_study['redirect_url'],
+                "isdeleted": case_study['isdeleted'],
+                "created_at": case_study['created_at'].isoformat() if case_study['created_at'] else None,
+                "updated_at": case_study['updated_at'].isoformat() if case_study['updated_at'] else None
+            }
+            for case_study in case_studies
+        ]
         
-        return {"status": "success", "case_studies": results, "count": len(results)}
+        return {"status": "success", "case_studies": case_studies_list, "count": len(case_studies_list)}
         
     except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.post("/case_studies", status_code=201)
-async def create_case_study(data: CreateCaseStudyRequest):
+
+@router.post("/case-studies", status_code=201)
+async def create_case_study(case_study_data: CreateCaseStudyRequest):
     """
     Create a new case study
+    Requires case study content as JSONB
+    Optional fields: status, keyword, redirect_url
     """
+    print(f"Creating new case study with status: {case_study_data.status}")
+    
+    if not case_study_data.blog:
+        raise HTTPException(status_code=400, detail="Case study content is required")
+    
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
-        content_type = data.case_study.get('contentType', 'CASE STUDY')
+        case_study_content = case_study_data.blog.copy() if case_study_data.blog else {}
+        content_type = case_study_content.get('contentType', 'CASE STUDY')
         
-        new_record = await conn.fetchrow(
+        new_case_study = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, category, editors_choice, slug, type, redirect_url, isdeleted)
+            INSERT INTO case_studies (blog, status, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
-            RETURNING *
+            RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
-            data.case_study,
-            data.status,
-            data.keyword,
-            data.category,
-            data.editors_choice,
-            data.slug,
+            json.dumps(case_study_content),
+            case_study_data.status,
+            json.dumps(case_study_data.keyword),
+            json.dumps(case_study_data.preview) if case_study_data.preview else None,
+            case_study_data.editors_choice,
+            case_study_data.slug,
             content_type,
-            data.redirect_url
+            case_study_data.redirect_url
         )
         
         await conn.close()
         
+        print(f"Case study created successfully with ID: {new_case_study['id']}")
         return {
             "status": "success",
             "message": "Case study created successfully",
-            "case_study": dict(new_record)
+            "case_study": {
+                "id": str(new_case_study['id']),
+                "blog": new_case_study['blog'],
+                "status": new_case_study['status'],
+                "date": new_case_study['date'].isoformat() if new_case_study['date'] else None,
+                "keyword": new_case_study['keyword'],
+                "preview": new_case_study['preview'],
+                "slug": new_case_study['slug'],
+                "type": new_case_study['type'],
+                "redirect_url": new_case_study['redirect_url'],
+                "isdeleted": new_case_study['isdeleted'],
+                "created_at": new_case_study['created_at'].isoformat() if new_case_study['created_at'] else None,
+                "updated_at": new_case_study['updated_at'].isoformat() if new_case_study['updated_at'] else None
+            }
         }
         
     except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.put("/case_studies/{case_study_id}")
-async def update_case_study(case_study_id: str, data: UpdateCaseStudyRequest):
+@router.put("/case-studies/{case_study_id}")
+async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest):
     """
     Update an existing case study
+    Only updates provided fields (partial update)
+    Cannot update soft-deleted case studies
     """
+    print(f"Updating case study ID: {case_study_id}")
+    
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
-        existing_record = await conn.fetchrow(
-            "SELECT id, isdeleted FROM blogs WHERE id = $1 AND type = 'CASE STUDY'",
+        existing_case_study = await conn.fetchrow(
+            "SELECT id, isdeleted FROM case_studies WHERE id = $1",
             case_study_id
         )
         
-        if not existing_record:
+        if not existing_case_study:
             await conn.close()
             raise HTTPException(status_code=404, detail="Case study not found")
         
-        if existing_record['isdeleted']:
+        if existing_case_study['isdeleted']:
             await conn.close()
             raise HTTPException(status_code=400, detail="Cannot update deleted case study")
         
@@ -130,39 +189,39 @@ async def update_case_study(case_study_id: str, data: UpdateCaseStudyRequest):
         update_values = []
         param_count = 1
         
-        if data.case_study is not None:
+        if case_study_data.blog is not None:
             update_fields.append(f"blog = ${param_count}")
-            update_values.append(data.case_study)
+            update_values.append(json.dumps(case_study_data.blog))
             param_count += 1
         
-        if data.status is not None:
+        if case_study_data.status is not None:
             update_fields.append(f"status = ${param_count}")
-            update_values.append(data.status)
+            update_values.append(case_study_data.status)
             param_count += 1
         
-        if data.keyword is not None:
+        if case_study_data.keyword is not None:
             update_fields.append(f"keyword = ${param_count}")
-            update_values.append(data.keyword)
+            update_values.append(json.dumps(case_study_data.keyword))
             param_count += 1
         
-        if data.category is not None:
-            update_fields.append(f"category = ${param_count}")
-            update_values.append(data.category)
+        if case_study_data.preview is not None:
+            update_fields.append(f"preview = ${param_count}")
+            update_values.append(json.dumps(case_study_data.preview))
             param_count += 1
         
-        if data.slug is not None:
+        if case_study_data.slug is not None:
             update_fields.append(f"slug = ${param_count}")
-            update_values.append(data.slug)
+            update_values.append(case_study_data.slug)
             param_count += 1
         
-        if data.editors_choice is not None:
+        if case_study_data.editors_choice is not None:
             update_fields.append(f"editors_choice = ${param_count}")
-            update_values.append(data.editors_choice)
+            update_values.append(case_study_data.editors_choice)
             param_count += 1
         
-        if data.redirect_url is not None:
+        if case_study_data.redirect_url is not None:
             update_fields.append(f"redirect_url = ${param_count}")
-            update_values.append(data.redirect_url)
+            update_values.append(case_study_data.redirect_url)
             param_count += 1
         
         if not update_fields:
@@ -173,60 +232,81 @@ async def update_case_study(case_study_id: str, data: UpdateCaseStudyRequest):
         update_values.append(case_study_id)
         
         query = f"""
-            UPDATE blogs
+            UPDATE case_studies
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING *
+            RETURNING id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
         """
         
-        updated_record = await conn.fetchrow(query, *update_values)
+        updated_case_study = await conn.fetchrow(query, *update_values)
         await conn.close()
         
+        print(f"Case study updated successfully: {case_study_id}")
         return {
             "status": "success",
             "message": "Case study updated successfully",
-            "case_study": dict(updated_record)
+            "case_study": {
+                "id": str(updated_case_study['id']),
+                "blog": updated_case_study['blog'],
+                "status": updated_case_study['status'],
+                "date": updated_case_study['date'].isoformat() if updated_case_study['date'] else None,
+                "keyword": updated_case_study['keyword'],
+                "preview": updated_case_study['preview'],
+                "slug": updated_case_study['slug'],
+                "type": updated_case_study['type'],
+                "redirect_url": updated_case_study['redirect_url'],
+                "isdeleted": updated_case_study['isdeleted'],
+                "created_at": updated_case_study['created_at'].isoformat() if updated_case_study['created_at'] else None,
+                "updated_at": updated_case_study['updated_at'].isoformat() if updated_case_study['updated_at'] else None
+            }
         }
         
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.delete("/case_studies/{case_study_id}")
+@router.patch("/case-studies/{case_study_id}")
+async def partial_update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest):
+    """
+    Partial update of an existing case study (alias for PUT endpoint)
+    Only updates provided fields
+    Cannot update soft-deleted case studies
+    """
+    return await update_case_study(case_study_id, case_study_data)
+
+@router.delete("/case-studies/{case_study_id}")
 async def delete_case_study(case_study_id: str):
     """
-    Soft delete a case study
+    Permanently delete a case study from the database
+    This action cannot be undone
     """
+    print(f"Permanently deleting case study ID: {case_study_id}")
+    
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
-        record = await conn.fetchrow(
-            "SELECT id, isdeleted FROM blogs WHERE id = $1 AND type = 'CASE STUDY'",
+        case_study = await conn.fetchrow(
+            "SELECT id FROM case_studies WHERE id = $1",
             case_study_id
         )
         
-        if not record:
+        if not case_study:
             await conn.close()
             raise HTTPException(status_code=404, detail="Case study not found")
         
-        if record['isdeleted']:
-            await conn.close()
-            raise HTTPException(status_code=400, detail="Case study is already deleted")
-        
         await conn.execute(
-            """
-            UPDATE blogs
-            SET isdeleted = TRUE, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $1
-            """,
+            "DELETE FROM case_studies WHERE id = $1",
             case_study_id
         )
         
         await conn.close()
         
+        print(f"Case study permanently deleted successfully: {case_study_id}")
         return {
             "status": "success",
             "message": "Case study deleted successfully"
@@ -235,29 +315,92 @@ async def delete_case_study(case_study_id: str):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.post("/case-studies/{case_study_id}/restore")
+async def restore_case_study(case_study_id: str):
+    """
+    Restore a soft-deleted case study
+    Sets isdeleted back to FALSE
+    """
+    print(f"Restoring case study ID: {case_study_id}")
+    
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        case_study = await conn.fetchrow(
+            "SELECT id, isdeleted FROM case_studies WHERE id = $1",
+            case_study_id
+        )
+        
+        if not case_study:
+            await conn.close()
+            raise HTTPException(status_code=404, detail="Case study not found")
+        
+        if not case_study['isdeleted']:
+            await conn.close()
+            raise HTTPException(status_code=400, detail="Case study is not deleted")
+        
+        await conn.execute(
+            """
+            UPDATE case_studies
+            SET isdeleted = FALSE, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $1
+            """,
+            case_study_id
+        )
+        
+        await conn.close()
+        
+        print(f"Case study restored successfully: {case_study_id}")
+        return {
+            "status": "success",
+            "message": "Case study restored successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/admin_save_case_study")
 async def admin_save_case_study(request: Request):
     """
     Save case study from admin panel (Draft or Publish)
+    Receives complete case study data from frontend and saves to database
+    Preserves all original JSON key names
+    Generates slug from title field
     """
     try:
         data = await request.json()
         
-        title = data.get('blogTitle', '')
-        if not title:
+        print("=" * 80)
+        print("RECEIVED CASE STUDY DATA FROM FRONTEND:")
+        print("=" * 80)
+        print(json.dumps(data, indent=2))
+        print("=" * 80)
+        print(f"Data keys: {list(data.keys())}")
+        print(f"Status field: {data.get('blogStatus', 'NOT FOUND')}")
+        print("=" * 80)
+        
+        case_study_title = data.get('blogTitle', '')
+        if not case_study_title:
             raise HTTPException(status_code=400, detail="Case study title is required")
         
         case_study_id = data.get('blog_id')
         reason = data.get('reason', 'create')
         
-        slug = generate_slug(title)
-        status = data.get('blogStatus', 'draft')
-        category = data.get('blogCategory', None)
-        content_type = 'CASE STUDY'
+        slug = generate_slug(case_study_title)
+        case_study_status = data.get('blogStatus', 'draft')
+        content_type = data.get('contentType', 'CASE STUDY')
         
         data['contentType'] = content_type
         
@@ -265,17 +408,18 @@ async def admin_save_case_study(request: Request):
         
         try:
             if reason == 'update' and case_study_id:
-                existing_record = await conn.fetchrow(
-                    "SELECT id, slug FROM blogs WHERE id = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
+                existing_case_study = await conn.fetchrow(
+                    "SELECT id, slug FROM case_studies WHERE id = $1 AND isdeleted = FALSE",
                     case_study_id
                 )
                 
-                if not existing_record:
+                if not existing_case_study:
                     raise HTTPException(status_code=404, detail="Case study not found for update")
                 
-                if slug != existing_record['slug']:
+                existing_slug = existing_case_study['slug']
+                if slug != existing_slug:
                     existing_slug_record = await conn.fetchrow(
-                        "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE AND type = 'CASE STUDY'",
+                        "SELECT id FROM case_studies WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
                         slug,
                         case_study_id
                     )
@@ -286,81 +430,101 @@ async def admin_save_case_study(request: Request):
                         while existing_slug_record:
                             slug = f"{original_slug}-{counter}"
                             existing_slug_record = await conn.fetchrow(
-                                "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE AND type = 'CASE STUDY'",
+                                "SELECT id FROM case_studies WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
                                 slug,
                                 case_study_id
                             )
                             counter += 1
+                        print(f"Generated unique slug: {slug}")
                 
-                updated_record = await conn.fetchrow(
+                preview_data = data.get('previewData')
+                
+                updated_case_study = await conn.fetchrow(
                     """
-                    UPDATE blogs
-                    SET blog = $1, status = $2, category = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
+                    UPDATE case_studies
+                    SET blog = $1, status = $2, preview = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $7
-                    RETURNING *
+                    RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
-                    status,
-                    category,
+                    case_study_status,
+                    json.dumps(preview_data) if preview_data else None,
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
                     case_study_id
                 )
                 
-                if not updated_record:
+                if not updated_case_study:
                     raise HTTPException(status_code=404, detail="Case study not found for update")
                 
-                record_id = str(updated_record['id'])
-                record_url = f"/case_study/{slug}"
+                case_study_id = str(updated_case_study['id'])
+                case_study_url = f"http://localhost:5000/case-study/{slug}"
+                
+                print(f"Case study updated successfully with ID: {case_study_id}")
+                print(f"Case study slug: {slug}")
+                print(f"Case study status: {case_study_status}")
+                print(f"Case study type: {content_type}")
+                print(f"Case study URL: {case_study_url}")
+                print("=" * 80)
                 
                 return {
                     "status": "success",
-                    "message": f"Case study {'published' if status == 'published' else 'updated'} successfully",
-                    "case_study_id": record_id,
+                    "message": f"Case study {'published' if case_study_status == 'published' else 'updated'} successfully",
+                    "blog_id": case_study_id,
                     "slug": slug,
-                    "url": record_url
+                    "url": case_study_url
                 }
             else:
-                existing_record = await conn.fetchrow(
-                    "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
+                existing_case_study = await conn.fetchrow(
+                    "SELECT id FROM case_studies WHERE slug = $1 AND isdeleted = FALSE",
                     slug
                 )
                 
-                if existing_record:
+                if existing_case_study:
                     original_slug = slug
                     counter = 1
-                    while existing_record:
+                    while existing_case_study:
                         slug = f"{original_slug}-{counter}"
-                        existing_record = await conn.fetchrow(
-                            "SELECT id FROM blogs WHERE slug = $1 AND isdeleted = FALSE AND type = 'CASE STUDY'",
+                        existing_case_study = await conn.fetchrow(
+                            "SELECT id FROM case_studies WHERE slug = $1 AND isdeleted = FALSE",
                             slug
                         )
                         counter += 1
+                    print(f"Generated unique slug: {slug}")
+            
+                preview_data = data.get('previewData')
                 
-                new_record = await conn.fetchrow(
+                new_case_study = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blog, status, category, editors_choice, slug, type, isdeleted)
+                    INSERT INTO case_studies (blog, status, preview, editors_choice, slug, type, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, $6, FALSE)
-                    RETURNING *
+                    RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
-                    status,
-                    category,
+                    case_study_status,
+                    json.dumps(preview_data) if preview_data else None,
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type
                 )
                 
-                record_id = str(new_record['id'])
-                record_url = f"/case_study/{slug}"
+                case_study_id = str(new_case_study['id'])
+                case_study_url = f"http://localhost:5000/case-study/{slug}"
+                
+                print(f"Case study saved successfully with ID: {case_study_id}")
+                print(f"Case study slug: {slug}")
+                print(f"Case study status: {case_study_status}")
+                print(f"Case study type: {content_type}")
+                print(f"Case study URL: {case_study_url}")
+                print("=" * 80)
                 
                 return {
                     "status": "success",
-                    "message": f"Case study {'published' if status == 'published' else 'saved as draft'} successfully",
-                    "case_study_id": record_id,
+                    "message": f"Case study {'published' if case_study_status == 'published' else 'saved as draft'} successfully",
+                    "blog_id": case_study_id,
                     "slug": slug,
-                    "url": record_url
+                    "url": case_study_url
                 }
             
         finally:
@@ -369,8 +533,11 @@ async def admin_save_case_study(request: Request):
     except HTTPException:
         raise
     except asyncpg.UniqueViolationError:
+        print(f"Slug already exists")
         raise HTTPException(status_code=400, detail="A case study with this title already exists")
     except asyncpg.PostgresError as e:
+        print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
+        print(f"Unexpected error in admin_save_case_study: {e}")
         raise HTTPException(status_code=500, detail=str(e))

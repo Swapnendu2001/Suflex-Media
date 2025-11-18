@@ -27,7 +27,6 @@ class CreateBlogRequest(BaseModel):
     blog: Dict[str, Any]
     status: str = "draft"
     keyword: Optional[Dict[str, Any]] = None
-    category: Optional[str] = None
     editors_choice: Optional[str] = 'N'
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
@@ -36,7 +35,6 @@ class UpdateBlogRequest(BaseModel):
     blog: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
-    category: Optional[str] = None
     editors_choice: Optional[str] = None
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
@@ -53,15 +51,16 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
         
         if include_deleted:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
+                WHERE type = 'BLOG'
                 ORDER BY date DESC
             """
         else:
             query = """
-                SELECT id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
-                WHERE isdeleted = FALSE
+                WHERE isdeleted = FALSE AND type = 'BLOG'
                 ORDER BY date DESC
             """
         
@@ -75,7 +74,6 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
                 "status": blog['status'],
                 "date": blog['date'].isoformat() if blog['date'] else None,
                 "keyword": blog['keyword'],
-                "category": blog['category'],
                 "slug": blog['slug'],
                 "type": blog['type'],
                 "redirect_url": blog['redirect_url'],
@@ -101,7 +99,7 @@ async def create_blog(blog_data: CreateBlogRequest):
     """
     Create a new blog
     Requires blog content as JSONB
-    Optional fields: status, keyword, category, redirect_url
+    Optional fields: status, keyword, redirect_url
     """
     print(f"Creating new blog with status: {blog_data.status}")
     
@@ -117,14 +115,13 @@ async def create_blog(blog_data: CreateBlogRequest):
         
         new_blog = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, category, editors_choice, slug, type, redirect_url, isdeleted)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
-            RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+            INSERT INTO blogs (blog, status, keyword, editors_choice, slug, type, redirect_url, isdeleted)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
+            RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
             json.dumps(blog_content),
             blog_data.status,
             json.dumps(blog_data.keyword),
-            blog_data.category,
             blog_data.editors_choice,
             blog_data.slug,
             content_type,
@@ -143,7 +140,6 @@ async def create_blog(blog_data: CreateBlogRequest):
                 "status": new_blog['status'],
                 "date": new_blog['date'].isoformat() if new_blog['date'] else None,
                 "keyword": new_blog['keyword'],
-                "category": new_blog['category'],
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
@@ -204,11 +200,6 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
             update_values.append(json.dumps(blog_data.keyword))
             param_count += 1
         
-        if blog_data.category is not None:
-            update_fields.append(f"category = ${param_count}")
-            update_values.append(blog_data.category)
-            param_count += 1
-        
         if blog_data.slug is not None:
             update_fields.append(f"slug = ${param_count}")
             update_values.append(blog_data.slug)
@@ -235,7 +226,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
             UPDATE blogs
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, blog, status, date, keyword, category, slug, type, redirect_url, isdeleted, created_at, updated_at
+            RETURNING id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
         """
         
         updated_blog = await conn.fetchrow(query, *update_values)
@@ -251,9 +242,8 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest):
                 "status": updated_blog['status'],
                 "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
                 "keyword": updated_blog['keyword'],
-                "category": updated_blog['category'],
                 "slug": updated_blog['slug'],
-                "type": updated_blog['type'],  # Added type field
+                "type": updated_blog['type'],
                 "redirect_url": updated_blog['redirect_url'],
                 "isdeleted": updated_blog['isdeleted'],
                 "created_at": updated_blog['created_at'].isoformat() if updated_blog['created_at'] else None,
@@ -282,17 +272,16 @@ async def partial_update_blog(blog_id: str, blog_data: UpdateBlogRequest):
 @router.delete("/blogs/{blog_id}")
 async def delete_blog(blog_id: str):
     """
-    Soft delete a blog
-    Sets isdeleted to TRUE instead of removing from database
-    Cannot delete already deleted blogs
+    Permanently delete a blog from the database
+    This action cannot be undone
     """
-    print(f"Soft deleting blog ID: {blog_id}")
+    print(f"Permanently deleting blog ID: {blog_id}")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
         blog = await conn.fetchrow(
-            "SELECT id, isdeleted FROM blogs WHERE id = $1",
+            "SELECT id FROM blogs WHERE id = $1",
             blog_id
         )
         
@@ -300,22 +289,14 @@ async def delete_blog(blog_id: str):
             await conn.close()
             raise HTTPException(status_code=404, detail="Blog not found")
         
-        if blog['isdeleted']:
-            await conn.close()
-            raise HTTPException(status_code=400, detail="Blog is already deleted")
-        
         await conn.execute(
-            """
-            UPDATE blogs
-            SET isdeleted = TRUE, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $1
-            """,
+            "DELETE FROM blogs WHERE id = $1",
             blog_id
         )
         
         await conn.close()
         
-        print(f"Blog soft deleted successfully: {blog_id}")
+        print(f"Blog permanently deleted successfully: {blog_id}")
         return {
             "status": "success",
             "message": "Blog deleted successfully"
@@ -410,7 +391,6 @@ async def admin_save_blog(request: Request):
         
         slug = generate_slug(blog_title)
         blog_status = data.get('blogStatus', 'draft')
-        blog_category = data.get('blogCategory', None)
         content_type = data.get('contentType', 'BLOG')
         
         # Add the content type to the blog data for storage
@@ -456,13 +436,12 @@ async def admin_save_blog(request: Request):
                 updated_blog = await conn.fetchrow(
                     """
                     UPDATE blogs
-                    SET blog = $1, status = $2, category = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = $7
-                    RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    SET blog = $1, status = $2, editors_choice = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $6
+                    RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
-                    blog_category,
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
@@ -510,13 +489,12 @@ async def admin_save_blog(request: Request):
             
                 new_blog = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blog, status, category, editors_choice, slug, type, isdeleted)
-                    VALUES ($1, $2, $3, $4, $5, $6, FALSE)
-                    RETURNING id, blog, status, date, keyword, category, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    INSERT INTO blogs (blog, status, editors_choice, slug, type, isdeleted)
+                    VALUES ($1, $2, $3, $4, $5, FALSE)
+                    RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
-                    blog_category,
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type

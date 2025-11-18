@@ -16,6 +16,7 @@ from PAGE_SERVING_ROUTERS.ROUTERS.login_router import router as login_router
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_homepage_router import router as admin_homepage_router
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_users_router import router as admin_users_router
 from PAGE_SERVING_ROUTERS.ROUTERS.admin_blogs_router import router as admin_blogs_router
+from PAGE_SERVING_ROUTERS.ROUTERS.admin_case_studies_router import router as admin_case_studies_router
 from PAGE_SERVING_ROUTERS.ROUTERS.Blog_Creator_router import router as blog_creator_router
 from PAGE_SERVING_ROUTERS.ROUTERS.landing_page import router as landing_page_router
 from PAGE_SERVING_ROUTERS.ROUTERS.linkedin_branding_router import router as linkedin_branding_router
@@ -24,11 +25,11 @@ from PAGE_SERVING_ROUTERS.ROUTERS.performance_marketing_router import router as 
 from PAGE_SERVING_ROUTERS.ROUTERS.website_development_router import router as website_development_router
 from PAGE_SERVING_ROUTERS.ROUTERS.seo_router import router as seo_router
 from PAGE_SERVING_ROUTERS.ROUTERS.ghostwriting_router import router as ghostwriting_router
+from PAGE_SERVING_ROUTERS.ROUTERS.case_study_router import router as case_study_router
 from API_ROUTERS.login_api_router import router as login_api_router
 from API_ROUTERS.admin_users_api_router import router as admin_users_api_router
 from API_ROUTERS.serve_images_api_router import router as serve_images_api_router
 from API_ROUTERS.blogs_api_router import router as blogs_api_router
-from PAGE_SERVING_ROUTERS.ROUTERS.Case_Study_Creator_router import router as case_study_creator_router
 from API_ROUTERS.case_studies_api_router import router as case_studies_api_router
 
 
@@ -61,6 +62,7 @@ app.include_router(login_router)
 app.include_router(admin_homepage_router)
 app.include_router(admin_users_router)
 app.include_router(admin_blogs_router)
+app.include_router(admin_case_studies_router)
 app.include_router(blog_creator_router)
 app.include_router(ghostwriting_router)
 app.include_router(linkedin_branding_router)
@@ -72,9 +74,9 @@ app.include_router(login_api_router)
 app.include_router(admin_users_api_router)
 app.include_router(serve_images_api_router)
 app.include_router(blogs_api_router)
-app.include_router(case_study_creator_router)
 app.include_router(case_studies_api_router)
 app.include_router(landing_page_router)
+app.include_router(case_study_router)
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: HTTPException):
