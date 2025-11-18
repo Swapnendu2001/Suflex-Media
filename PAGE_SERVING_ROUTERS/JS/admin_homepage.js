@@ -119,6 +119,10 @@
         title: 'Blogs',
         url: '/admin/blogs'
       },
+      'case-studies': {
+        title: 'Case Studies',
+        url: '/admin/case-studies'
+      },
       'admin-users': {
         title: 'Admin Users',
         url: '/admin/users'

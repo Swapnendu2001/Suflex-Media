@@ -492,19 +492,6 @@ document.addEventListener('click', function (event) {
         addBulletPoint();
     }
 
-    if (event.target.closest('.remove-bullet-btn')) {
-        event.preventDefault();
-        const bulletItem = event.target.closest('.bullet-point-item');
-        const container = document.getElementById('bulletPointsContainer');
-
-        if (container.children.length > 1) {
-            bulletItem.remove();
-        } else {
-            const input = bulletItem.querySelector('.bullet-input');
-            if (input) input.value = '';
-        }
-    }
-
     const bulletModal = document.getElementById('bulletModal');
     if (event.target === bulletModal) {
         closeBulletModal();
@@ -579,7 +566,7 @@ async function confirmDeleteBlog() {
         confirmDeleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Deleting...';
         confirmDeleteBtn.disabled = true;
 
-        const response = await fetch(`/api/blogs/${currentDeleteBlogId}`, {
+        const response = await fetch(`/api/case-studies/${currentDeleteBlogId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -592,14 +579,14 @@ async function confirmDeleteBlog() {
         const result = await response.json();
 
         if (result.status === 'success') {
-            let message = `Blog "${currentDeleteBlogTitle}" has been permanently deleted from the database.`;
+            let message = `Case Study "${currentDeleteBlogTitle}" has been permanently deleted from the database.`;
             showModal('Success', message, 'success');
 
             closeDeleteConfirmModal();
 
             fetchBlogs();
         } else {
-            showModal('Error', result.message || 'Failed to delete blog', 'error');
+            showModal('Error', result.message || 'Failed to delete case study', 'error');
         }
 
     } catch (error) {
@@ -608,7 +595,7 @@ async function confirmDeleteBlog() {
         confirmDeleteBtn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Delete Blog';
         confirmDeleteBtn.disabled = false;
 
-        showModal('Error', 'An error occurred while deleting the blog. Please try again.', 'error');
+        showModal('Error', 'An error occurred while deleting the case study. Please try again.', 'error');
     }
 }
 
@@ -653,7 +640,7 @@ function showBlogUrl(blogSlug, blogTitle) {
     }
 
     const baseUrl = window.location.origin;
-    const blogUrl = `${baseUrl}/blog/${blogSlug}`;
+    const blogUrl = `${baseUrl}/case-study/${blogSlug}`;
     currentBlogUrl = blogUrl;
 
     const urlModal = document.getElementById('blogUrlModal');
@@ -866,10 +853,10 @@ function showContentSection(tabTitle) {
 
     let sectionId = '';
     switch (tabTitle) {
-        case 'Add Blogs':
+        case 'Add Case Studies':
             sectionId = 'addBlogs';
             break;
-        case 'Edit/Delete Blog':
+        case 'Edit/Delete Case Study':
             sectionId = 'editBlogs';
             break;
     }
@@ -1051,7 +1038,7 @@ async function handleLoadPreview() {
         loadPreviewBtn.disabled = true;
 
 
-        const endpoint = '/api/admin_blog_preview';
+        const endpoint = '/api/admin_case_study_preview';
 
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -1117,12 +1104,14 @@ async function handleSaveDraft() {
         if (blogDateInput) blogDateInput.value = today;
     }
 
-    const dynamicSections = collectDynamicSections();
-    data.dynamicSections = dynamicSections;
+    const structuredContent = collectStructuredContent();
+    data.structuredContent = structuredContent;
+
+    const previewData = collectPreviewData();
+    data.previewData = previewData;
 
     data.blogStatus = 'draft';
     
-    // Add content type to the data
     data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
@@ -1131,7 +1120,7 @@ async function handleSaveDraft() {
         saveDraftBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Saving...';
         saveDraftBtn.disabled = true;
 
-        const endpoint = '/api/admin_save_blog';
+        const endpoint = '/api/admin_save_case_study';
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -1158,9 +1147,9 @@ async function handleSaveDraft() {
         const result = await response.json();
 
         if (result.status === 'success') {
-            let message = 'Blog saved as draft successfully!';
+            let message = 'Case Study saved as draft successfully!';
             if (result.url) {
-                message += `\n\nBlog URL: ${result.url}`;
+                message += `\n\nCase Study URL: ${result.url}`;
             }
             showModal('Success', message, 'success');
         } else {
@@ -1203,12 +1192,14 @@ async function handleSavePublish() {
         if (blogDateInput) blogDateInput.value = today;
     }
 
-    const dynamicSections = collectDynamicSections();
-    data.dynamicSections = dynamicSections;
+    const structuredContent = collectStructuredContent();
+    data.structuredContent = structuredContent;
+
+    const previewData = collectPreviewData();
+    data.previewData = previewData;
 
     data.blogStatus = 'published';
     
-    // Add content type to the data
     data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
@@ -1217,7 +1208,7 @@ async function handleSavePublish() {
         savePublishBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Publishing...';
         savePublishBtn.disabled = true;
 
-        const endpoint = '/api/admin_save_blog';
+        const endpoint = '/api/admin_save_case_study';
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -1237,16 +1228,16 @@ async function handleSavePublish() {
             } catch (e) {
                 errorMessage = response.statusText || errorMessage;
             }
-            showModal('Error Publishing Blog', errorMessage, 'error');
+            showModal('Error Publishing Case Study', errorMessage, 'error');
             return;
         }
 
         const result = await response.json();
 
         if (result.status === 'success') {
-            let message = 'Blog published successfully!';
+            let message = 'Case Study published successfully!';
             if (result.url) {
-                message += `\n\nBlog URL: ${result.url}`;
+                message += `\n\nCase Study URL: ${result.url}`;
             }
             showModal('Success', message, 'success');
 
@@ -1258,7 +1249,7 @@ async function handleSavePublish() {
             }
             sectionCounter = 0;
         } else {
-            showModal('Error Publishing Blog', result.message || 'Unknown error', 'error');
+            showModal('Error Publishing Case Study', result.message || 'Unknown error', 'error');
         }
 
     } catch (error) {
@@ -1266,8 +1257,8 @@ async function handleSavePublish() {
         savePublishBtn.innerHTML = '<i data-lucide="send" class="w-4 h-4 mr-2"></i>Save & Publish';
         savePublishBtn.disabled = false;
 
-        console.error('Error publishing blog:', error);
-        showModal('Error Publishing Blog', error.message, 'error');
+        console.error('Error publishing case study:', error);
+        showModal('Error Publishing Case Study', error.message, 'error');
     }
 }
 
@@ -1392,7 +1383,7 @@ function createDynamicSection(type, content = '') {
                     <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
                     <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
                 </div>
-                <input type="text" name="dynamic_h5_${sectionId}" class="form-input" placeholder="Enter H6 header text..." value="${content}">
+                <div contenteditable="true" data-name="dynamic_h5_${sectionId}" class="form-input content-editable" data-placeholder="Enter H6 header text...">${content}</div>
             `;
             break;
         case 'subheader-text':
@@ -1703,6 +1694,657 @@ function updatePreviewIfVisible() {
 
 }
 
+function addProjectSnapshot() {
+    const container = document.getElementById('projectSnapshotsContainer');
+    const snapshotCount = container.children.length + 1;
+    
+    const snapshotItem = document.createElement('div');
+    snapshotItem.className = 'project-snapshot-item';
+    snapshotItem.innerHTML = `
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-white/70">Snapshot ${snapshotCount}</span>
+            <button type="button" class="remove-snapshot-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+            <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+            <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+            <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+        </div>
+        <div contenteditable="true" class="snapshot-input form-input content-editable" style="min-height: 3rem; max-height: 10rem; overflow-y: auto;" data-placeholder="Enter project snapshot..."></div>
+    `;
+    
+    container.appendChild(snapshotItem);
+    lucide.createIcons();
+    
+    const snapshotInput = snapshotItem.querySelector('.snapshot-input');
+    if (snapshotInput) {
+        snapshotInput.addEventListener('focus', function() {
+            if (this.textContent === '' && this.dataset.placeholder) {
+                this.classList.remove('empty');
+            }
+        });
+        
+        snapshotInput.addEventListener('blur', function() {
+            if (this.textContent.trim() === '') {
+                this.classList.add('empty');
+            }
+        });
+        
+        if (snapshotInput.textContent.trim() === '') {
+            snapshotInput.classList.add('empty');
+        }
+    }
+}
+
+function removeProjectSnapshot(button) {
+    const snapshotItem = button.closest('.project-snapshot-item');
+    if (snapshotItem) {
+        snapshotItem.remove();
+        updateSnapshotNumbers();
+    }
+}
+
+function updateSnapshotNumbers() {
+    const container = document.getElementById('projectSnapshotsContainer');
+    const snapshots = container.querySelectorAll('.project-snapshot-item');
+    
+    snapshots.forEach((snapshot, index) => {
+        const label = snapshot.querySelector('.text-sm');
+        if (label) {
+            label.textContent = `Snapshot ${index + 1}`;
+        }
+    });
+}
+
+function collectPreviewData() {
+    const previewText = document.getElementById('previewText');
+    const blogSummary = document.getElementById('blogSummary');
+    const snapshotInputs = document.querySelectorAll('.snapshot-input');
+    
+    const previewData = {
+        text: previewText ? (previewText.isContentEditable ? previewText.innerHTML.trim() : previewText.value.trim()) : '',
+        summary: blogSummary ? (blogSummary.isContentEditable ? blogSummary.innerHTML.trim() : blogSummary.value.trim()) : '',
+        projectSnapshots: []
+    };
+    
+    snapshotInputs.forEach(input => {
+        const value = input.isContentEditable ? input.innerHTML.trim() : input.value.trim();
+        if (value) {
+            previewData.projectSnapshots.push(value);
+        }
+    });
+    
+    return previewData;
+}
+
+function populatePreviewData(previewData) {
+    const previewText = document.getElementById('previewText');
+    const blogSummary = document.getElementById('blogSummary');
+    const container = document.getElementById('projectSnapshotsContainer');
+    
+    if (!previewData) {
+        if (previewText) {
+            if (previewText.isContentEditable) {
+                previewText.innerHTML = '';
+            } else {
+                previewText.value = '';
+            }
+        }
+        if (blogSummary) {
+            if (blogSummary.isContentEditable) {
+                blogSummary.innerHTML = '';
+            } else {
+                blogSummary.value = '';
+            }
+        }
+        container.innerHTML = '';
+        return;
+    }
+    
+    if (previewText && previewData.text) {
+        if (previewText.isContentEditable) {
+            previewText.innerHTML = previewData.text;
+            if (previewData.text && previewData.text.trim() !== '') {
+                previewText.classList.remove('empty');
+            } else {
+                previewText.classList.add('empty');
+            }
+        } else {
+            previewText.value = previewData.text;
+        }
+    }
+    
+    if (blogSummary && previewData.summary) {
+        if (blogSummary.isContentEditable) {
+            blogSummary.innerHTML = previewData.summary;
+            if (previewData.summary && previewData.summary.trim() !== '') {
+                blogSummary.classList.remove('empty');
+            } else {
+                blogSummary.classList.add('empty');
+            }
+        } else {
+            blogSummary.value = previewData.summary;
+        }
+    }
+    
+    container.innerHTML = '';
+    
+    if (previewData.projectSnapshots && Array.isArray(previewData.projectSnapshots) && previewData.projectSnapshots.length > 0) {
+        previewData.projectSnapshots.forEach((snapshot, index) => {
+            const snapshotItem = document.createElement('div');
+            snapshotItem.className = 'project-snapshot-item';
+            snapshotItem.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-white/70">Snapshot ${index + 1}</span>
+                    <button type="button" class="remove-snapshot-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                    <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                    <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                    <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                </div>
+                <div contenteditable="true" class="snapshot-input form-input content-editable" style="min-height: 3rem; max-height: 10rem; overflow-y: auto;" data-placeholder="Enter project snapshot...">${snapshot}</div>
+            `;
+            
+            container.appendChild(snapshotItem);
+            
+            const snapshotInput = snapshotItem.querySelector('.snapshot-input');
+            if (snapshotInput) {
+                if (snapshot && snapshot.trim() !== '') {
+                    snapshotInput.classList.remove('empty');
+                } else {
+                    snapshotInput.classList.add('empty');
+                }
+                
+                snapshotInput.addEventListener('focus', function() {
+                    if (this.textContent === '' && this.dataset.placeholder) {
+                        this.classList.remove('empty');
+                    }
+                });
+                
+                snapshotInput.addEventListener('blur', function() {
+                    if (this.textContent.trim() === '') {
+                        this.classList.add('empty');
+                    }
+                });
+                
+                if (snapshotInput.textContent.trim() === '') {
+                    snapshotInput.classList.add('empty');
+                }
+            }
+            
+            const formatBtns = snapshotItem.querySelectorAll('.format-btn');
+            formatBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const format = this.dataset.format;
+                    const textInput = snapshotItem.querySelector('.snapshot-input');
+                    if (textInput) {
+                        applyFormatting(textInput, format);
+                    }
+                });
+            });
+        });
+    }
+    
+    lucide.createIcons();
+}
+
+let storyCounter = 0;
+
+function addProcessBullet() {
+    const container = document.getElementById('ourProcessBullets');
+    const bulletItem = document.createElement('div');
+    bulletItem.className = 'bullet-item flex items-start gap-2 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+    
+    bulletItem.innerHTML = `
+        <span class="text-white/50 mt-2">•</span>
+        <div class="flex-1">
+            <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+            </div>
+            <div contenteditable="true" class="process-bullet form-input content-editable" style="min-height: 2.5rem;" data-placeholder="Enter process step..."></div>
+        </div>
+        <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    
+    container.appendChild(bulletItem);
+    lucide.createIcons();
+    
+    const processBullet = bulletItem.querySelector('.process-bullet');
+    if (processBullet) {
+        processBullet.addEventListener('focus', function() {
+            if (this.textContent === '' && this.dataset.placeholder) {
+                this.classList.remove('empty');
+            }
+        });
+        
+        processBullet.addEventListener('blur', function() {
+            if (this.textContent.trim() === '') {
+                this.classList.add('empty');
+            }
+        });
+        
+        if (processBullet.textContent.trim() === '') {
+            processBullet.classList.add('empty');
+        }
+    }
+}
+
+function addImpactBullet() {
+    const container = document.getElementById('theImpactBullets');
+    const bulletItem = document.createElement('div');
+    bulletItem.className = 'bullet-item flex items-start gap-2 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+    
+    bulletItem.innerHTML = `
+        <span class="text-white/50 mt-2">•</span>
+        <div class="flex-1">
+            <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+            </div>
+            <div contenteditable="true" class="impact-bullet form-input content-editable" style="min-height: 2.5rem;" data-placeholder="Enter impact point..."></div>
+        </div>
+        <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    
+    container.appendChild(bulletItem);
+    lucide.createIcons();
+    
+    const impactBullet = bulletItem.querySelector('.impact-bullet');
+    if (impactBullet) {
+        impactBullet.addEventListener('focus', function() {
+            if (this.textContent === '' && this.dataset.placeholder) {
+                this.classList.remove('empty');
+            }
+        });
+        
+        impactBullet.addEventListener('blur', function() {
+            if (this.textContent.trim() === '') {
+                this.classList.add('empty');
+            }
+        });
+        
+        if (impactBullet.textContent.trim() === '') {
+            impactBullet.classList.add('empty');
+        }
+    }
+}
+
+function removeBullet(button) {
+    const bulletItem = button.closest('.bullet-item');
+    if (bulletItem) {
+        bulletItem.remove();
+    }
+}
+
+function addStorySection(type) {
+    const container = document.getElementById('storyDynamicSections');
+    storyCounter++;
+    const sectionId = `story_section_${storyCounter}`;
+    
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'story-section p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+    sectionDiv.dataset.sectionId = sectionId;
+    sectionDiv.dataset.type = type;
+    
+    if (type === 'h3') {
+        sectionDiv.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <label class="form-label text-sm flex items-center">
+                    <i data-lucide="heading-3" class="w-4 h-4 mr-2"></i>Story Section
+                </label>
+                <button type="button" class="remove-story-section" data-section-id="${sectionId}">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <input type="text" class="story-h3 form-input mb-2" placeholder="Enter section title...">
+            <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+            </div>
+            <div contenteditable="true" class="story-text form-input content-editable" style="min-height: 6rem; max-height: 20rem; overflow-y: auto;" data-placeholder="Enter section content..."></div>
+        `;
+    } else if (type === 'image') {
+        sectionDiv.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <label class="form-label text-sm flex items-center">
+                    <i data-lucide="image" class="w-4 h-4 mr-2"></i>Image
+                </label>
+                <button type="button" class="remove-story-section" data-section-id="${sectionId}">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <input type="url" class="story-image-url form-input" placeholder="Image URL...">
+                <input type="text" class="story-image-alt form-input" placeholder="Alt text for image...">
+            </div>
+        `;
+    }
+    
+    container.appendChild(sectionDiv);
+    lucide.createIcons();
+    
+    if (type === 'h3') {
+        const storyText = sectionDiv.querySelector('.story-text');
+        if (storyText) {
+            if (content && content.trim() !== '') {
+                storyText.classList.remove('empty');
+            } else {
+                storyText.classList.add('empty');
+            }
+            if (content && content.trim() !== '') {
+                storyText.classList.remove('empty');
+            } else {
+                storyText.classList.add('empty');
+            }
+            storyText.addEventListener('focus', function() {
+                if (this.textContent === '' && this.dataset.placeholder) {
+                    this.classList.remove('empty');
+                }
+            });
+            
+            storyText.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.classList.add('empty');
+                }
+            });
+            
+            if (storyText.textContent.trim() === '') {
+                storyText.classList.add('empty');
+            }
+        }
+    }
+}
+
+function removeStorySection(button) {
+    const section = button.closest('.story-section');
+    if (section) {
+        section.remove();
+    }
+}
+
+function collectStructuredContent() {
+    const theVision = document.getElementById('theVision');
+    const ourProcessIntro = document.getElementById('ourProcessIntro');
+    const ourProcessConclusion = document.getElementById('ourProcessConclusion');
+    const theResult = document.getElementById('theResult');
+    
+    const processBullets = [];
+    document.querySelectorAll('.process-bullet').forEach(input => {
+        const value = input.isContentEditable ? input.innerHTML.trim() : input.value.trim();
+        if (value) {
+            processBullets.push(value);
+        }
+    });
+    
+    const impactBullets = [];
+    document.querySelectorAll('.impact-bullet').forEach(input => {
+        const value = input.isContentEditable ? input.innerHTML.trim() : input.value.trim();
+        if (value) {
+            impactBullets.push(value);
+        }
+    });
+    
+    const storySections = [];
+    document.querySelectorAll('.story-section').forEach(section => {
+        const type = section.dataset.type;
+        
+        if (type === 'h3') {
+            const h3Input = section.querySelector('.story-h3');
+            const textInput = section.querySelector('.story-text');
+            
+            if (h3Input && h3Input.value.trim()) {
+                const content = textInput.isContentEditable ? textInput.innerHTML.trim() : textInput.value.trim();
+                storySections.push({
+                    type: 'h3',
+                    title: h3Input.value.trim(),
+                    content: content
+                });
+            }
+        } else if (type === 'image') {
+            const urlInput = section.querySelector('.story-image-url');
+            const altInput = section.querySelector('.story-image-alt');
+            
+            if (urlInput && urlInput.value.trim()) {
+                storySections.push({
+                    type: 'image',
+                    url: urlInput.value.trim(),
+                    alt: altInput ? altInput.value.trim() : ''
+                });
+            }
+        }
+    });
+    
+    return {
+        theVision: theVision ? (theVision.isContentEditable ? theVision.innerHTML.trim() : theVision.value.trim()) : '',
+        ourProcess: {
+            intro: ourProcessIntro ? (ourProcessIntro.isContentEditable ? ourProcessIntro.innerHTML.trim() : ourProcessIntro.value.trim()) : '',
+            steps: processBullets,
+            conclusion: ourProcessConclusion ? (ourProcessConclusion.isContentEditable ? ourProcessConclusion.innerHTML.trim() : ourProcessConclusion.value.trim()) : ''
+        },
+        theStory: storySections,
+        theResult: theResult ? (theResult.isContentEditable ? theResult.innerHTML.trim() : theResult.value.trim()) : '',
+        theImpact: impactBullets
+    };
+}
+
+function populateStructuredContent(contentData) {
+    if (!contentData) return;
+    
+    const theVision = document.getElementById('theVision');
+    const ourProcessIntro = document.getElementById('ourProcessIntro');
+    const ourProcessConclusion = document.getElementById('ourProcessConclusion');
+    const theResult = document.getElementById('theResult');
+    const processBulletsContainer = document.getElementById('ourProcessBullets');
+    const impactBulletsContainer = document.getElementById('theImpactBullets');
+    const storyContainer = document.getElementById('storyDynamicSections');
+    
+    if (theVision && contentData.theVision) {
+        if (theVision.isContentEditable) {
+            theVision.innerHTML = contentData.theVision;
+            if (contentData.theVision && contentData.theVision.trim() !== '') {
+                theVision.classList.remove('empty');
+            } else {
+                theVision.classList.add('empty');
+            }
+        } else {
+            theVision.value = contentData.theVision;
+        }
+    }
+    
+    if (contentData.ourProcess) {
+        if (ourProcessIntro && contentData.ourProcess.intro) {
+            if (ourProcessIntro.isContentEditable) {
+                ourProcessIntro.innerHTML = contentData.ourProcess.intro;
+                if (contentData.ourProcess.intro && contentData.ourProcess.intro.trim() !== '') {
+                    ourProcessIntro.classList.remove('empty');
+                } else {
+                    ourProcessIntro.classList.add('empty');
+                }
+            } else {
+                ourProcessIntro.value = contentData.ourProcess.intro;
+            }
+        }
+        
+        if (processBulletsContainer) {
+            processBulletsContainer.innerHTML = '';
+            if (contentData.ourProcess.steps && Array.isArray(contentData.ourProcess.steps)) {
+                contentData.ourProcess.steps.forEach(step => {
+                    const bulletItem = document.createElement('div');
+                    bulletItem.className = 'bullet-item flex items-start gap-2 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+                    bulletItem.innerHTML = `
+                        <span class="text-white/50 mt-2">•</span>
+                        <div class="flex-1">
+                            <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                                <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                                <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                                <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                            </div>
+                            <div contenteditable="true" class="process-bullet form-input content-editable" style="min-height: 2.5rem;" data-placeholder="Enter process step...">${step}</div>
+                        </div>
+                        <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    processBulletsContainer.appendChild(bulletItem);
+                    const processBullet = bulletItem.querySelector('.process-bullet');
+                    if (step && step.trim() !== '') {
+                        processBullet.classList.remove('empty');
+                    } else {
+                        processBullet.classList.add('empty');
+                    }
+                });
+            }
+        }
+        
+        if (ourProcessConclusion && contentData.ourProcess.conclusion) {
+            if (ourProcessConclusion.isContentEditable) {
+                ourProcessConclusion.innerHTML = contentData.ourProcess.conclusion;
+                if (contentData.ourProcess.conclusion && contentData.ourProcess.conclusion.trim() !== '') {
+                    ourProcessConclusion.classList.remove('empty');
+                } else {
+                    ourProcessConclusion.classList.add('empty');
+                }
+            } else {
+                ourProcessConclusion.value = contentData.ourProcess.conclusion;
+            }
+        }
+    }
+    
+    if (storyContainer) {
+        storyContainer.innerHTML = '';
+        if (contentData.theStory && Array.isArray(contentData.theStory)) {
+            contentData.theStory.forEach(section => {
+                storyCounter++;
+                const sectionId = `story_section_${storyCounter}`;
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'story-section p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+                sectionDiv.dataset.sectionId = sectionId;
+                sectionDiv.dataset.type = section.type;
+                
+                if (section.type === 'h3') {
+                    sectionDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="form-label text-sm flex items-center">
+                                <i data-lucide="heading-3" class="w-4 h-4 mr-2"></i>Story Section
+                            </label>
+                            <button type="button" class="remove-story-section" data-section-id="${sectionId}">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <input type="text" class="story-h3 form-input mb-2" placeholder="Enter section title..." value="${section.title || ''}">
+                        <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                            <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                            <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                            <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                        </div>
+                        <div contenteditable="true" class="story-text form-input content-editable" style="min-height: 6rem; max-height: 20rem; overflow-y: auto;" data-placeholder="Enter section content...">${section.content || ''}</div>
+                    `;
+                    
+                    const storyText = sectionDiv.querySelector('.story-text');
+                    if (section.content && section.content.trim() !== '') {
+                        storyText.classList.remove('empty');
+                    } else {
+                        storyText.classList.add('empty');
+                    }
+                    const formatBtns = sectionDiv.querySelectorAll('.format-btn');
+                    formatBtns.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const format = this.dataset.format;
+                            if (storyText) {
+                                applyFormatting(storyText, format);
+                            }
+                        });
+                    });
+                } else if (section.type === 'image') {
+                    sectionDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="form-label text-sm flex items-center">
+                                <i data-lucide="image" class="w-4 h-4 mr-2"></i>Image
+                            </label>
+                            <button type="button" class="remove-story-section" data-section-id="${sectionId}">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <input type="url" class="story-image-url form-input" placeholder="Image URL..." value="${section.url || ''}">
+                            <input type="text" class="story-image-alt form-input" placeholder="Alt text for image..." value="${section.alt || ''}">
+                        </div>
+                    `;
+                }
+                
+                storyContainer.appendChild(sectionDiv);
+            });
+        }
+    }
+    
+    if (theResult && contentData.theResult) {
+        if (theResult.isContentEditable) {
+            theResult.innerHTML = contentData.theResult;
+            if (contentData.theResult && contentData.theResult.trim() !== '') {
+                theResult.classList.remove('empty');
+            } else {
+                theResult.classList.add('empty');
+            }
+        } else {
+            theResult.value = contentData.theResult;
+        }
+    }
+    
+    if (impactBulletsContainer) {
+        impactBulletsContainer.innerHTML = '';
+        if (contentData.theImpact && Array.isArray(contentData.theImpact)) {
+            contentData.theImpact.forEach(impact => {
+                const bulletItem = document.createElement('div');
+                bulletItem.className = 'bullet-item flex items-start gap-2 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]';
+                bulletItem.innerHTML = `
+                    <span class="text-white/50 mt-2">•</span>
+                    <div class="flex-1">
+                        <div class="text-formatting-toolbar mb-2 flex flex-wrap gap-1">
+                            <button type="button" class="format-btn" data-format="bold" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                            <button type="button" class="format-btn" data-format="italic" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                            <button type="button" class="format-btn" data-format="underline" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                        </div>
+                        <div contenteditable="true" class="impact-bullet form-input content-editable" style="min-height: 2.5rem;" data-placeholder="Enter impact point...">${impact}</div>
+                    </div>
+                    <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                `;
+                impactBulletsContainer.appendChild(bulletItem);
+                
+                const impactBullet = bulletItem.querySelector('.impact-bullet');
+                const formatBtns = bulletItem.querySelectorAll('.format-btn');
+                formatBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const format = this.dataset.format;
+                        if (impactBullet) {
+                            applyFormatting(impactBullet, format);
+                        }
+                    });
+                });
+            });
+        }
+    }
+    
+    lucide.createIcons();
+}
+
 function collectDynamicSections() {
     const sections = [];
     const dynamicSections = document.querySelectorAll('.dynamic-section');
@@ -1715,94 +2357,44 @@ function collectDynamicSections() {
 
         switch (type) {
             case 'text':
-                const textElement = section.querySelector(`[data-name="dynamic_text_${sectionId}"]`);
-                if (textElement && textElement.hasAttribute('contenteditable')) {
-                    sectionData.content = textElement.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_text_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const textEl = section.querySelector(`[data-name="dynamic_text_${sectionId}"]`) || section.querySelector(`[name="dynamic_text_${sectionId}"]`);
+                sectionData.content = textEl.isContentEditable ? textEl.innerHTML : textEl.value;
                 break;
             case 'h1':
-                const h1Element = section.querySelector(`[data-name="dynamic_h1_${sectionId}"]`);
-                if (h1Element && h1Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h1Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h1_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h1El = section.querySelector(`[data-name="dynamic_h1_${sectionId}"]`) || section.querySelector(`[name="dynamic_h1_${sectionId}"]`);
+                sectionData.content = h1El.isContentEditable ? h1El.innerHTML : h1El.value;
                 break;
             case 'h2':
-                const h2Element = section.querySelector(`[data-name="dynamic_h2_${sectionId}"]`);
-                if (h2Element && h2Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h2Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h2_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h2El = section.querySelector(`[data-name="dynamic_h2_${sectionId}"]`) || section.querySelector(`[name="dynamic_h2_${sectionId}"]`);
+                sectionData.content = h2El.isContentEditable ? h2El.innerHTML : h2El.value;
                 break;
             case 'h3':
-                const h3Element = section.querySelector(`[data-name="dynamic_h3_${sectionId}"]`);
-                if (h3Element && h3Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h3Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h3_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h3El = section.querySelector(`[data-name="dynamic_h3_${sectionId}"]`) || section.querySelector(`[name="dynamic_h3_${sectionId}"]`);
+                sectionData.content = h3El.isContentEditable ? h3El.innerHTML : h3El.value;
                 break;
             case 'h4':
-                const h4Element = section.querySelector(`[data-name="dynamic_h4_${sectionId}"]`);
-                if (h4Element && h4Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h4Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h4_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h4El = section.querySelector(`[data-name="dynamic_h4_${sectionId}"]`) || section.querySelector(`[name="dynamic_h4_${sectionId}"]`);
+                sectionData.content = h4El.isContentEditable ? h4El.innerHTML : h4El.value;
                 break;
             case 'h5':
-                const h5Element = section.querySelector(`[data-name="dynamic_h5_${sectionId}"]`);
-                if (h5Element && h5Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h5Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h5_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h5El = section.querySelector(`[data-name="dynamic_h5_${sectionId}"]`) || section.querySelector(`[name="dynamic_h5_${sectionId}"]`);
+                sectionData.content = h5El.isContentEditable ? h5El.innerHTML : h5El.value;
                 break;
             case 'h6':
-                const h6Element = section.querySelector(`[data-name="dynamic_h6_${sectionId}"]`);
-                if (h6Element && h6Element.hasAttribute('contenteditable')) {
-                    sectionData.content = h6Element.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_h6_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const h6El = section.querySelector(`[data-name="dynamic_h6_${sectionId}"]`) || section.querySelector(`[name="dynamic_h6_${sectionId}"]`);
+                sectionData.content = h6El.isContentEditable ? h6El.innerHTML : h6El.value;
                 break;
             case 'header':
-                const headerElement = section.querySelector(`[data-name="dynamic_header_${sectionId}"]`);
-                if (headerElement && headerElement.hasAttribute('contenteditable')) {
-                    sectionData.content = headerElement.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_header_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const headerEl = section.querySelector(`[data-name="dynamic_header_${sectionId}"]`) || section.querySelector(`[name="dynamic_header_${sectionId}"]`);
+                sectionData.content = headerEl.isContentEditable ? headerEl.innerHTML : headerEl.value;
                 break;
             case 'subheader':
-                const subheaderElement = section.querySelector(`[data-name="dynamic_subheader_${sectionId}"]`);
-                if (subheaderElement && subheaderElement.hasAttribute('contenteditable')) {
-                    sectionData.content = subheaderElement.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_subheader_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const subheaderEl = section.querySelector(`[data-name="dynamic_subheader_${sectionId}"]`) || section.querySelector(`[name="dynamic_subheader_${sectionId}"]`);
+                sectionData.content = subheaderEl.isContentEditable ? subheaderEl.innerHTML : subheaderEl.value;
                 break;
             case 'subheader-text':
-                const subheaderTextElement = section.querySelector(`[data-name="dynamic_subheader_text_${sectionId}"]`);
-                if (subheaderTextElement && subheaderTextElement.hasAttribute('contenteditable')) {
-                    sectionData.content = subheaderTextElement.innerHTML;
-                } else {
-                    const input = section.querySelector(`[name="dynamic_subheader_text_${sectionId}"]`);
-                    sectionData.content = input ? input.value : '';
-                }
+                const subheaderTextEl = section.querySelector(`[data-name="dynamic_subheader_text_${sectionId}"]`) || section.querySelector(`[name="dynamic_subheader_text_${sectionId}"]`);
+                sectionData.content = subheaderTextEl.isContentEditable ? subheaderTextEl.innerHTML : subheaderTextEl.value;
                 break;
             case 'image':
                 sectionData.content = {
@@ -1836,15 +2428,15 @@ async function fetchBlogs() {
     paginationControls.classList.add('hidden');
 
     try {
-        console.log('📡 Fetching blogs from /api/blogs...');
-        const response_blogs = await fetch('/api/blogs');
+        console.log('📡 Fetching case studies from /api/case-studies...');
+        const response_blogs = await fetch('/api/case-studies');
         const result_blogs = await response_blogs.json();
 
         blogsLoading.classList.add('hidden');
         
         let blogs = [];
-        if (result_blogs.status === 'success' && Array.isArray(result_blogs.blogs)) {
-            blogs = result_blogs.blogs;
+        if (result_blogs.status === 'success' && Array.isArray(result_blogs.case_studies)) {
+            blogs = result_blogs.case_studies;
         }
 
         allFetchedBlogs = [...blogs];
@@ -1852,9 +2444,9 @@ async function fetchBlogs() {
         
         applyFiltersAndRender(1);
     } catch (error) {
-        console.error('✗ Error fetching blogs:', error);
+        console.error('✗ Error fetching case studies:', error);
         blogsLoading.classList.add('hidden');
-        blogsList.innerHTML = `<div class="text-center py-8"><p class="text-white/60">Error loading blogs. Please try again later.</p></div>`;
+        blogsList.innerHTML = `<div class="text-center py-8"><p class="text-white/60">Error loading case studies. Please try again later.</p></div>`;
     }
 }
 
@@ -2072,16 +2664,16 @@ let isEditing = false;
 
 async function editBlog(blogId) {
     blogId = blogId.replace("[quotetation_here]", "'");
-    console.log('✏️ Editing blog with ID:', blogId);
+    console.log('✏️ Editing case study with ID:', blogId);
     
     if (!blogId) {
-        showModal('Error', 'Blog ID not found', 'error');
+        showModal('Error', 'Case Study ID not found', 'error');
         return;
     }
 
     const blog = allFetchedBlogs.find(b => b.id === blogId);
     if (blog) {
-        console.log('✓ Found blog to edit:', blog);
+        console.log('✓ Found case study to edit:', blog);
         isEditing = true;
         populateEditForm(blog);
         switchToEditMode();
@@ -2089,20 +2681,20 @@ async function editBlog(blogId) {
         const navbarTabs = document.querySelectorAll('#navbarTabs .tab-button');
         const createBlogTab = Array.from(navbarTabs).find(btn => {
             const text = btn.textContent.trim();
-            return text.includes('Add Blogs') || text.includes('Add Blog');
+            return text.includes('Add Case Studies') || text.includes('Add Case Study');
         });
         
         if (createBlogTab) {
-            console.log('✓ Clicking Create Blog tab');
+            console.log('✓ Clicking Create Case Study tab');
             createBlogTab.click();
         } else {
-            console.warn('⚠️ Create Blog tab not found, available tabs:', Array.from(navbarTabs).map(t => t.textContent.trim()));
-            showContentSection('Add Blogs');
+            console.warn('⚠️ Create Case Study tab not found, available tabs:', Array.from(navbarTabs).map(t => t.textContent.trim()));
+            showContentSection('Add Case Studies');
         }
         
         isEditing = false;
     } else {
-        showModal('Error', 'Blog not found in the list. Please refresh.', 'error');
+        showModal('Error', 'Case Study not found in the list. Please refresh.', 'error');
     }
 }
 
@@ -2133,7 +2725,18 @@ function populateEditForm(blog) {
     if (mainImageAlt) mainImageAlt.value = blogData.mainImageAlt || '';
     if (blogTitle) blogTitle.value = blogData.blogTitle || '';
     if (blogDate) blogDate.value = blogData.blogDate || '';
-    if (blogSummary) blogSummary.value = blogData.blogSummary || '';
+    if (blogSummary) {
+        if (blogSummary.isContentEditable) {
+            blogSummary.innerHTML = blogData.blogSummary || '';
+            if (blogData.blogSummary && blogData.blogSummary.trim() !== '') {
+                blogSummary.classList.remove('empty');
+            } else {
+                blogSummary.classList.add('empty');
+            }
+        } else {
+            blogSummary.value = blogData.blogSummary || '';
+        }
+    }
 
     const statusRadios = document.querySelectorAll('input[name="blogStatus"]');
     statusRadios.forEach(radio => {
@@ -2191,16 +2794,12 @@ function populateEditForm(blog) {
         }
     }
 
-    if (blogData.dynamicSections && Array.isArray(blogData.dynamicSections)) {
-        blogData.dynamicSections.forEach(section => {
-            const sectionElement = createDynamicSection(section.type, section.content);
-            document.getElementById('dynamicSections').appendChild(sectionElement);
+    if (blogData.structuredContent) {
+        populateStructuredContent(blogData.structuredContent);
+    }
 
-            const removeBtn = sectionElement.querySelector('.remove-section');
-            removeBtn.addEventListener('click', function () {
-                sectionElement.remove();
-            });
-        });
+    if (blogData.previewData) {
+        populatePreviewData(blogData.previewData);
     }
 
     console.log('✓ Form populated successfully');
@@ -2209,7 +2808,7 @@ function populateEditForm(blog) {
 
 function switchToEditMode() {
     const sectionTitle = document.querySelector('#addBlogs .section-title');
-    if (sectionTitle) sectionTitle.textContent = 'Edit Blog';
+    if (sectionTitle) sectionTitle.textContent = 'Edit Case Study';
 
     const blogStatusSection = document.getElementById('blogStatusSection');
     if (blogStatusSection) blogStatusSection.style.display = 'block';
@@ -2222,7 +2821,7 @@ function switchToEditMode() {
 
 function switchToAddMode() {
     const sectionTitle = document.querySelector('#addBlogs .section-title');
-    if (sectionTitle) sectionTitle.textContent = 'Add New Blog';
+    if (sectionTitle) sectionTitle.textContent = 'Add New Case Study';
 
     const blogStatusSection = document.getElementById('blogStatusSection');
     if (blogStatusSection) blogStatusSection.style.display = 'none';
@@ -2237,9 +2836,46 @@ function switchToAddMode() {
     const addBlogForm = document.getElementById('addBlogForm');
     if (addBlogForm) addBlogForm.reset();
     
-    const dynamicSections = document.getElementById('dynamicSections');
-    if (dynamicSections) dynamicSections.innerHTML = '';
-    sectionCounter = 0;
+    const theVision = document.getElementById('theVision');
+    const ourProcessIntro = document.getElementById('ourProcessIntro');
+    const ourProcessConclusion = document.getElementById('ourProcessConclusion');
+    const theResult = document.getElementById('theResult');
+    const processBulletsContainer = document.getElementById('ourProcessBullets');
+    const impactBulletsContainer = document.getElementById('theImpactBullets');
+    const storyContainer = document.getElementById('storyDynamicSections');
+    
+    if (theVision) {
+        if (theVision.isContentEditable) {
+            theVision.innerHTML = '';
+        } else {
+            theVision.value = '';
+        }
+    }
+    if (ourProcessIntro) {
+        if (ourProcessIntro.isContentEditable) {
+            ourProcessIntro.innerHTML = '';
+        } else {
+            ourProcessIntro.value = '';
+        }
+    }
+    if (ourProcessConclusion) {
+        if (ourProcessConclusion.isContentEditable) {
+            ourProcessConclusion.innerHTML = '';
+        } else {
+            ourProcessConclusion.value = '';
+        }
+    }
+    if (theResult) {
+        if (theResult.isContentEditable) {
+            theResult.innerHTML = '';
+        } else {
+            theResult.value = '';
+        }
+    }
+    if (processBulletsContainer) processBulletsContainer.innerHTML = '';
+    if (impactBulletsContainer) impactBulletsContainer.innerHTML = '';
+    if (storyContainer) storyContainer.innerHTML = '';
+    storyCounter = 0;
 
     const blogCategory = document.getElementById('blogCategory');
     const seoTitle = document.getElementById('seoTitle');
@@ -2270,12 +2906,37 @@ function switchToAddMode() {
     
     const labelsNotMandatory = document.getElementById('labelsNotMandatory');
     if (labelsNotMandatory) labelsNotMandatory.checked = false;
+    
+    const previewText = document.getElementById('previewText');
+    const blogSummary = document.getElementById('blogSummary');
+    
+    if (previewText) {
+        if (previewText.isContentEditable) {
+            previewText.innerHTML = '';
+        } else {
+            previewText.value = '';
+        }
+    }
+    
+    if (blogSummary) {
+        if (blogSummary.isContentEditable) {
+            blogSummary.innerHTML = '';
+        } else {
+            blogSummary.value = '';
+        }
+    }
+    
+    const projectSnapshotsContainer = document.getElementById('projectSnapshotsContainer');
+    if (projectSnapshotsContainer) {
+        projectSnapshotsContainer.innerHTML = '';
+    }
+    
     lucide.createIcons();
 }
 
 async function handleUpdateBlog() {
     if (!currentEditingBlog) {
-        showModal('Error', 'No blog selected for editing', 'error');
+        showModal('Error', 'No case study selected for editing', 'error');
         return;
     }
 
@@ -2306,14 +2967,16 @@ async function handleUpdateBlog() {
         if (blogDateInput) blogDateInput.value = today;
     }
 
-    const dynamicSections = collectDynamicSections();
-    data.dynamicSections = dynamicSections;
+    const structuredContent = collectStructuredContent();
+    data.structuredContent = structuredContent;
+
+    const previewData = collectPreviewData();
+    data.previewData = previewData;
 
     data.blog_id = currentEditingBlog.id;
     data.base_url = window.location.origin;
     data.reason = 'update';
     
-    // Add content type to the data
     data.contentType = document.getElementById('contentType').value || 'BLOG';
 
     try {
@@ -2322,9 +2985,7 @@ async function handleUpdateBlog() {
         updateBlogBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Updating...';
         updateBlogBtn.disabled = true;
 
-        const endpoint = data.contentType === 'CASE STUDY'
-            ? `/api/case_studies/${currentEditingBlog.id}`
-            : `/api/blogs/${currentEditingBlog.id}`;
+        const endpoint = `/api/case-studies/${currentEditingBlog.id}`;
 
         const payload = {
             status: data.status,
@@ -2353,24 +3014,24 @@ async function handleUpdateBlog() {
             } catch (e) {
                 errorMessage = response.statusText || errorMessage;
             }
-            showModal('Error Updating Blog', errorMessage, 'error');
+            showModal('Error Updating Case Study', errorMessage, 'error');
             return;
         }
 
         const result = await response.json();
 
         if (result.status === 'success') {
-            let message = 'Blog updated successfully!';
-            if (result.blog && result.blog.slug) {
-                const blogUrl = `${window.location.origin}/blog/${result.blog.slug}`;
-                message += `\n\nBlog URL: ${blogUrl}`;
+            let message = 'Case Study updated successfully!';
+            if (result.case_study && result.case_study.slug) {
+                const blogUrl = `${window.location.origin}/case-study/${result.case_study.slug}`;
+                message += `\n\nCase Study URL: ${blogUrl}`;
             }
             showModal('Success', message, 'success');
 
             switchToAddMode();
-            showContentSection('Edit/Delete Blog');
+            showContentSection('Edit/Delete Case Study');
         } else {
-            showModal('Error Updating Blog', result.message || 'Unknown error', 'error');
+            showModal('Error Updating Case Study', result.message || 'Unknown error', 'error');
         }
 
     } catch (error) {
@@ -2378,18 +3039,18 @@ async function handleUpdateBlog() {
         updateBlogBtn.innerHTML = '<i data-lucide="save" class="w-4 h-4 mr-2"></i>Update Blog';
         updateBlogBtn.disabled = false;
 
-        console.error('Error updating blog:', error);
-        showModal('Error Updating Blog', error.message, 'error');
+        console.error('Error updating case study:', error);
+        showModal('Error Updating Case Study', error.message, 'error');
     }
 }
 
 function deleteBlog(blogId, blogTitle) {
     blogId = blogId.replace("[quotetation_here]", "'");
     blogTitle = blogTitle.replace("[quotetation_here]", "'");
-    console.log('🗑️ Deleting blog - ID:', blogId, 'Title:', blogTitle);
+    console.log('🗑️ Deleting case study - ID:', blogId, 'Title:', blogTitle);
     
     if (!blogId) {
-        showModal('Error', 'Blog ID not found', 'error');
+        showModal('Error', 'Case Study ID not found', 'error');
         return;
     }
 
@@ -2479,13 +3140,91 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    document.getElementById('addTextBtn').addEventListener('click', () => addDynamicSection('text'));
-    document.getElementById('addH1Btn').addEventListener('click', () => addDynamicSection('h1'));
-    document.getElementById('addH2Btn').addEventListener('click', () => addDynamicSection('h2'));
-    document.getElementById('addH3Btn').addEventListener('click', () => addDynamicSection('h3'));
-    document.getElementById('addH4Btn').addEventListener('click', () => addDynamicSection('h4'));
-    document.getElementById('addH5Btn').addEventListener('click', () => addDynamicSection('h5'));
-    document.getElementById('addImageBtn').addEventListener('click', () => addDynamicSection('image'));
+    const addProcessBulletBtn = document.getElementById('addProcessBulletBtn');
+    if (addProcessBulletBtn) {
+        addProcessBulletBtn.addEventListener('click', addProcessBullet);
+    }
+
+    const addImpactBulletBtn = document.getElementById('addImpactBulletBtn');
+    if (addImpactBulletBtn) {
+        addImpactBulletBtn.addEventListener('click', addImpactBullet);
+    }
+
+    const addStoryH3Btn = document.getElementById('addStoryH3Btn');
+    if (addStoryH3Btn) {
+        addStoryH3Btn.addEventListener('click', () => addStorySection('h3'));
+    }
+
+    const addStoryImageBtn = document.getElementById('addStoryImageBtn');
+    if (addStoryImageBtn) {
+        addStoryImageBtn.addEventListener('click', () => addStorySection('image'));
+    }
+
+    const addProjectSnapshotBtn = document.getElementById('addProjectSnapshotBtn');
+    if (addProjectSnapshotBtn) {
+        addProjectSnapshotBtn.addEventListener('click', addProjectSnapshot);
+    }
+
+    document.addEventListener('click', function(event) {
+        const removeSnapshotBtn = event.target.closest('.remove-snapshot-btn');
+        if (removeSnapshotBtn) {
+            removeProjectSnapshot(removeSnapshotBtn);
+        }
+
+        const removeBulletBtn = event.target.closest('.remove-bullet-btn');
+        if (removeBulletBtn) {
+            removeBullet(removeBulletBtn);
+        }
+
+        const removeStorySectionBtn = event.target.closest('.remove-story-section');
+        if (removeStorySectionBtn) {
+            removeStorySection(removeStorySectionBtn);
+        }
+
+        const formatBtn = event.target.closest('.format-btn');
+        if (formatBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+            const format = formatBtn.dataset.format;
+            const toolbar = formatBtn.closest('.text-formatting-toolbar');
+            
+            if (toolbar) {
+                let targetInput = toolbar.nextElementSibling;
+                
+                if (targetInput && targetInput.isContentEditable) {
+                    applyFormatting(targetInput, format);
+                } else {
+                    const parent = toolbar.parentElement;
+                    targetInput = parent.querySelector('[contenteditable="true"]');
+                    if (targetInput) {
+                        applyFormatting(targetInput, format);
+                    }
+                }
+            }
+        }
+    });
+    
+    const contentEditableFields = ['previewText', 'blogSummary', 'theVision', 'ourProcessIntro', 'ourProcessConclusion', 'theResult'];
+    contentEditableFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && field.isContentEditable) {
+            field.addEventListener('focus', function() {
+                if (this.textContent === '' && this.dataset.placeholder) {
+                    this.classList.remove('empty');
+                }
+            });
+            
+            field.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.classList.add('empty');
+                }
+            });
+            
+            if (field.textContent.trim() === '') {
+                field.classList.add('empty');
+            }
+        }
+    });
 
     const filterTitleInput = document.getElementById('filterTitle');
 
@@ -2526,13 +3265,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const originalShowContentSection = showContentSection;
     showContentSection = function (tabTitle) {
-        if (tabTitle !== 'Add Blogs' && currentEditingBlog) {
+        if (tabTitle !== 'Add Case Studies' && currentEditingBlog) {
             switchToAddMode();
         }
 
         originalShowContentSection(tabTitle);
 
-        if (tabTitle === 'Edit/Delete Blog') {
+        if (tabTitle === 'Edit/Delete Case Study') {
             setTimeout(() => {
                 fetchBlogs();
             }, 100);
@@ -2540,8 +3279,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const navbarTabs = [
-        { title: "Add Blogs", icon: "plus-circle" },
-        { title: "Edit/Delete Blog", icon: "edit" },
+        { title: "Add Case Studies", icon: "plus-circle" },
+        { title: "Edit/Delete Case Study", icon: "edit" },
     ];
     const navbarContainer = document.getElementById('navbarTabs');
     const expandableTabs = new ExpandableTabs(navbarContainer, {
@@ -2551,13 +3290,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Navbar tab changed:', index);
             if (index !== null && navbarTabs[index]) {
                 console.log('Selected tab:', navbarTabs[index].title);
-                if (navbarTabs[index].title === "Add Blogs") {
+                if (navbarTabs[index].title === "Add Case Studies") {
                     if (!isEditing) {
                         switchToAddMode();
                     }
-                    showContentSection('Add Blogs');
-                } else if (navbarTabs[index].title === "Edit/Delete Blog") {
-                    showContentSection('Edit/Delete Blog');
+                    showContentSection('Add Case Studies');
+                } else if (navbarTabs[index].title === "Edit/Delete Case Study") {
+                    showContentSection('Edit/Delete Case Study');
                 }
             }
         }

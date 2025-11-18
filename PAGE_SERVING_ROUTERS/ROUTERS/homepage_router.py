@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
-from generate_blog_sections import get_blogs_html, get_home_insights_html
+from DATABASE_HANDLER.utils import get_blogs_html, get_home_insights_html
 
 router = APIRouter()
 
