@@ -841,7 +841,7 @@ async def get_cards(current_slug: str):
             """
             SELECT slug, blog, created_at
             FROM blogs
-            WHERE isdeleted = FALSE AND status = 'published' AND type = 'BLOG' AND slug != $1
+            WHERE isdeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG') AND slug != $1
             ORDER BY created_at DESC
             LIMIT 3
             """,
@@ -865,17 +865,17 @@ async def get_cards(current_slug: str):
         author = "Suflex Media"
         date = blog['created_at'].strftime('%b %d, %Y') if blog['created_at'] else ''
 
-        card_html = f"""<a href="/blog/{blog['slug']}" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
+        card_html = f"""<a href="/blog/{blog['slug']}" class="flex">
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex flex-col flex-1 hover:shadow-lg transition-shadow duration-300">
                     <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
+                    <div class="h-48 overflow-hidden flex-shrink-0">
                         <img src="{image_url}" alt="{image_alt}" class="w-full h-full object-cover">
                     </div>
                     <!-- Card content -->
-                    <div class="p-6">
+                    <div class="p-6 flex flex-col flex-grow">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">{title}</h3>
-                        <p class="text-gray-600 mb-4">{summary}</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                        <p class="text-gray-600 mb-4 flex-grow">{summary}</p>
+                        <div class="flex items-center text-sm text-gray-500 mt-auto">
                             <span>{author}</span>
                             <span class="mx-2">•</span>
                             <span>{date}</span>
