@@ -829,84 +829,69 @@ async def get_faq_section():
     """
 
 
-async def get_cards(category):
-    print(f"Fetching blogs for category: {category}")
-    # Hardcoded test data
-    xx = []
+async def get_cards(current_slug: str):
+    """
+    Fetch the latest 3 related blogs, excluding the current one.
+    """
+    print(f"Fetching related blogs, excluding current one: {current_slug}")
+    conn = None
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        latest_blogs = await conn.fetch(
+            """
+            SELECT slug, blog, created_at
+            FROM blogs
+            WHERE isdeleted = FALSE AND status = 'published' AND type = 'BLOG' AND slug != $1
+            ORDER BY created_at DESC
+            LIMIT 3
+            """,
+            current_slug
+        )
+    except Exception as e:
+        print(f"Error fetching related blogs: {e}")
+        return ""
+    finally:
+        if conn:
+            await conn.close()
 
-    # Sample blog 1
-    xx.append(
-        f"""<a href="/blog/1" class="block">
+    cards_html = []
+    for blog in latest_blogs:
+        blog_content = json.loads(blog['blog'])
+        
+        image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
+        image_alt = blog_content.get('mainImageAlt', 'Blog Image')
+        title = blog_content.get('blogTitle', 'Untitled')
+        summary = blog_content.get('blogSummary', '')
+        author = "Suflex Media"
+        date = blog['created_at'].strftime('%b %d, %Y') if blog['created_at'] else ''
+
+        card_html = f"""<a href="/blog/{blog['slug']}" class="block">
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
                     <!-- Card image -->
                     <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog1/800/400" alt="Sample Blog Image 1" class="w-full h-full object-cover">
+                        <img src="{image_url}" alt="{image_alt}" class="w-full h-full object-cover">
                     </div>
                     <!-- Card content -->
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">The Future of Digital Marketing in 2024</h3>
-                        <p class="text-gray-600 mb-4">Explore the latest trends and strategies that are shaping the digital marketing landscape this year.</p>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{title}</h3>
+                        <p class="text-gray-600 mb-4">{summary}</p>
                         <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>John Doe</span>
+                            <span>{author}</span>
                             <span class="mx-2">•</span>
-                            <span>Jan 15, 2024</span>
+                            <span>{date}</span>
                         </div>
                     </div>
                 </div>
             </a>"""
-    )
-
-    # Sample blog 2
-    xx.append(
-        f"""<a href="/blog/2" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-                    <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog2/800/400" alt="Sample Blog Image 2" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Card content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">AI and Machine Learning: Transforming Business</h3>
-                        <p class="text-gray-600 mb-4">Discover how artificial intelligence is revolutionizing the way businesses operate and make decisions.</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>Jane Smith</span>
-                            <span class="mx-2">•</span>
-                            <span>Jan 20, 2024</span>
-                        </div>
-                    </div>
-                </div>
-            </a>"""
-    )
-
-    # Sample blog 3
-    xx.append(
-        f"""<a href="/blog/3" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-                    <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog3/800/400" alt="Sample Blog Image 3" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Card content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Sustainable Business Practices for Growth</h3>
-                        <p class="text-gray-600 mb-4">Learn how sustainability can drive innovation and create long-term value for your business.</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>Mike Johnson</span>
-                            <span class="mx-2">•</span>
-                            <span>Jan 25, 2024</span>
-                        </div>
-                    </div>
-                </div>
-            </a>"""
-    )
-
-    return "\n".join(xx)
+        cards_html.append(card_html)
+    
+    return "\n".join(cards_html)
 
 
 async def get_more_blogs_section(data: dict):
-    template = """
+    template = r"""
     <style>
-        more_blogs {
+        .more_blogs {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f9fafb;
         }
@@ -953,7 +938,9 @@ async def get_more_blogs_section(data: dict):
         </div>
     </div>
 </section>"""
-    return template.replace("[[cards]]", await get_cards("sample_category"))
+    current_slug = data.get('slug', '')
+    cards_html = await get_cards(current_slug)
+    return template.replace("[[cards]]", cards_html)
 
 
 async def get_blog_hero_section(data: dict):
@@ -2223,6 +2210,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Blog data keys: {list(blog_record['blog'].keys()) if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog']).keys()}")
         
         blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
+        blog_data['slug'] = slug
         print(f"[DEBUG] Rendering blog HTML...")
         
         html_content = await create_blog_html(blog_data)
