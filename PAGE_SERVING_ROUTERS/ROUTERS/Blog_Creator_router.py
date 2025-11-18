@@ -686,12 +686,12 @@ async def get_faq_section():
             <div class="faq-grid">
                 <!-- Left Column - Header -->
                 <div class="faq-header">
-                    <h2 class="faq-title">This is the start of something new</h2>
+                    <h2 class="faq-title">Frequently Asked Questions</h2>
                     <p class="faq-description">
-                        Managing a small business today is already tough. Avoid further complications by ditching outdated, tedious trade methods. Our goal is to streamline SMB trade, making it easier and faster than ever.
+                        Find answers to common questions about Suflex Media's services, processes, and how we can help your business grow.
                     </p>
-                    <a href="#contact" class="faq-cta">
-                        <span>Any questions? Reach out</span>
+                    <a href="/contact" class="faq-cta">
+                        <span>Any more questions? Reach out</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M7 17L17 7M17 7H7M17 7V17"/>
                         </svg>
@@ -703,7 +703,7 @@ async def get_faq_section():
                     <!-- FAQ Item 1 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">What is Brands Out Loud?</h3>
+                            <h3 class="faq-question">What kind of content do you specialize in?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -712,7 +712,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Brands Out Loud is a premier digital media platform dedicated to providing in-depth analysis, insightful articles, and the latest news on business, technology, startups, and global trends. We focus on the stories that shape our future, with a special emphasis on innovation in the GCC region and beyond.
+                                We specialize in a wide range of content, including blog posts, articles, website copy, social media content, and more. Our team is equipped to handle various niches and industries, ensuring your content is tailored to your target audience.
                             </div>
                         </div>
                     </div>
@@ -720,7 +720,7 @@ async def get_faq_section():
                     <!-- FAQ Item 2 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">Who is the content for?</h3>
+                            <h3 class="faq-question">How do you ensure the content is original?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -729,7 +729,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Our content is created for forward-thinkers, entrepreneurs, business leaders, tech enthusiasts, and anyone curious about the forces driving modern economies. Whether you're a startup founder, a C-suite executive, or an aspiring innovator, you'll find valuable perspectives here.
+                                We use advanced plagiarism checkers to ensure that all content we deliver is 100% original. Our writers are trained to create unique content from scratch, and we have a strict policy against plagiarism.
                             </div>
                         </div>
                     </div>
@@ -737,7 +737,7 @@ async def get_faq_section():
                     <!-- FAQ Item 3 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">Can I contribute an article to Brands Out Loud?</h3>
+                            <h3 class="faq-question">What is the turnaround time for content?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -746,7 +746,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                We are always open to collaborating with industry experts and thought leaders. If you have a unique perspective or a compelling story to share, please visit our 'Write for Us' page for submission guidelines. We look for original, well-researched, and insightful content that aligns with our core topics.
+                                The turnaround time depends on the complexity and length of the content. However, we always strive to deliver high-quality content within the agreed-upon deadline. We also offer expedited services for urgent requirements.
                             </div>
                         </div>
                     </div>
@@ -754,7 +754,7 @@ async def get_faq_section():
                     <!-- FAQ Item 4 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">How do I subscribe to the newsletter?</h3>
+                            <h3 class="faq-question">Do you offer revisions?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -763,7 +763,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Subscribing is easy! You can find the newsletter subscription form in the footer of our website. Just enter your email address and click "Subscribe" to receive our latest articles, special reports, and event invitations directly in your inbox.
+                                Yes, we offer a set number of revisions to ensure you are completely satisfied with the final product. Our goal is to create content that aligns with your vision and meets your expectations.
                             </div>
                         </div>
                     </div>
@@ -771,7 +771,7 @@ async def get_faq_section():
                     <!-- FAQ Item 5 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">What topics do you cover?</h3>
+                            <h3 class="faq-question">How do you optimize content for SEO?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -780,7 +780,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                We cover a wide range of topics including business strategy, technology trends, startup ecosystem, digital transformation, leadership insights, and market analysis with a focus on the GCC region and global markets.
+                                Our content is optimized for SEO using the latest best practices. We conduct keyword research, incorporate relevant keywords naturally, and structure the content to be easily crawlable by search engines, helping you rank higher in search results.
                             </div>
                         </div>
                     </div>
