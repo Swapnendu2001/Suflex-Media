@@ -49,21 +49,33 @@ function setupCarousel() {
     const carousel = document.getElementById('editors-choice-carousel');
     if (!carousel) return;
 
-    const items = carousel.querySelectorAll('.blog-card');
-    if (items.length === 0) return;
+    const items = carousel.querySelectorAll('.editors-choice-card');
+    if (items.length <= 3) return;
 
-    // Clone items for a seamless loop
-    items.forEach(item => {
-        const clone = item.cloneNode(true);
-        carousel.appendChild(clone);
+    let currentIndex = 0;
+    const totalItems = items.length;
+    const cardWidth = items[0].offsetWidth + parseInt(window.getComputedStyle(items[0]).marginRight);
+
+    const leftArrow = document.getElementById('carousel-arrow-left');
+    const rightArrow = document.getElementById('carousel-arrow-right');
+
+    function updateCarousel() {
+        const offset = -currentIndex * cardWidth;
+        carousel.style.transform = `translateX(${offset}px)`;
+    }
+
+    leftArrow.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
     });
 
-    carousel.addEventListener('mouseenter', () => {
-        carousel.style.animationPlayState = 'paused';
-    });
-
-    carousel.addEventListener('mouseleave', () => {
-        carousel.style.animationPlayState = 'running';
+    rightArrow.addEventListener('click', () => {
+        if (currentIndex < totalItems - 3) {
+            currentIndex++;
+            updateCarousel();
+        }
     });
 }
 

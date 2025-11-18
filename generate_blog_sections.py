@@ -82,6 +82,9 @@ def extract_blog_image(blog_content):
     Extract the cover image URL from the blog content.
     The image is expected to be the first block of type 'image'.
     """
+    if 'mainImageUrl' in blog_content and blog_content['mainImageUrl']:
+        return blog_content['mainImageUrl']
+    
     if 'blog_cover_image' in blog_content and blog_content['blog_cover_image']:
         return blog_content['blog_cover_image'].get('url')
         
@@ -103,14 +106,10 @@ def generate_editors_choice_card_html(blog):
             </div>
             <div class="editors-choice-card-content">
                 <h3 class="blog-title">{blog['title']}</h3>
-                <p class="blog-date">{blog['created_at']} • {blog['category']}</p>
-                <a href="/blog/{blog['slug']}" class="blog-arrow-link">
-                    <div class="blog-arrow">
-                        <svg viewBox="0 24 24" fill="none">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </a>
+                <p class="blog-summary">{blog['summary']}</p>
+                <div class="blog-footer">
+                    <p class="blog-date">Suflex Media • {blog['created_at']}</p>
+                </div>
             </div>
         </div>
     '''
