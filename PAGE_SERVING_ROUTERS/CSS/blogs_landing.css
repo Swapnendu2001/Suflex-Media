@@ -407,6 +407,121 @@ body {
     margin: 0 auto;
 }
 
+.editors-choice-section {
+    overflow: hidden;
+    width: 71vw;
+    margin: 0 auto;
+    background-color: transparent;
+    padding: 0;
+}
+
+.editors-choice-carousel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.editors-choice-carousel-wrapper {
+    overflow: hidden;
+}
+
+.editors-choice-carousel {
+    display: flex;
+    gap: 2vw;
+    transition: transform 0.5s ease;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    cursor: pointer;
+    padding: 1vw;
+    z-index: 10;
+    border-radius: 50%;
+}
+
+.carousel-arrow.left {
+    left: 1vw;
+}
+
+.carousel-arrow.right {
+    right: 1vw;
+}
+
+.carousel-arrow img {
+    width: 2vw;
+    height: 2vw;
+}
+
+.carousel-arrow.left img {
+    transform: rotate(180deg);
+}
+
+.editors-choice-card {
+    flex: 0 0 calc(33.333% - 1.333vw);
+    background-color: #fff;
+    border-radius: 1.5vw;
+    padding: 1.5vw;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.editors-choice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1vh 2vw rgba(0, 123, 255, 0.15);
+}
+
+.editors-choice-card-image-container {
+    width: 100%;
+    height: 15vw;
+    overflow: hidden;
+    border-radius: 1vw;
+    margin-bottom: 1.5vh;
+}
+
+.editors-choice-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.editors-choice-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    flex: 1;
+}
+
+.editors-choice-card .blog-title {
+    font-size: 1.2vw;
+    font-weight: 600;
+}
+
+.editors-choice-card .blog-summary {
+    font-size: 1vw;
+    color: #555;
+    flex-grow: 1;
+}
+
+.editors-choice-card .blog-footer {
+    margin-top: auto;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 .blog-card {
     background-color: #fff;
     border: 0.15vw solid #017AFF;
