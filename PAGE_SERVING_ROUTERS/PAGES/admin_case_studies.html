@@ -821,7 +821,7 @@
                         </div>
                     </button>
                     <button type="button" id="confirmDeleteBtn"
-                        class="modal-button bg-red-600 hover:bg-red-700 text-white" onclick="confirmDeleteBlog()"
+                        class="modal-button bg-red-600 hover:bg-red-700 text-white" onclick="confirmDeleteBlog('/api/case-studies', fetchBlogs)"
                         disabled>
                         <div class="flex items-center gap-2">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -903,7 +903,7 @@
             }
         });
     </script>
-    <script src="/js/admin_case_studies.js"></script>
+    <script type="module" src="/js/admin_case_studies.js"></script>
 </body>
 
 </html>

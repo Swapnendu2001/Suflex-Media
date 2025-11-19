@@ -1,31 +1,21 @@
-from fastapi import APIRouter, HTTPException, Query, Request
+import logging
+from fastapi import APIRouter, HTTPException, Query, Request, Depends
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import asyncpg
-import os
 import json
-import re
-from dotenv import load_dotenv
+from DATABASE_HANDLER.auth import require_admin
+from DATABASE_HANDLER.utils.shared_utils import generate_slug, ensure_unique_slug
+from config import config, StatusConstants, ContentTypeConstants
 
-load_dotenv()
-
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["Case Studies Management"])
 
-DATABASE_URL = os.getenv("POSTGRES_CONNECTION_URL")
-
-def generate_slug(title: str) -> str:
-    """
-    Generate a URL-friendly slug from a title
-    """
-    slug = title.lower()
-    slug = re.sub(r'[^a-z0-9\s-]', '', slug)
-    slug = re.sub(r'\s+', '-', slug)
-    slug = re.sub(r'-+', '-', slug)
-    return slug.strip('-')
+DATABASE_URL = config.DATABASE_URL
 
 class CreateCaseStudyRequest(BaseModel):
     blog: Dict[str, Any]
-    status: str = "draft"
+    status: str = StatusConstants.DRAFT
     keyword: Optional[Dict[str, Any]] = None
     preview: Optional[Dict[str, Any]] = None
     editors_choice: Optional[str] = 'N'
@@ -52,17 +42,17 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         conn = await asyncpg.connect(DATABASE_URL)
         
         if include_deleted:
-            query = """
+            query = f"""
                 SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM case_studies
-                WHERE type = 'CASE STUDY'
+                WHERE type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
             """
         else:
-            query = """
+            query = f"""
                 SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM case_studies
-                WHERE isdeleted = FALSE AND type = 'CASE STUDY'
+                WHERE isdeleted = FALSE AND type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
             """
         
@@ -90,21 +80,21 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         return {"status": "success", "case_studies": case_studies_list, "count": len(case_studies_list)}
         
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in get_case_studies: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error in get_case_studies: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.post("/case-studies", status_code=201)
-async def create_case_study(case_study_data: CreateCaseStudyRequest):
+async def create_case_study(case_study_data: CreateCaseStudyRequest, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Create a new case study
     Requires case study content as JSONB
     Optional fields: status, keyword, redirect_url
     """
-    print(f"Creating new case study with status: {case_study_data.status}")
+    logger.info(f"Creating new case study with status: {case_study_data.status}")
     
     if not case_study_data.blog:
         raise HTTPException(status_code=400, detail="Case study content is required")
@@ -113,7 +103,7 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest):
         conn = await asyncpg.connect(DATABASE_URL)
         
         case_study_content = case_study_data.blog.copy() if case_study_data.blog else {}
-        content_type = case_study_content.get('contentType', 'CASE STUDY')
+        content_type = case_study_content.get('contentType', ContentTypeConstants.CASE_STUDY)
         
         new_case_study = await conn.fetchrow(
             """
@@ -133,7 +123,7 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest):
         
         await conn.close()
         
-        print(f"Case study created successfully with ID: {new_case_study['id']}")
+        logger.info(f"Case study created successfully with ID: {new_case_study['id']}")
         return {
             "status": "success",
             "message": "Case study created successfully",
@@ -154,20 +144,20 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest):
         }
         
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in create_case_study: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error in create_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.put("/case-studies/{case_study_id}")
-async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest):
+async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Update an existing case study
     Only updates provided fields (partial update)
     Cannot update soft-deleted case studies
     """
-    print(f"Updating case study ID: {case_study_id}")
+    logger.info(f"Updating case study ID: {case_study_id}")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
@@ -241,7 +231,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
         updated_case_study = await conn.fetchrow(query, *update_values)
         await conn.close()
         
-        print(f"Case study updated successfully: {case_study_id}")
+        logger.info(f"Case study updated successfully: {case_study_id}")
         return {
             "status": "success",
             "message": "Case study updated successfully",
@@ -264,14 +254,14 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in update_case_study: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error in update_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.patch("/case-studies/{case_study_id}")
-async def partial_update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest):
+async def partial_update_case_study(case_study_id: str, case_study_data: UpdateCaseStudyRequest, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Partial update of an existing case study (alias for PUT endpoint)
     Only updates provided fields
@@ -280,12 +270,12 @@ async def partial_update_case_study(case_study_id: str, case_study_data: UpdateC
     return await update_case_study(case_study_id, case_study_data)
 
 @router.delete("/case-studies/{case_study_id}")
-async def delete_case_study(case_study_id: str):
+async def delete_case_study(case_study_id: str, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Permanently delete a case study from the database
     This action cannot be undone
     """
-    print(f"Permanently deleting case study ID: {case_study_id}")
+    logger.warning(f"Permanently deleting case study ID: {case_study_id}")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
@@ -306,7 +296,7 @@ async def delete_case_study(case_study_id: str):
         
         await conn.close()
         
-        print(f"Case study permanently deleted successfully: {case_study_id}")
+        logger.info(f"Case study permanently deleted successfully: {case_study_id}")
         return {
             "status": "success",
             "message": "Case study deleted successfully"
@@ -315,19 +305,19 @@ async def delete_case_study(case_study_id: str):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in delete_case_study: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error in delete_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/case-studies/{case_study_id}/restore")
-async def restore_case_study(case_study_id: str):
+async def restore_case_study(case_study_id: str, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Restore a soft-deleted case study
     Sets isdeleted back to FALSE
     """
-    print(f"Restoring case study ID: {case_study_id}")
+    logger.info(f"Restoring case study ID: {case_study_id}")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
@@ -356,7 +346,7 @@ async def restore_case_study(case_study_id: str):
         
         await conn.close()
         
-        print(f"Case study restored successfully: {case_study_id}")
+        logger.info(f"Case study restored successfully: {case_study_id}")
         return {
             "status": "success",
             "message": "Case study restored successfully"
@@ -365,14 +355,14 @@ async def restore_case_study(case_study_id: str):
     except HTTPException:
         raise
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in restore_case_study: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error in restore_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/admin_save_case_study")
-async def admin_save_case_study(request: Request):
+async def admin_save_case_study(request: Request, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Save case study from admin panel (Draft or Publish)
     Receives complete case study data from frontend and saves to database
@@ -382,14 +372,12 @@ async def admin_save_case_study(request: Request):
     try:
         data = await request.json()
         
-        print("=" * 80)
-        print("RECEIVED CASE STUDY DATA FROM FRONTEND:")
-        print("=" * 80)
-        print(json.dumps(data, indent=2))
-        print("=" * 80)
-        print(f"Data keys: {list(data.keys())}")
-        print(f"Status field: {data.get('blogStatus', 'NOT FOUND')}")
-        print("=" * 80)
+        logger.debug("=" * 80)
+        logger.debug("RECEIVED CASE STUDY DATA FROM FRONTEND:")
+        logger.debug(json.dumps(data, indent=2))
+        logger.debug(f"Data keys: {list(data.keys())}")
+        logger.debug(f"Status field: {data.get('blogStatus', 'NOT FOUND')}")
+        logger.debug("=" * 80)
         
         case_study_title = data.get('blogTitle', '')
         if not case_study_title:
@@ -399,8 +387,8 @@ async def admin_save_case_study(request: Request):
         reason = data.get('reason', 'create')
         
         slug = generate_slug(case_study_title)
-        case_study_status = data.get('blogStatus', 'draft')
-        content_type = data.get('contentType', 'CASE STUDY')
+        case_study_status = data.get('blogStatus', StatusConstants.DRAFT)
+        content_type = data.get('contentType', ContentTypeConstants.CASE_STUDY)
         
         data['contentType'] = content_type
         
@@ -435,7 +423,7 @@ async def admin_save_case_study(request: Request):
                                 case_study_id
                             )
                             counter += 1
-                        print(f"Generated unique slug: {slug}")
+                        logger.info(f"Generated unique slug: {slug}")
                 
                 preview_data = data.get('previewData')
                 
@@ -459,18 +447,13 @@ async def admin_save_case_study(request: Request):
                     raise HTTPException(status_code=404, detail="Case study not found for update")
                 
                 case_study_id = str(updated_case_study['id'])
-                case_study_url = f"http://localhost:5000/case-study/{slug}"
+                case_study_url = f"{config.BACKEND_URL}/case-study/{slug}"
                 
-                print(f"Case study updated successfully with ID: {case_study_id}")
-                print(f"Case study slug: {slug}")
-                print(f"Case study status: {case_study_status}")
-                print(f"Case study type: {content_type}")
-                print(f"Case study URL: {case_study_url}")
-                print("=" * 80)
+                logger.info(f"Case study updated successfully - ID: {case_study_id}, slug: {slug}, status: {case_study_status}, type: {content_type}, URL: {case_study_url}")
                 
                 return {
                     "status": "success",
-                    "message": f"Case study {'published' if case_study_status == 'published' else 'updated'} successfully",
+                    "message": f"Case study {'published' if case_study_status == StatusConstants.PUBLISHED else 'updated'} successfully",
                     "blog_id": case_study_id,
                     "slug": slug,
                     "url": case_study_url
@@ -491,7 +474,7 @@ async def admin_save_case_study(request: Request):
                             slug
                         )
                         counter += 1
-                    print(f"Generated unique slug: {slug}")
+                    logger.info(f"Generated unique slug: {slug}")
             
                 preview_data = data.get('previewData')
                 
@@ -510,18 +493,13 @@ async def admin_save_case_study(request: Request):
                 )
                 
                 case_study_id = str(new_case_study['id'])
-                case_study_url = f"http://localhost:5000/case-study/{slug}"
+                case_study_url = f"{config.BACKEND_URL}/case-study/{slug}"
                 
-                print(f"Case study saved successfully with ID: {case_study_id}")
-                print(f"Case study slug: {slug}")
-                print(f"Case study status: {case_study_status}")
-                print(f"Case study type: {content_type}")
-                print(f"Case study URL: {case_study_url}")
-                print("=" * 80)
+                logger.info(f"Case study saved successfully - ID: {case_study_id}, slug: {slug}, status: {case_study_status}, type: {content_type}, URL: {case_study_url}")
                 
                 return {
                     "status": "success",
-                    "message": f"Case study {'published' if case_study_status == 'published' else 'saved as draft'} successfully",
+                    "message": f"Case study {'published' if case_study_status == StatusConstants.PUBLISHED else 'saved as draft'} successfully",
                     "blog_id": case_study_id,
                     "slug": slug,
                     "url": case_study_url
@@ -533,11 +511,11 @@ async def admin_save_case_study(request: Request):
     except HTTPException:
         raise
     except asyncpg.UniqueViolationError:
-        print(f"Slug already exists")
+        logger.warning("Slug already exists")
         raise HTTPException(status_code=400, detail="A case study with this title already exists")
     except asyncpg.PostgresError as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error in admin_save_case_study: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
     except Exception as e:
-        print(f"Unexpected error in admin_save_case_study: {e}")
+        logger.error(f"Unexpected error in admin_save_case_study: {e}")
         raise HTTPException(status_code=500, detail=str(e))

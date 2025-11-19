@@ -1,855 +1,37 @@
-function handleLogout() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('userSession');
-    sessionStorage.clear();
-    deleteCookie('hashed_email');
-    deleteCookie('hashed_password');
-    window.location.href = '/login';
-}
-function getCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for(let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
-function deleteCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-}
-
-function showLoading(show) {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        if (show) {
-            loadingOverlay.classList.remove('hidden');
-        } else {
-            loadingOverlay.classList.add('hidden');
-        }
-    }
-}
-
-async function verifyAuth() {
-    const hashedEmail = getCookie('hashed_email');
-    const hashedPassword = getCookie('hashed_password');
-    
-    if (!hashedEmail || !hashedPassword) {
-        console.log("No credentials found, redirecting to login...");
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000);
-        return false;
-    }
-
-    try {
-        console.log("Verifying stored credentials...");
-        const res = await fetch("/api/auto-login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                hashed_email: hashedEmail,
-                hashed_password: hashedPassword
-            }),
-            credentials: 'include'
-        });
-
-        if (!res.ok) {
-            console.log("Authentication failed, clearing credentials...");
-            deleteCookie('hashed_email');
-            deleteCookie('hashed_password');
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 1000);
-            return false;
-        }
-
-        const data = await res.json().catch(() => null);
-        if (data && data.status === "success") {
-            console.log("✓ Authentication successful");
-            showLoading(false);
-            return true;
-        } else {
-            console.log("Invalid response, clearing credentials...");
-            deleteCookie('hashed_email');
-            deleteCookie('hashed_password');
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 1000);
-            return false;
-        }
-    } catch (err) {
-        console.error("Error during authentication:", err);
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000);
-        return false;
-    }
-}
-
-(function initAuth() {
-    showLoading(true);
-    verifyAuth();
-
-let galleryState = {
-    isCollapsed: false
-};
-
-function toggleGallerySection() {
-    const leftSection = document.getElementById('leftSection');
-    
-    if (!leftSection) {
-        console.error('❌ [Gallery Toggle] Left section not found');
-        return;
-    }
-    
-    console.log('🔄 [Gallery Toggle] Toggle triggered (width: ' + window.innerWidth + 'px)');
-    console.log('📊 [Gallery Toggle] Current state before toggle:', galleryState.isCollapsed ? 'collapsed' : 'expanded');
-    
-    galleryState.isCollapsed = !galleryState.isCollapsed;
-    
-    if (galleryState.isCollapsed) {
-        console.log('➡️ [Gallery Toggle] Collapsing gallery section');
-        leftSection.classList.add('collapsed');
-    } else {
-        console.log('⬅️ [Gallery Toggle] Expanding gallery section');
-        leftSection.classList.remove('collapsed');
-    }
-    
-    console.log('✅ [Gallery Toggle] New state after toggle:', galleryState.isCollapsed ? 'collapsed' : 'expanded');
-    console.log('📐 [Gallery Toggle] Left section classes:', leftSection.classList.toString());
-}
-
-function initGalleryToggle() {
-    console.log('🎨 [Gallery Toggle] Initializing gallery toggle functionality');
-    
-    const toggleBtn = document.getElementById('toggleGalleryBtn');
-    const galleryHeader = document.getElementById('galleryHeader');
-    const leftSection = document.getElementById('leftSection');
-    
-    if (!toggleBtn) {
-        console.error('❌ [Gallery Toggle] Toggle button not found');
-        return;
-    }
-    
-    if (!galleryHeader) {
-        console.error('❌ [Gallery Toggle] Gallery header not found');
-        return;
-    }
-    
-    if (!leftSection) {
-        console.error('❌ [Gallery Toggle] Left section not found');
-        return;
-    }
-    
-    console.log('✅ [Gallery Toggle] Elements found:', {
-        toggleBtn: toggleBtn,
-        galleryHeader: galleryHeader,
-        leftSection: leftSection
-    });
-    
-    toggleBtn.addEventListener('click', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log('🖱️ [Gallery Toggle] Toggle button clicked directly');
-        toggleGallerySection();
-    });
-    
-    galleryHeader.addEventListener('click', function(event) {
-        const isTabButton = event.target.closest('.left-tab-button');
-        const isToggleButton = event.target === toggleBtn || toggleBtn.contains(event.target);
-        
-        if (isTabButton) {
-            console.log('🖱️ [Gallery Toggle] Tab button clicked - Ignoring for toggle');
-            return;
-        }
-        
-        if (!isToggleButton && galleryState.isCollapsed) {
-            console.log('🖱️ [Gallery Toggle] Collapsed bar clicked - Expanding');
-            toggleGallerySection();
-        }
-    });
-    
-    const tabButtons = document.querySelectorAll('.left-tab-button');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.stopPropagation();
-            console.log('🖱️ [Gallery Toggle] Tab button clicked - Propagation stopped');
-        });
-    });
-    
-    console.log('✅ [Gallery Toggle] Event listeners attached successfully');
-    console.log('📋 [Gallery Toggle] Button triggers collapse on desktop');
-    console.log('📋 [Gallery Toggle] Collapsed bar is clickable to expand');
-    console.log('🔒 [Gallery Toggle] Tab button clicks will not trigger collapse');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 [Gallery Toggle] DOM Content Loaded - Initializing');
-    initGalleryToggle();
-    lucide.createIcons();
-    console.log('✅ [Gallery Toggle] Lucide icons created');
-});
-})();
-
-
-function showModal(title, message, type = 'info') {
-    const modal = document.getElementById('messageModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalContent = modal.querySelector('.modal-content');
-
-
-    modalTitle.textContent = title;
-    modalMessage.style.whiteSpace = 'pre-line';
-
-
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    if (urlRegex.test(message)) {
-        modalMessage.innerHTML = message.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" class="modal-url-link">$1</a>');
-    } else {
-        modalMessage.textContent = message;
-    }
-
-
-    modalContent.classList.remove('error-modal', 'success-modal');
-
-
-    if (type === 'error') {
-        modalContent.classList.add('error-modal');
-    } else if (type === 'success') {
-        modalContent.classList.add('success-modal');
-    }
-
-
-    modal.classList.add('show');
-
-
-    lucide.createIcons();
-}
-
-function closeModal() {
-    const modal = document.getElementById('messageModal');
-    modal.classList.remove('show');
-}
-
-
-
-document.addEventListener('click', function (event) {
-    const modal = document.getElementById('messageModal');
-    if (event.target === modal) {
-        closeModal();
-    }
-});
-
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-        closeModal();
-        closeLinkModal();
-        closeBulletModal();
-        closeDeleteConfirmModal();
-        closeBlogUrlModal();
-    }
-});
-
-let currentLinkTextInput = null;
-let currentLinkSelectedText = '';
-let currentLinkBeforeText = '';
-let currentLinkAfterText = '';
-let currentLinkStart = 0;
-
-function showLinkDialog(textInput, selectedText, beforeText, afterText, start) {
-    currentLinkTextInput = textInput;
-    currentLinkSelectedText = selectedText;
-    currentLinkBeforeText = beforeText;
-    currentLinkAfterText = afterText;
-    currentLinkStart = start;
-
-    const linkModal = document.getElementById('linkModal');
-    const linkUrlInput = document.getElementById('linkUrl');
-    const linkDisplayNameInput = document.getElementById('linkDisplayName');
-
-    linkUrlInput.value = '';
-    linkDisplayNameInput.value = selectedText || '';
-
-    linkModal.classList.add('show');
-
-    setTimeout(() => {
-        linkUrlInput.focus();
-    }, 100);
-
-    lucide.createIcons();
-}
-
-function closeLinkModal() {
-    const linkModal = document.getElementById('linkModal');
-    linkModal.classList.remove('show');
-
-    currentLinkTextInput = null;
-    currentLinkSelectedText = '';
-    currentLinkBeforeText = '';
-    currentLinkAfterText = '';
-    currentLinkStart = 0;
-}
-
-function insertLink() {
-    if (currentContentEditableElement) {
-        insertLinkInContentEditable();
-        return;
-    }
-
-    const linkUrl = document.getElementById('linkUrl').value.trim();
-    const linkDisplayName = document.getElementById('linkDisplayName').value.trim();
-
-    if (!linkUrl) {
-        alert('Please enter a URL');
-        document.getElementById('linkUrl').focus();
-        return;
-    }
-
-    if (!linkDisplayName) {
-        alert('Please enter display text for the link');
-        document.getElementById('linkDisplayName').focus();
-        return;
-    }
-
-    try {
-        new URL(linkUrl);
-    } catch (e) {
-        alert('Please enter a valid URL (including http:// or https://)//');
-        document.getElementById('linkUrl').focus();
-        return;
-    }
-
-    const formattedText = `<a href="${linkUrl}">${linkDisplayName}</a>`;
-
-    if (currentLinkTextInput) {
-        currentLinkTextInput.value = currentLinkBeforeText + formattedText + currentLinkAfterText;
-
-        const newCursorPos = currentLinkStart + formattedText.length;
-        currentLinkTextInput.setSelectionRange(newCursorPos, newCursorPos);
-        currentLinkTextInput.focus();
-    }
-
-    closeLinkModal();
-}
-
-document.addEventListener('keydown', function (event) {
-    const linkModal = document.getElementById('linkModal');
-    if (linkModal && linkModal.classList.contains('show')) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            insertLink();
-        }
-    }
-});
-
-document.addEventListener('click', function (event) {
-    const linkModal = document.getElementById('linkModal');
-    if (event.target === linkModal) {
-        closeLinkModal();
-    }
-});
-
-let currentBulletTextInput = null;
-let currentBulletSelectedText = '';
-let currentBulletBeforeText = '';
-let currentBulletAfterText = '';
-let currentBulletStart = 0;
-
-function showBulletDialog(textInput, selectedText, beforeText, afterText, start) {
-    currentBulletTextInput = textInput;
-    currentBulletSelectedText = selectedText;
-    currentBulletBeforeText = beforeText;
-    currentBulletAfterText = afterText;
-    currentBulletStart = start;
-
-    const bulletModal = document.getElementById('bulletModal');
-    const bulletInputs = document.querySelectorAll('.bullet-input');
-
-    bulletInputs.forEach(input => input.value = '');
-
-    if (selectedText) {
-        const lines = selectedText.split('\n').filter(line => line.trim());
-        lines.forEach((line, index) => {
-            if (index < bulletInputs.length) {
-                bulletInputs[index].value = line.trim();
-            } else {
-                addBulletPoint(line.trim());
-            }
-        });
-    }
-
-    bulletModal.classList.add('show');
-
-    setTimeout(() => {
-        const firstInput = document.querySelector('.bullet-input');
-        if (firstInput) firstInput.focus();
-    }, 100);
-
-    lucide.createIcons();
-}
-
-function closeBulletModal() {
-    const bulletModal = document.getElementById('bulletModal');
-    bulletModal.classList.remove('show');
-
-    resetBulletPoints();
-
-    currentBulletTextInput = null;
-    currentBulletSelectedText = '';
-    currentBulletBeforeText = '';
-    currentBulletAfterText = '';
-    currentBulletStart = 0;
-}
-
-function addBulletPoint(value = '') {
-    const container = document.getElementById('bulletPointsContainer');
-    const bulletCount = container.children.length + 1;
-
-    const bulletItem = document.createElement('div');
-    bulletItem.className = 'bullet-point-item flex items-center gap-2';
-    bulletItem.innerHTML = `
-        <input type="text" class="bullet-input form-input flex-1" placeholder="Bullet point ${bulletCount}" value="${value}" />
-        <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-1" title="Remove">
-            <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-    `;
-
-    container.appendChild(bulletItem);
-    lucide.createIcons();
-
-    const newInput = bulletItem.querySelector('.bullet-input');
-    if (newInput) newInput.focus();
-}
-
-function resetBulletPoints() {
-    const container = document.getElementById('bulletPointsContainer');
-    container.innerHTML = `
-        <div class="bullet-point-item flex items-center gap-2">
-            <input type="text" class="bullet-input form-input flex-1" placeholder="Bullet point 1" />
-            <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-1" title="Remove">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-        <div class="bullet-point-item flex items-center gap-2">
-            <input type="text" class="bullet-input form-input flex-1" placeholder="Bullet point 2" />
-            <button type="button" class="remove-bullet-btn text-white/50 hover:text-red-500 transition-colors p-1" title="Remove">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-    `;
-    lucide.createIcons();
-}
-
-function insertBulletList() {
-    if (currentContentEditableElement) {
-        insertBulletListInContentEditable();
-        return;
-    }
-
-    const bulletInputs = document.querySelectorAll('.bullet-input');
-    const bulletPoints = [];
-
-    bulletInputs.forEach(input => {
-        const value = input.value.trim();
-        if (value) {
-            bulletPoints.push(value);
-        }
-    });
-
-    if (bulletPoints.length === 0) {
-        alert('Please enter at least one bullet point');
-        const firstInput = document.querySelector('.bullet-input');
-        if (firstInput) firstInput.focus();
-        return;
-    }
-
-    const listItems = bulletPoints.map(point => `<li> • ${point}</li>`);
-    const formattedText = `<ul>\n${listItems.join('\n')}\n</ul>`;
-
-    if (currentBulletTextInput) {
-        currentBulletTextInput.value = currentBulletBeforeText + formattedText + currentBulletAfterText;
-
-        const newCursorPos = currentBulletStart + formattedText.length;
-        currentBulletTextInput.setSelectionRange(newCursorPos, newCursorPos);
-        currentBulletTextInput.focus();
-    }
-
-    closeBulletModal();
-}
-
-document.addEventListener('click', function (event) {
-    if (event.target.id === 'addBulletBtn' || event.target.closest('#addBulletBtn')) {
-        event.preventDefault();
-        addBulletPoint();
-    }
-
-    const bulletModal = document.getElementById('bulletModal');
-    if (event.target === bulletModal) {
-        closeBulletModal();
-    }
-});
-
-document.addEventListener('keydown', function (event) {
-    const bulletModal = document.getElementById('bulletModal');
-    if (bulletModal && bulletModal.classList.contains('show')) {
-        if (event.key === 'Enter') {
-            if (event.target.classList.contains('bullet-input')) {
-                event.preventDefault();
-                addBulletPoint();
-            } else {
-                event.preventDefault();
-                insertBulletList();
-            }
-        } else if (event.key === 'Escape') {
-            event.preventDefault();
-            closeBulletModal();
-        }
-    }
-});
-
-let currentDeleteBlogId = null;
-let currentDeleteBlogTitle = '';
-
-function showDeleteConfirmModal(blogId, blogTitle) {
-    currentDeleteBlogId = blogId;
-    currentDeleteBlogTitle = blogTitle;
-
-    const deleteModal = document.getElementById('deleteConfirmModal');
-    const deleteBlogTitleElement = document.getElementById('deleteBlogTitle');
-    const confirmCheckbox = document.getElementById('confirmDeleteCheckbox');
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-    deleteBlogTitleElement.textContent = blogTitle;
-
-    confirmCheckbox.checked = false;
-    confirmDeleteBtn.disabled = true;
-
-    deleteModal.classList.add('show');
-
-    lucide.createIcons();
-}
-
-function closeDeleteConfirmModal() {
-    const deleteModal = document.getElementById('deleteConfirmModal');
-    deleteModal.classList.remove('show');
-
-    currentDeleteBlogId = null;
-    currentDeleteBlogTitle = '';
-}
-
-function updateDeleteButtonState() {
-    const confirmCheckbox = document.getElementById('confirmDeleteCheckbox');
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-    confirmDeleteBtn.disabled = !confirmCheckbox.checked;
-}
-
-async function confirmDeleteBlog() {
-    if (!currentDeleteBlogId) {
-        showModal('Error', 'No blog selected for deletion', 'error');
-        return;
-    }
-
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-    try {
-        const originalText = confirmDeleteBtn.innerHTML;
-        confirmDeleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Deleting...';
-        confirmDeleteBtn.disabled = true;
-
-        const response = await fetch(`/api/case-studies/${currentDeleteBlogId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        confirmDeleteBtn.innerHTML = originalText;
-        confirmDeleteBtn.disabled = false;
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-            let message = `Case Study "${currentDeleteBlogTitle}" has been permanently deleted from the database.`;
-            showModal('Success', message, 'success');
-
-            closeDeleteConfirmModal();
-
-            fetchBlogs();
-        } else {
-            showModal('Error', result.message || 'Failed to delete case study', 'error');
-        }
-
-    } catch (error) {
-        console.error('Error deleting blog:', error);
-
-        confirmDeleteBtn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Delete Blog';
-        confirmDeleteBtn.disabled = false;
-
-        showModal('Error', 'An error occurred while deleting the case study. Please try again.', 'error');
-    }
-}
-
-document.addEventListener('change', function (event) {
-    if (event.target.id === 'confirmDeleteCheckbox') {
-        updateDeleteButtonState();
-    }
-});
-
-document.addEventListener('click', function (event) {
-    const deleteModal = document.getElementById('deleteConfirmModal');
-    if (event.target === deleteModal) {
-        closeDeleteConfirmModal();
-    }
-});
-
-document.addEventListener('keydown', function (event) {
-    const deleteModal = document.getElementById('deleteConfirmModal');
-    if (deleteModal && deleteModal.classList.contains('show')) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const confirmCheckbox = document.getElementById('confirmDeleteCheckbox');
-            if (confirmCheckbox.checked) {
-                confirmDeleteBlog();
-            }
-        } else if (event.key === 'Escape') {
-            event.preventDefault();
-            closeDeleteConfirmModal();
-        }
-    }
-});
-
-let currentBlogUrl = '';
-
-function showBlogUrl(blogSlug, blogTitle) {
-    blogSlug = blogSlug.replace("[quotetation_here]", "'");
-    blogTitle = blogTitle.replace("[quotetation_here]", "'");
-
-    if (!blogSlug) {
-        showModal('Error', 'Blog slug not found', 'error');
-        return;
-    }
-
-    const baseUrl = window.location.origin;
-    const blogUrl = `${baseUrl}/case-study/${blogSlug}`;
-    currentBlogUrl = blogUrl;
-
-    const urlModal = document.getElementById('blogUrlModal');
-    const urlBlogTitle = document.getElementById('urlBlogTitle');
-    const blogUrlDisplay = document.getElementById('blogUrlDisplay');
-
-    urlBlogTitle.textContent = blogTitle;
-    blogUrlDisplay.value = blogUrl;
-
-    urlModal.classList.add('show');
-
-    lucide.createIcons();
-}
-
-function closeBlogUrlModal() {
-    const urlModal = document.getElementById('blogUrlModal');
-    urlModal.classList.remove('show');
-
-    currentBlogUrl = '';
-}
-
-function copyBlogUrl() {
-    const blogUrlDisplay = document.getElementById('blogUrlDisplay');
-    const copyBtn = document.getElementById('copyUrlBtn');
-
-    blogUrlDisplay.select();
-    blogUrlDisplay.setSelectionRange(0, 99999);
-
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(currentBlogUrl).then(() => {
-            showCopyFeedback(copyBtn, 'Copied!');
-        }).catch(() => {
-            fallbackCopyTextToClipboard(currentBlogUrl, copyBtn);
-        });
-    } else {
-        fallbackCopyTextToClipboard(currentBlogUrl, copyBtn);
-    }
-}
-
-function openBlogInNewTab() {
-    if (currentBlogUrl) {
-        window.open(currentBlogUrl, '_blank', 'noopener,noreferrer');
-    }
-}
-
-function showCopyFeedback(button, message) {
-    const originalContent = button.innerHTML;
-    button.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i>`;
-    button.classList.add('bg-green-600', 'hover:bg-green-700');
-    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-
-    lucide.createIcons();
-
-    setTimeout(() => {
-        button.innerHTML = originalContent;
-        button.classList.remove('bg-green-600', 'hover:bg-green-700');
-        button.classList.add('bg-blue-600', 'hover:bg-blue-700');
-        lucide.createIcons();
-    }, 2000);
-}
-
-function fallbackCopyTextToClipboard(text, button) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.width = "2em";
-    textArea.style.height = "2em";
-    textArea.style.padding = "0";
-    textArea.style.border = "none";
-    textArea.style.outline = "none";
-    textArea.style.boxShadow = "none";
-    textArea.style.background = "transparent";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        document.execCommand('copy');
-        showCopyFeedback(button, 'Copied!');
-    } catch (err) {
-        console.error('Failed to copy URL', err);
-        showModal('Copy Failed', 'Unable to copy URL to clipboard. Please select and copy manually.', 'error');
-    }
-
-    document.body.removeChild(textArea);
-}
-
-document.addEventListener('click', function (event) {
-    const urlModal = document.getElementById('blogUrlModal');
-    if (event.target === urlModal) {
-        closeBlogUrlModal();
-    }
-});
-
-document.addEventListener('keydown', function (event) {
-    const urlModal = document.getElementById('blogUrlModal');
-    if (urlModal && urlModal.classList.contains('show')) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            openBlogInNewTab();
-        } else if (event.key === 'Escape') {
-            event.preventDefault();
-            closeBlogUrlModal();
-        }
-    }
-});
-
-class ExpandableTabs {
-    constructor(container, options = {}) {
-        this.container = container;
-        this.tabs = options.tabs || [];
-        this.activeColor = options.activeColor || 'text-blue-600';
-        this.onChange = options.onChange || (() => { });
-        this.selected = null;
-        this.init();
-    }
-    init() {
-        this.render();
-        this.bindEvents();
-    }
-    render() {
-        this.container.innerHTML = '';
-        this.tabs.forEach((tab, index) => {
-            if (tab.type === 'separator') {
-                const separator = this.createSeparator();
-                this.container.appendChild(separator);
-            } else {
-                const button = this.createTabButton(tab, index);
-                this.container.appendChild(button);
-            }
-        });
-    }
-    createSeparator() {
-        const separator = document.createElement('div');
-        separator.className = 'separator';
-        separator.style.background = 'rgba(255, 255, 255, 0.3)';
-        separator.setAttribute('aria-hidden', 'true');
-        return separator;
-    }
-    createTabButton(tab, index) {
-        const button = document.createElement('button');
-        const isSelected = this.selected === index;
-        button.className = `tab-button relative flex items-center text-sm font-medium tracking-wide transition-all duration-[600ms] ${isSelected ? 'selected' : ''
-            }`;
-        if (isSelected) {
-            button.style.color = this.activeColor || 'rgb(147, 197, 253)';
-        } else {
-            button.style.color = 'rgba(255, 255, 255, 0.6)';
-        }
-        button.dataset.index = index;
-        const iconWrapper = document.createElement('div');
-        iconWrapper.className = 'flex-shrink-0';
-        iconWrapper.innerHTML = `<i data-lucide="${tab.icon}" class="w-4 h-4"></i>`;
-        const textElement = document.createElement('span');
-        textElement.className = `tab-text ${isSelected ? 'expanded' : ''}`;
-        textElement.textContent = tab.title;
-        button.appendChild(iconWrapper);
-        button.appendChild(textElement);
-        button.addEventListener('mouseenter', () => {
-            if (!button.classList.contains('selected')) {
-                button.style.color = 'rgba(255, 255, 255, 0.9)';
-            }
-        });
-        button.addEventListener('mouseleave', () => {
-            if (!button.classList.contains('selected')) {
-                button.style.color = 'rgba(255, 255, 255, 0.6)';
-            }
-        });
-        return button;
-    }
-    handleSelect(index) {
-        this.selected = index;
-        const buttons = this.container.querySelectorAll('.tab-button');
-        buttons.forEach((button, i) => {
-            const buttonIndex = parseInt(button.dataset.index);
-            const textElement = button.querySelector('.tab-text');
-            if (this.selected === buttonIndex) {
-                button.classList.add('selected');
-                button.style.color = this.activeColor || 'rgb(147, 197, 253)';
-                textElement.classList.add('expanded');
-            } else {
-                button.classList.remove('selected');
-                button.style.color = 'rgba(255, 255, 255, 0.6)';
-                textElement.classList.remove('expanded');
-            }
-        });
-        this.onChange(this.selected);
-    }
-    bindEvents() {
-        if (this.eventsbound) return;
-        this.eventsbound = true;
-        this.container.addEventListener('click', (e) => {
-            const button = e.target.closest('.tab-button');
-            if (button && button.dataset.index !== undefined) {
-                this.handleSelect(parseInt(button.dataset.index));
-            }
-        });
-    }
-}
+import { showLoading, verifyAuth, handleLogout, getCookie, deleteCookie, initAuth, authenticatedFetch, getAuthToken } from './shared/auth-utils.js';
+import { showModal, closeModal } from './shared/ui-utils.js';
+import { initGalleryOnLoad } from './shared/gallery-utils.js';
+import { ExpandableTabs } from './shared/admin-tabs.js';
+import { initializeLabelsSection, addLabelRow, populateLabelsFromData, collectLabelsData } from './shared/admin-labels.js';
+import {
+    showLinkDialog, closeLinkModal, insertLink,
+    showBulletDialog, closeBulletModal, insertBulletList, addBulletPoint, resetBulletPoints,
+    showDeleteConfirmModal, closeDeleteConfirmModal, updateDeleteButtonState, confirmDeleteBlog,
+    showBlogUrl, closeBlogUrlModal, copyBlogUrl, openBlogInNewTab, initModalEventListeners
+} from './shared/admin-modals.js';
+
+initAuth();
+initGalleryOnLoad();
+initModalEventListeners();
+
+window.handleLogout = handleLogout;
+window.closeModal = closeModal;
+window.closeLinkModal = closeLinkModal;
+window.insertLink = insertLink;
+window.closeBulletModal = closeBulletModal;
+window.insertBulletList = insertBulletList;
+window.closeDeleteConfirmModal = closeDeleteConfirmModal;
+window.confirmDeleteBlog = confirmDeleteBlog;
+window.showBlogUrl = showBlogUrl;
+window.closeBlogUrlModal = closeBlogUrlModal;
+window.copyBlogUrl = copyBlogUrl;
+window.openBlogInNewTab = openBlogInNewTab;
 
 function showContentSection(tabTitle) {
-
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => {
         section.classList.remove('active');
     });
-
 
     let sectionId = '';
     switch (tabTitle) {
@@ -868,106 +50,6 @@ function showContentSection(tabTitle) {
         }
     }
 }
-
-function initializeLabelsSection() {
-    const addLabelBtn = document.getElementById('addLabelBtn');
-    const labelsContainer = document.getElementById('labelsContainer');
-    const labelsNotMandatory = document.getElementById('labelsNotMandatory');
-
-    addLabelBtn.addEventListener('click', function () {
-        addLabelRow();
-    });
-
-    labelsContainer.addEventListener('click', function (e) {
-        if (e.target.closest('.remove-label-btn')) {
-            const labelItem = e.target.closest('.label-item');
-            const allLabels = labelsContainer.querySelectorAll('.label-item');
-
-            if (allLabels.length > 1) {
-                labelItem.remove();
-            } else {
-                labelItem.querySelector('.label-input').value = '';
-                labelItem.querySelector('.weight-input').value = '';
-            }
-        }
-    });
-}
-
-function addLabelRow() {
-    const labelsContainer = document.getElementById('labelsContainer');
-    const labelItem = document.createElement('div');
-    labelItem.className = 'label-item flex items-center gap-3';
-    labelItem.innerHTML = `
-        <div class="flex-1">
-            <input type="text" class="label-input form-input" placeholder="Enter label name..." />
-        </div>
-        <div class="w-24">
-            <input type="number" class="weight-input form-input" placeholder="Weight" min="1" max="100" />
-        </div>
-        <button type="button" class="remove-label-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
-            <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-    `;
-    labelsContainer.appendChild(labelItem);
-    lucide.createIcons();
-}
-
-function populateLabelsFromData(labelsData) {
-    const labelsContainer = document.getElementById('labelsContainer');
-    const labelsNotMandatory = document.getElementById('labelsNotMandatory');
-
-    labelsContainer.innerHTML = '';
-
-    if (labelsData && typeof labelsData === 'object' && Object.keys(labelsData).length > 0) {
-        Object.entries(labelsData).forEach(([label, weight]) => {
-            const labelItem = document.createElement('div');
-            labelItem.className = 'label-item flex items-center gap-3';
-            labelItem.innerHTML = `
-                <div class="flex-1">
-                    <input type="text" class="label-input form-input" placeholder="Enter label name..." value="${label}" />
-                </div>
-                <div class="w-24">
-                    <input type="number" class="weight-input form-input" placeholder="Weight" min="1" max="100" value="${weight}" />
-                </div>
-                <button type="button" class="remove-label-btn text-white/50 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/[0.05]" title="Remove">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            `;
-            labelsContainer.appendChild(labelItem);
-        });
-        labelsNotMandatory.checked = false;
-    } else {
-        addLabelRow();
-        labelsNotMandatory.checked = true;
-    }
-
-    lucide.createIcons();
-}
-
-function collectLabelsData() {
-    const labelsNotMandatory = document.getElementById('labelsNotMandatory').checked;
-    const labelItems = document.querySelectorAll('.label-item');
-    const labelsObj = {};
-    let hasLabels = false;
-
-    labelItems.forEach(item => {
-        const labelInput = item.querySelector('.label-input').value.trim();
-        const weightInput = item.querySelector('.weight-input').value.trim();
-
-        if (labelInput && weightInput) {
-            labelsObj[labelInput] = parseInt(weightInput);
-            hasLabels = true;
-        }
-    });
-
-    if (!labelsNotMandatory && !hasLabels) {
-        showModal('Labels Required', 'Please add at least one label or check the "Labels are not mandatory" option.', 'error');
-        return null;
-    }
-
-    return { labels: labelsObj, labelsNotMandatory: labelsNotMandatory };
-}
-
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -1045,6 +127,7 @@ async function handleLoadPreview() {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(data)
         });
 
@@ -1121,11 +204,8 @@ async function handleSaveDraft() {
         saveDraftBtn.disabled = true;
 
         const endpoint = '/api/admin_save_case_study';
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data)
         });
 
@@ -1209,11 +289,8 @@ async function handleSavePublish() {
         savePublishBtn.disabled = true;
 
         const endpoint = '/api/admin_save_case_study';
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data)
         });
 
@@ -2429,7 +1506,9 @@ async function fetchBlogs() {
 
     try {
         console.log('📡 Fetching case studies from /api/case-studies...');
-        const response_blogs = await fetch('/api/case-studies');
+        const response_blogs = await fetch('/api/case-studies', {
+            credentials: 'include'
+        });
         const result_blogs = await response_blogs.json();
 
         blogsLoading.classList.add('hidden');
@@ -2603,7 +1682,7 @@ function displayBlogs(blogs) {
                             <p>Edit</p>
                         </div>
                     </button>
-                    <button class="form-button text-xs px-4 py-2 min-w-[60px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="showBlogUrl('${slug.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}')">
+                    <button class="form-button text-xs px-4 py-2 min-w-[60px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="showBlogUrl('${slug.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}', 'case-study')">
                         <div class="flex items-center gap-2">
                             <i data-lucide="external-link" class="w-3 h-3"></i>
                             <p>URL</p>
@@ -2697,6 +1776,9 @@ async function editBlog(blogId) {
         showModal('Error', 'Case Study not found in the list. Please refresh.', 'error');
     }
 }
+
+window.editBlog = editBlog;
+window.fetchBlogs = fetchBlogs;
 
 function populateEditForm(blog) {
     currentEditingBlog = blog;
@@ -2995,11 +2077,8 @@ async function handleUpdateBlog() {
 
         payload.blog = data;
 
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(payload)
         });
 
@@ -3056,6 +2135,8 @@ function deleteBlog(blogId, blogTitle) {
 
     showDeleteConfirmModal(blogId, blogTitle);
 }
+
+window.deleteBlog = deleteBlog;
 
 document.addEventListener('DOMContentLoaded', function () {
     lucide.createIcons();
@@ -3323,7 +2404,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (tabName === 'storage') {
                 setTimeout(() => {
                     loadGallery();
-                    loadMagazines();
                 }, 100);
             }
         });
@@ -3357,9 +2437,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (subTabName === 'gallery') {
                 setTimeout(() => loadGallery(), 100);
-            } else if (subTabName === 'magazines') {
-                setTimeout(() => loadMagazines(), 100);
-            }
+            } 
         });
     });
 
@@ -3450,9 +2528,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (successCount > 0) {
                 if (fileType === 'image') {
                     await loadGallery();
-                } else if (fileType === 'pdf') {
-                    await loadMagazines();
-                }
+                } 
             }
 
             filesToUpload.length = 0;
@@ -3545,27 +2621,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error('Error loading gallery:', error);
-        }
-    }
-
-    async function loadMagazines() {
-        try {
-            const response = await fetch('/get_file_details?bucket_name=magazine-pdfs');
-            const result = await response.json();
-
-            if (result.status === 'success' && result.data) {
-                magazineFiles = result.data
-                    .filter(file => file.name.toLowerCase().endsWith('.pdf'))
-                    .map(file => ({
-                        id: file.id,
-                        name: file.name,
-                        url: file.public_url,
-                        size: file.size
-                    }));
-                renderMagazines();
-            }
-        } catch (error) {
-            console.error('Error loading magazines:', error);
         }
     }
 
@@ -3820,9 +2875,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (itemIndex > -1) {
                             magazineFiles.splice(itemIndex, 1);
                             renderMagazines();
-                        } else {
-                            await loadMagazines();
-                        }
+                        } 
                     }
                     showToast(`${displayType.charAt(0).toUpperCase() + displayType.slice(1)} "${itemName}" deleted successfully!`, 'success');
                 } else {
