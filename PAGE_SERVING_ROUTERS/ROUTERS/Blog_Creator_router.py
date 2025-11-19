@@ -686,12 +686,12 @@ async def get_faq_section():
             <div class="faq-grid">
                 <!-- Left Column - Header -->
                 <div class="faq-header">
-                    <h2 class="faq-title">This is the start of something new</h2>
+                    <h2 class="faq-title">Frequently Asked Questions</h2>
                     <p class="faq-description">
-                        Managing a small business today is already tough. Avoid further complications by ditching outdated, tedious trade methods. Our goal is to streamline SMB trade, making it easier and faster than ever.
+                        Find answers to common questions about Suflex Media's services, processes, and how we can help your business grow.
                     </p>
-                    <a href="#contact" class="faq-cta">
-                        <span>Any questions? Reach out</span>
+                    <a href="/contact" class="faq-cta">
+                        <span>Any more questions? Reach out</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M7 17L17 7M17 7H7M17 7V17"/>
                         </svg>
@@ -703,7 +703,7 @@ async def get_faq_section():
                     <!-- FAQ Item 1 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">What is Brands Out Loud?</h3>
+                            <h3 class="faq-question">What kind of content do you specialize in?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -712,7 +712,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Brands Out Loud is a premier digital media platform dedicated to providing in-depth analysis, insightful articles, and the latest news on business, technology, startups, and global trends. We focus on the stories that shape our future, with a special emphasis on innovation in the GCC region and beyond.
+                                We specialize in a wide range of content, including blog posts, articles, website copy, social media content, and more. Our team is equipped to handle various niches and industries, ensuring your content is tailored to your target audience.
                             </div>
                         </div>
                     </div>
@@ -720,7 +720,7 @@ async def get_faq_section():
                     <!-- FAQ Item 2 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">Who is the content for?</h3>
+                            <h3 class="faq-question">How do you ensure the content is original?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -729,7 +729,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Our content is created for forward-thinkers, entrepreneurs, business leaders, tech enthusiasts, and anyone curious about the forces driving modern economies. Whether you're a startup founder, a C-suite executive, or an aspiring innovator, you'll find valuable perspectives here.
+                                We use advanced plagiarism checkers to ensure that all content we deliver is 100% original. Our writers are trained to create unique content from scratch, and we have a strict policy against plagiarism.
                             </div>
                         </div>
                     </div>
@@ -737,7 +737,7 @@ async def get_faq_section():
                     <!-- FAQ Item 3 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">Can I contribute an article to Brands Out Loud?</h3>
+                            <h3 class="faq-question">What is the turnaround time for content?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -746,7 +746,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                We are always open to collaborating with industry experts and thought leaders. If you have a unique perspective or a compelling story to share, please visit our 'Write for Us' page for submission guidelines. We look for original, well-researched, and insightful content that aligns with our core topics.
+                                The turnaround time depends on the complexity and length of the content. However, we always strive to deliver high-quality content within the agreed-upon deadline. We also offer expedited services for urgent requirements.
                             </div>
                         </div>
                     </div>
@@ -754,7 +754,7 @@ async def get_faq_section():
                     <!-- FAQ Item 4 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">How do I subscribe to the newsletter?</h3>
+                            <h3 class="faq-question">Do you offer revisions?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -763,7 +763,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                Subscribing is easy! You can find the newsletter subscription form in the footer of our website. Just enter your email address and click "Subscribe" to receive our latest articles, special reports, and event invitations directly in your inbox.
+                                Yes, we offer a set number of revisions to ensure you are completely satisfied with the final product. Our goal is to create content that aligns with your vision and meets your expectations.
                             </div>
                         </div>
                     </div>
@@ -771,7 +771,7 @@ async def get_faq_section():
                     <!-- FAQ Item 5 -->
                     <div class="faq-item">
                         <button type="button" class="faq-toggle" aria-expanded="false">
-                            <h3 class="faq-question">What topics do you cover?</h3>
+                            <h3 class="faq-question">How do you optimize content for SEO?</h3>
                             <div class="faq-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6"/>
@@ -780,7 +780,7 @@ async def get_faq_section():
                         </button>
                         <div class="faq-content">
                             <div class="faq-answer">
-                                We cover a wide range of topics including business strategy, technology trends, startup ecosystem, digital transformation, leadership insights, and market analysis with a focus on the GCC region and global markets.
+                                Our content is optimized for SEO using the latest best practices. We conduct keyword research, incorporate relevant keywords naturally, and structure the content to be easily crawlable by search engines, helping you rank higher in search results.
                             </div>
                         </div>
                     </div>
@@ -829,84 +829,69 @@ async def get_faq_section():
     """
 
 
-async def get_cards(category):
-    print(f"Fetching blogs for category: {category}")
-    # Hardcoded test data
-    xx = []
+async def get_cards(current_slug: str):
+    """
+    Fetch the latest 3 related blogs, excluding the current one.
+    """
+    print(f"Fetching related blogs, excluding current one: {current_slug}")
+    conn = None
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        latest_blogs = await conn.fetch(
+            """
+            SELECT slug, blog, created_at
+            FROM blogs
+            WHERE isdeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG') AND slug != $1
+            ORDER BY created_at DESC
+            LIMIT 3
+            """,
+            current_slug
+        )
+    except Exception as e:
+        print(f"Error fetching related blogs: {e}")
+        return ""
+    finally:
+        if conn:
+            await conn.close()
 
-    # Sample blog 1
-    xx.append(
-        f"""<a href="/blog/1" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
+    cards_html = []
+    for blog in latest_blogs:
+        blog_content = json.loads(blog['blog'])
+        
+        image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
+        image_alt = blog_content.get('mainImageAlt', 'Blog Image')
+        title = blog_content.get('blogTitle', 'Untitled')
+        summary = blog_content.get('blogSummary', '')
+        author = "Suflex Media"
+        date = blog['created_at'].strftime('%b %d, %Y') if blog['created_at'] else ''
+
+        card_html = f"""<a href="/blog/{blog['slug']}" class="flex">
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex flex-col flex-1 hover:shadow-lg transition-shadow duration-300">
                     <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog1/800/400" alt="Sample Blog Image 1" class="w-full h-full object-cover">
+                    <div class="h-48 overflow-hidden flex-shrink-0">
+                        <img src="{image_url}" alt="{image_alt}" class="w-full h-full object-cover">
                     </div>
                     <!-- Card content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">The Future of Digital Marketing in 2024</h3>
-                        <p class="text-gray-600 mb-4">Explore the latest trends and strategies that are shaping the digital marketing landscape this year.</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>John Doe</span>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{title}</h3>
+                        <p class="text-gray-600 mb-4 flex-grow">{summary}</p>
+                        <div class="flex items-center text-sm text-gray-500 mt-auto">
+                            <span>{author}</span>
                             <span class="mx-2">•</span>
-                            <span>Jan 15, 2024</span>
+                            <span>{date}</span>
                         </div>
                     </div>
                 </div>
             </a>"""
-    )
-
-    # Sample blog 2
-    xx.append(
-        f"""<a href="/blog/2" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-                    <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog2/800/400" alt="Sample Blog Image 2" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Card content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">AI and Machine Learning: Transforming Business</h3>
-                        <p class="text-gray-600 mb-4">Discover how artificial intelligence is revolutionizing the way businesses operate and make decisions.</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>Jane Smith</span>
-                            <span class="mx-2">•</span>
-                            <span>Jan 20, 2024</span>
-                        </div>
-                    </div>
-                </div>
-            </a>"""
-    )
-
-    # Sample blog 3
-    xx.append(
-        f"""<a href="/blog/3" class="block">
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden flex-1 hover:shadow-lg transition-shadow duration-300">
-                    <!-- Card image -->
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://picsum.photos/seed/blog3/800/400" alt="Sample Blog Image 3" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Card content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Sustainable Business Practices for Growth</h3>
-                        <p class="text-gray-600 mb-4">Learn how sustainability can drive innovation and create long-term value for your business.</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-3">
-                            <span>Mike Johnson</span>
-                            <span class="mx-2">•</span>
-                            <span>Jan 25, 2024</span>
-                        </div>
-                    </div>
-                </div>
-            </a>"""
-    )
-
-    return "\n".join(xx)
+        cards_html.append(card_html)
+    
+    return "\n".join(cards_html)
 
 
 async def get_more_blogs_section(data: dict):
-    template = """
+    template = r"""
     <style>
-        more_blogs {
+        .more_blogs {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f9fafb;
         }
@@ -953,7 +938,9 @@ async def get_more_blogs_section(data: dict):
         </div>
     </div>
 </section>"""
-    return template.replace("[[cards]]", await get_cards("sample_category"))
+    current_slug = data.get('slug', '')
+    cards_html = await get_cards(current_slug)
+    return template.replace("[[cards]]", cards_html)
 
 
 async def get_blog_hero_section(data: dict):
@@ -988,6 +975,10 @@ async def get_blog_hero_section(data: dict):
         <div class="text-sm text-gray-600">
             <span class="font-jakarta font-medium flex items-center flex-wrap">
                 <a href="/blogs" class="flex items-center">blogs</a>
+                <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                <span class="flex items-center">{data.get('blogCategory', 'General')}</span>
                 <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -1234,7 +1225,7 @@ async def get_blog_body(data: dict):
 """
 
 
-EMPTY_BLOG_TEMPLATE = """<!DOCTYPE html>
+EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="en" class="scroll-smooth w-full">
 
 <head>
@@ -2219,6 +2210,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Blog data keys: {list(blog_record['blog'].keys()) if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog']).keys()}")
         
         blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
+        blog_data['slug'] = slug
         print(f"[DEBUG] Rendering blog HTML...")
         
         html_content = await create_blog_html(blog_data)

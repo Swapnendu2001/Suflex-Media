@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/blogs_landing.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 
 <body>
@@ -51,28 +52,44 @@
 
     <div class="content-wrapper">
 
-        <section class="blogs-section">
+        <!-- Section 1: Editor's Choice (Carousel) -->
+        <section class="blogs-section editors-choice-section">
             <div class="section-heading">
-                <h1>The latest Gossips</h1>
+                <h1>Editor's Choice</h1>
             </div>
-            <div class="blogs-grid" id="latest-gossips-grid">
-                <!-- LATEST GOSSIPS BLOGS WILL BE INSERTED HERE DYNAMICALLY -->
-                
-                <!-- LATEST GOSSIPS BLOGS WILL BE INSERTED HERE DYNAMICALLY -->
-                <div id="dynamic-latest-gossips-content"></div>
+            <div class="editors-choice-carousel-container">
+                <button class="carousel-arrow left" id="carousel-arrow-left"><img src="/icons/forward-arrow.png" alt="Previous"></button>
+                <div class="editors-choice-carousel-wrapper">
+                    <div class="editors-choice-carousel" id="editors-choice-carousel">
+                        <!-- Editor's Choice blogs will be inserted here dynamically -->
+                        <div id="dynamic-editors-choice-content"></div>
+                    </div>
+                </div>
+                <button class="carousel-arrow right" id="carousel-arrow-right"><img src="/icons/forward-arrow.png" alt="Next"></button>
             </div>
-            <div class="pagination-container" id="latest-gossips-pagination"></div>
         </section>
 
-        <section class="blogs-section">
+        <!-- Section 2: Latest Gossip -->
+        <section class="blogs-section latest-gossip-section">
             <div class="section-heading">
-                <h1>Editor's choice</h1>
+                <h1>The Latest Gossip</h1>
             </div>
-            <div class="blogs-grid" id="editors-choice-grid">
-                <!-- EDITOR'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->
-                <div id="dynamic-editors-choice-content"></div>
+            <div class="blogs-grid" id="latest-gossip-grid">
+                <!-- Latest Gossip blogs will be inserted here dynamically -->
+                <div id="dynamic-latest-gossip-content"></div>
             </div>
-            <div class="pagination-container" id="editors-choice-pagination"></div>
+        </section>
+
+        <!-- Section 3: Read More of Our Stories -->
+        <section class="blogs-section read-more-section">
+            <div class="section-heading">
+                <h1>Read More of Our Stories</h1>
+            </div>
+            <div class="blogs-grid" id="read-more-grid">
+                <!-- "Read More" blogs will be inserted here dynamically -->
+                <div id="dynamic-read-more-content"></div>
+            </div>
+            <div class="pagination-container" id="read-more-pagination"></div>
         </section>
 
     </div>

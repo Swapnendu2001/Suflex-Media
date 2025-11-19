@@ -118,14 +118,14 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
         conn = await asyncpg.connect(DATABASE_URL)
         
         if include_deleted:
-            query = f"""
+            query = """
                 SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
                 WHERE type = '{ContentTypeConstants.BLOG}'
                 ORDER BY date DESC
             """
         else:
-            query = f"""
+            query = """
                 SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM blogs
                 WHERE isdeleted = FALSE AND type = '{ContentTypeConstants.BLOG}'
@@ -142,6 +142,7 @@ async def get_blogs(include_deleted: bool = Query(False, description="Include so
                 "status": blog['status'],
                 "date": blog['date'].isoformat() if blog['date'] else None,
                 "keyword": blog['keyword'],
+                "category": blog['blog'].get('blogCategory', 'General') if isinstance(blog['blog'], dict) else json.loads(blog['blog']).get('blogCategory', 'General'),
                 "slug": blog['slug'],
                 "type": blog['type'],
                 "redirect_url": blog['redirect_url'],
@@ -208,6 +209,7 @@ async def create_blog(blog_data: CreateBlogRequest, current_user: Dict[str, Any]
                 "status": new_blog['status'],
                 "date": new_blog['date'].isoformat() if new_blog['date'] else None,
                 "keyword": new_blog['keyword'],
+                "category": new_blog['blog'].get('blogCategory', 'General') if isinstance(new_blog['blog'], dict) else json.loads(new_blog['blog']).get('blogCategory', 'General'),
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
@@ -310,6 +312,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
                 "status": updated_blog['status'],
                 "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
                 "keyword": updated_blog['keyword'],
+                "category": updated_blog['blog'].get('blogCategory', 'General') if isinstance(updated_blog['blog'], dict) else json.loads(updated_blog['blog']).get('blogCategory', 'General'),
                 "slug": updated_blog['slug'],
                 "type": updated_blog['type'],
                 "redirect_url": updated_blog['redirect_url'],
