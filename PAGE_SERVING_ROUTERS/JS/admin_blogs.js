@@ -1,4 +1,4 @@
-import { showLoading, verifyAuth, handleLogout, getCookie, deleteCookie, initAuth } from './shared/auth-utils.js';
+import { showLoading, verifyAuth, handleLogout, getCookie, deleteCookie, initAuth, authenticatedFetch } from './shared/auth-utils.js';
 import { showModal, closeModal } from './shared/ui-utils.js';
 import { initGalleryOnLoad } from './shared/gallery-utils.js';
 import { ExpandableTabs } from './shared/admin-tabs.js';
@@ -9,6 +9,16 @@ import {
     showDeleteConfirmModal, closeDeleteConfirmModal, updateDeleteButtonState, confirmDeleteBlog,
     showBlogUrl, closeBlogUrlModal, copyBlogUrl, openBlogInNewTab, initModalEventListeners
 } from './shared/admin-modals.js';
+
+window.closeModal = closeModal;
+window.showModal = showModal;
+window.closeLinkModal = closeLinkModal;
+window.closeBulletModal = closeBulletModal;
+window.closeDeleteConfirmModal = closeDeleteConfirmModal;
+window.closeBlogUrlModal = closeBlogUrlModal;
+window.copyBlogUrl = copyBlogUrl;
+window.openBlogInNewTab = openBlogInNewTab;
+window.handleLogout = handleLogout;
 
 initAuth();
 initGalleryOnLoad();
@@ -191,11 +201,8 @@ async function handleSaveDraft() {
         saveDraftBtn.disabled = true;
 
         const endpoint = '/api/admin_save_blog';
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data)
         });
 
@@ -277,11 +284,8 @@ async function handleSavePublish() {
         savePublishBtn.disabled = true;
 
         const endpoint = '/api/admin_save_blog';
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data)
         });
 
@@ -685,6 +689,8 @@ function insertLinkInContentEditable() {
     closeLinkModal();
 }
 
+window.insertLink = insertLinkInContentEditable;
+
 function showBulletDialogForContentEditable(element, selectedText, range) {
     currentContentEditableElement = element;
     currentContentEditableRange = range;
@@ -756,6 +762,8 @@ function insertBulletListInContentEditable() {
     currentContentEditableRange = null;
     closeBulletModal();
 }
+
+window.insertBulletList = insertBulletListInContentEditable;
 
 function updatePreviewIfVisible() {
 
@@ -1393,11 +1401,8 @@ async function handleUpdateBlog() {
 
         payload.blog = data;
 
-        const response = await fetch(endpoint, {
+        const response = await authenticatedFetch(endpoint, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(payload)
         });
 
@@ -1454,6 +1459,11 @@ function deleteBlog(blogId, blogTitle) {
 
     showDeleteConfirmModal(blogId, blogTitle);
 }
+
+window.editBlog = editBlog;
+window.showBlogUrl = showBlogUrl;
+window.deleteBlog = deleteBlog;
+window.confirmDeleteBlog = confirmDeleteBlog;
 
 document.addEventListener('DOMContentLoaded', function () {
     lucide.createIcons();
@@ -1849,45 +1859,6 @@ document.addEventListener('DOMContentLoaded', function () {
         uploadBtnText.textContent = `Upload ${filesToUpload.length} File${filesToUpload.length !== 1 ? 's' : ''}`;
     }
 
-    async function loadGallery() {
-        try {
-            const response = await fetch('/get_file_details?bucket_name=blog-images');
-            const result = await response.json();
-
-            if (result.status === 'success' && result.data) {
-                imageFiles = result.data.map(file => ({
-                    id: file.id,
-                    name: file.name,
-                    url: file.public_url,
-                    size: file.size
-                }));
-                renderGallery();
-            }
-        } catch (error) {
-            console.error('Error loading gallery:', error);
-        }
-    }
-
-    async function loadMagazines() {
-        try {
-            const response = await fetch('/get_file_details?bucket_name=magazine-pdfs');
-            const result = await response.json();
-
-            if (result.status === 'success' && result.data) {
-                magazineFiles = result.data
-                    .filter(file => file.name.toLowerCase().endsWith('.pdf'))
-                    .map(file => ({
-                        id: file.id,
-                        name: file.name,
-                        url: file.public_url,
-                        size: file.size
-                    }));
-                renderMagazines();
-            }
-        } catch (error) {
-            console.error('Error loading magazines:', error);
-        }
-    }
 
     function renderGallery(searchTerm = '') {
         const galleryGrid = document.getElementById('galleryGrid');
