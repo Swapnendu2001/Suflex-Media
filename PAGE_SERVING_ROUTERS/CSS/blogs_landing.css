@@ -409,7 +409,7 @@ body {
 
 .editors-choice-section {
     overflow: hidden;
-    width: 71vw;
+    width: 85vw;
     margin: 0 auto;
     background-color: transparent;
     padding: 0;
@@ -431,7 +431,7 @@ body {
 
 .editors-choice-carousel {
     display: flex;
-    gap: 2vw;
+    gap: 3vw;
     transition: transform 0.5s ease;
 }
 
@@ -465,7 +465,7 @@ body {
 }
 
 .editors-choice-card {
-    flex: 0 0 calc(33.333% - 1.333vw);
+    flex: 0 0 calc((100% - 6vw) / 3);
     background-color: #fff;
     border-radius: 1.5vw;
     padding: 1.5vw;
