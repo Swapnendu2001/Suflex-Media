@@ -79,6 +79,54 @@ function setupCarousel() {
     });
 }
 
+function setupMobileCarousel() {
+    const mobileCarousel = document.getElementById('editors-choice-carousel-mobile');
+    if (!mobileCarousel) return;
+
+    const items = mobileCarousel.querySelectorAll('.blog-card');
+    if (items.length <= 1) {
+        const leftArrow = document.getElementById('carousel-arrow-left-mobile');
+        const rightArrow = document.getElementById('carousel-arrow-right-mobile');
+        if(leftArrow) leftArrow.style.display = 'none';
+        if(rightArrow) rightArrow.style.display = 'none';
+        return;
+    }
+
+    let currentIndex = 0;
+    const totalItems = items.length;
+
+    const leftArrow = document.getElementById('carousel-arrow-left-mobile');
+    const rightArrow = document.getElementById('carousel-arrow-right-mobile');
+
+    function updateCarousel() {
+        const card = items[0];
+        if (!card) return;
+        const carouselStyle = window.getComputedStyle(mobileCarousel);
+        const cardWidth = card.offsetWidth;
+        const gap = parseInt(carouselStyle.gap) || 0;
+        const offset = -currentIndex * (cardWidth + gap);
+        mobileCarousel.style.transform = `translateX(${offset}px)`;
+    }
+
+    leftArrow.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
+    });
+
+    rightArrow.addEventListener('click', () => {
+        if (currentIndex < totalItems - 1) {
+            currentIndex++;
+            updateCarousel();
+        }
+    });
+
+    // Initial call
+    updateCarousel();
+    window.addEventListener('resize', updateCarousel);
+}
+
 function setupPagination() {
     const grid = document.getElementById('read-more-grid');
     const pagination = document.getElementById('read-more-pagination');
@@ -159,6 +207,21 @@ function setupPagination() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+    const desktopCarouselContent = document.getElementById('dynamic-editors-choice-content');
+    const mobileCarouselContent = document.getElementById('dynamic-editors-choice-content-mobile');
+
+    if (desktopCarouselContent && mobileCarouselContent) {
+        const observer = new MutationObserver(() => {
+            mobileCarouselContent.innerHTML = desktopCarouselContent.innerHTML;
+            const mobileCards = mobileCarouselContent.querySelectorAll('.editors-choice-card');
+            mobileCards.forEach(card => {
+                card.className = 'blog-card';
+            });
+            setupMobileCarousel();
+        });
+        observer.observe(desktopCarouselContent, { childList: true });
+    }
+
     setupCarousel();
     setupPagination();
 });
