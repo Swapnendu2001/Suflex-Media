@@ -813,6 +813,9 @@ body {
         width: 10vw;
         height: 10vw;
         border-width: 0.4vw;
+        position: absolute;
+        right: 1vw;
+        bottom: -2vw;
     }
 
     .blog-arrow svg {

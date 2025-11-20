@@ -39,53 +39,89 @@ class UpdateBlogRequest(BaseModel):
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
+def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, Any]]:
+    return [
+        {
+            "id": str(blog['id']),
+            "blog": blog['blog'],
+            "status": blog['status'],
+            "date": blog['date'].isoformat() if blog['date'] else None,
+            "keyword": blog['keyword'],
+            "category": blog['blog'].get('blogCategory', 'General') if isinstance(blog['blog'], dict) else json.loads(blog['blog']).get('blogCategory', 'General'),
+            "slug": blog['slug'],
+            "type": blog['type'],
+            "redirect_url": blog['redirect_url'],
+            "isdeleted": blog['isdeleted'],
+            "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
+            "updated_at": blog['updated_at'].isoformat() if blog['updated_at'] else None,
+            "editors_choice": blog.get('editors_choice', 'N')
+        }
+        for blog in blogs_list_raw
+    ]
+
 @router.get("/blogs")
-async def get_blogs(include_deleted: bool = Query(False, description="Include soft-deleted blogs")):
+async def get_blogs(
+    include_deleted: bool = Query(False, description="Include soft-deleted blogs"),
+    purpose: Optional[str] = Query(None, description="Purpose of the request, e.g., 'landing_page'")
+):
     """
-    Get all blogs
-    By default excludes soft-deleted entries
-    Set include_deleted=true to show all blogs including deleted ones
+    Get all blogs.
+    - By default excludes soft-deleted entries. Set include_deleted=true to show all.
+    - Use purpose=landing_page to get blogs structured for the landing page sections.
     """
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        
-        if include_deleted:
+
+        if purpose == 'landing_page':
             query = """
-                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
                 FROM blogs
+                WHERE isdeleted = FALSE AND status = 'published'
                 ORDER BY date DESC
             """
-        else:
-            query = """
-                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
-                FROM blogs
-                WHERE isdeleted = FALSE
-                ORDER BY date DESC
-            """
-        
-        blogs = await conn.fetch(query)
-        await conn.close()
-        
-        blogs_list = [
-            {
-                "id": str(blog['id']),
-                "blog": blog['blog'],
-                "status": blog['status'],
-                "date": blog['date'].isoformat() if blog['date'] else None,
-                "keyword": blog['keyword'],
-                "category": blog['blog'].get('blogCategory', 'General') if isinstance(blog['blog'], dict) else json.loads(blog['blog']).get('blogCategory', 'General'),
-                "slug": blog['slug'],
-                "type": blog['type'],
-                "redirect_url": blog['redirect_url'],
-                "isdeleted": blog['isdeleted'],
-                "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
-                "updated_at": blog['updated_at'].isoformat() if blog['updated_at'] else None
+            all_blogs = await conn.fetch(query)
+            
+            editors_choice_blogs = [b for b in all_blogs if b['editors_choice'] == 'Y']
+            other_blogs = [b for b in all_blogs if b['editors_choice'] != 'Y']
+
+            # The 3 most recent non-editor's-choice blogs for "Latest Gossip"
+            latest_gossip_blogs = other_blogs[:3]
+            # The rest for "Read More"
+            read_more_blogs = other_blogs[3:]
+
+            await conn.close()
+            
+            return {
+                "status": "success",
+                "sections": {
+                    "editors_choice": _format_blog_list(editors_choice_blogs),
+                    "latest_gossip": _format_blog_list(latest_gossip_blogs),
+                    "read_more": _format_blog_list(read_more_blogs)
+                }
             }
-            for blog in blogs
-        ]
         
-        return {"status": "success", "blogs": blogs_list, "count": len(blogs_list)}
-        
+        else:
+            if include_deleted:
+                query = """
+                    SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    FROM blogs
+                    ORDER BY date DESC
+                """
+            else:
+                query = """
+                    SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    FROM blogs
+                    WHERE isdeleted = FALSE
+                    ORDER BY date DESC
+                """
+            
+            blogs = await conn.fetch(query)
+            await conn.close()
+            
+            blogs_list = _format_blog_list(blogs)
+            
+            return {"status": "success", "blogs": blogs_list, "count": len(blogs_list)}
+            
     except asyncpg.PostgresError as e:
         print(f"Database error: {e}")
         raise HTTPException(status_code=500, detail="Database error occurred")
