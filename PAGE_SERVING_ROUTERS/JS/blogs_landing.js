@@ -51,34 +51,69 @@ function setupCarousel() {
     if (!carousel) return;
 
     const items = carousel.querySelectorAll('.editors-choice-card');
-    if (items.length <= 3) return;
+    const totalItems = items.length;
+    if (totalItems <= 3) {
+        const leftArrow = document.getElementById('carousel-arrow-left');
+        const rightArrow = document.getElementById('carousel-arrow-right');
+        if(leftArrow) leftArrow.style.display = 'none';
+        if(rightArrow) rightArrow.style.display = 'none';
+        return;
+    };
 
     let currentIndex = 0;
-    const totalItems = items.length;
-    const cardWidth = items[0].offsetWidth + parseInt(window.getComputedStyle(items[0]).marginRight);
+    let autoScrollInterval;
 
     const leftArrow = document.getElementById('carousel-arrow-left');
     const rightArrow = document.getElementById('carousel-arrow-right');
 
     function updateCarousel() {
-        const offset = -currentIndex * cardWidth;
+        const cardWidth = items[0].offsetWidth;
+        const gap = parseFloat(window.getComputedStyle(carousel).columnGap) || 0;
+        const offset = -currentIndex * (cardWidth + gap);
         carousel.style.transform = `translateX(${offset}px)`;
     }
 
+    function showNext() {
+        const maxIndex = totalItems - 3;
+        currentIndex = (currentIndex + 1) > maxIndex ? 0 : currentIndex + 1;
+        updateCarousel();
+    }
+    
+    function showPrev() {
+        const maxIndex = totalItems - 3;
+        currentIndex = (currentIndex - 1) < 0 ? maxIndex : currentIndex - 1;
+        updateCarousel();
+    }
+
+    function startAutoScroll() {
+        stopAutoScroll();
+        autoScrollInterval = setInterval(showNext, 3000);
+    }
+
+    function stopAutoScroll() {
+        clearInterval(autoScrollInterval);
+    }
+
     leftArrow.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarousel();
-        }
+        stopAutoScroll();
+        showPrev();
+        startAutoScroll();
     });
 
     rightArrow.addEventListener('click', () => {
-        if (currentIndex < totalItems - 3) {
-            currentIndex++;
-            updateCarousel();
-        }
+        stopAutoScroll();
+        showNext();
+        startAutoScroll();
     });
+
+    carousel.parentElement.addEventListener('mouseenter', stopAutoScroll);
+    carousel.parentElement.addEventListener('mouseleave', startAutoScroll);
+
+    startAutoScroll();
+    updateCarousel();
+    window.addEventListener('resize', updateCarousel);
 }
+
 
 function setupMobileCarousel() {
     const mobileCarousel = document.getElementById('editors-choice-carousel-mobile');
@@ -105,7 +140,7 @@ function setupMobileCarousel() {
         if (!card) return;
         const carouselStyle = window.getComputedStyle(mobileCarousel);
         const cardWidth = card.offsetWidth;
-        const gap = parseInt(carouselStyle.gap) || 0;
+        const gap = parseFloat(carouselStyle.columnGap) || 0;
         const offset = -currentIndex * (cardWidth + gap);
         mobileCarousel.style.transform = `translateX(${offset}px)`;
     }
