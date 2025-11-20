@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+    fetchBlogs();
 });
 
 const blogColors = ['#22c5e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e'];
@@ -94,6 +95,7 @@ function setupMobileCarousel() {
 
     let currentIndex = 0;
     const totalItems = items.length;
+    let autoScrollInterval;
 
     const leftArrow = document.getElementById('carousel-arrow-left-mobile');
     const rightArrow = document.getElementById('carousel-arrow-right-mobile');
@@ -108,24 +110,49 @@ function setupMobileCarousel() {
         mobileCarousel.style.transform = `translateX(${offset}px)`;
     }
 
+    function showNext() {
+        currentIndex = (currentIndex + 1) % totalItems;
+        updateCarousel();
+    }
+    
+    function showPrev() {
+        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+        updateCarousel();
+    }
+
+    function startAutoScroll() {
+        stopAutoScroll(); // Ensure no multiple intervals are running
+        autoScrollInterval = setInterval(showNext, 3000); // Change slide every 3 seconds
+    }
+
+    function stopAutoScroll() {
+        clearInterval(autoScrollInterval);
+    }
+
     leftArrow.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarousel();
-        }
+        stopAutoScroll();
+        showPrev();
+        startAutoScroll();
     });
 
     rightArrow.addEventListener('click', () => {
-        if (currentIndex < totalItems - 1) {
-            currentIndex++;
-            updateCarousel();
-        }
+        stopAutoScroll();
+        showNext();
+        startAutoScroll();
     });
+
+    // Start auto-scrolling
+    startAutoScroll();
+    
+    // Pause on hover
+    mobileCarousel.addEventListener('mouseenter', stopAutoScroll);
+    mobileCarousel.addEventListener('mouseleave', startAutoScroll);
 
     // Initial call
     updateCarousel();
     window.addEventListener('resize', updateCarousel);
 }
+
 
 function setupPagination() {
     const grid = document.getElementById('read-more-grid');
@@ -205,23 +232,96 @@ function setupPagination() {
     createPaginationControls();
 }
 
+function renderEditorsChoice(blogs) {
+    const container = document.getElementById('dynamic-editors-choice-content');
+    if (!container) return;
 
-document.addEventListener('DOMContentLoaded', function () {
-    const desktopCarouselContent = document.getElementById('dynamic-editors-choice-content');
-    const mobileCarouselContent = document.getElementById('dynamic-editors-choice-content-mobile');
+    container.innerHTML = blogs.map(blog => {
+        let blogData = {};
+        try {
+            blogData = typeof blog.blog === 'string' ? JSON.parse(blog.blog) : blog.blog;
+        } catch (e) {
+            console.error('Error parsing blog data:', e, blog.blog);
+        }
+        return `
+        <div class="editors-choice-card" onclick="window.location.href='/blog/${blog.slug}'">
+            <div class="editors-choice-card-image-container">
+                <img src="${blogData.blogTitleImage}" alt="${blogData.blogTitle}" class="editors-choice-card-image">
+            </div>
+            <div class="editors-choice-card-content">
+                <h3 class="blog-title">${blogData.blogTitle}</h3>
+                <p class="blog-summary">${blogData.blogSummary}</p>
+                <div class="blog-footer">
+                    <span class="blog-date">${new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${blog.category}</span>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+    setupCarousel();
+}
 
-    if (desktopCarouselContent && mobileCarouselContent) {
-        const observer = new MutationObserver(() => {
-            mobileCarouselContent.innerHTML = desktopCarouselContent.innerHTML;
-            const mobileCards = mobileCarouselContent.querySelectorAll('.editors-choice-card');
-            mobileCards.forEach(card => {
-                card.className = 'blog-card';
-            });
-            setupMobileCarousel();
-        });
-        observer.observe(desktopCarouselContent, { childList: true });
+function renderLatestGossip(blogs) {
+    const container = document.getElementById('dynamic-latest-gossip-content');
+    if (!container) return;
+    container.innerHTML = blogs.map((blog, index) => renderBlogCard(blog, index)).join('');
+}
+
+function renderReadMore(blogs) {
+    const container = document.getElementById('dynamic-read-more-content');
+    if (!container) return;
+    container.innerHTML = blogs.map((blog, index) => renderBlogCard(blog, index)).join('');
+    setupPagination();
+}
+
+function renderBlogCard(blog, index) {
+    const color = blogColors[index % blogColors.length];
+    let blogData = {};
+    try {
+        blogData = typeof blog.blog === 'string' ? JSON.parse(blog.blog) : blog.blog;
+    } catch (e) {
+        console.error('Error parsing blog data:', e, blog.blog);
     }
 
-    setupCarousel();
-    setupPagination();
-});
+    const readTime = blogData.readTime || '5 mins read';
+    const title = blogData.blogTitle || 'No Title';
+    const summary = blogData.blogSummary || '';
+
+    return `
+        <div class="blog-card" onclick="window.location.href='/blog/${blog.slug}'">
+            <div class="blog-card-header">
+                <div class="blog-dot" style="background-color: ${color};"></div>
+                <span class="blog-read-time">${readTime}</span>
+            </div>
+            <h2 class="blog-title">${title}</h2>
+            <p class="blog-date">${new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${blog.category}</p>
+            <div class="blog-footer">
+                <p class="blog-description">${summary}</p>
+                <a href="/blog/${blog.slug}" class="blog-arrow-link">
+                    <div class="blog-arrow">
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+async function fetchBlogs() {
+    try {
+        const response = await fetch('/api/blogs?purpose=landing_page');
+        const data = await response.json();
+        if (data.status === 'success' && data.sections) {
+            renderEditorsChoice(data.sections.editors_choice);
+            renderLatestGossip(data.sections.latest_gossip);
+            renderReadMore(data.sections.read_more);
+            
+            const mobileCarousel = document.getElementById('editors-choice-carousel-mobile');
+            if (mobileCarousel) {
+                mobileCarousel.innerHTML = data.sections.editors_choice.map((blog, index) => renderBlogCard(blog, index)).join('');
+                setupMobileCarousel();
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+    }
+}
