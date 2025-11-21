@@ -831,31 +831,30 @@ async def get_faq_section():
 
 async def get_cards(current_slug: str):
     """
-    Fetch the latest 3 related blogs, excluding the current one.
+    Fetch all blogs, excluding the current one.
     """
-    print(f"Fetching related blogs, excluding current one: {current_slug}")
+    print(f"Fetching all blogs, excluding current one: {current_slug}")
     conn = None
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        latest_blogs = await conn.fetch(
+        all_blogs = await conn.fetch(
             """
             SELECT slug, blog, created_at
             FROM blogs
             WHERE isdeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG') AND slug != $1
             ORDER BY created_at DESC
-            LIMIT 3
             """,
             current_slug
         )
     except Exception as e:
-        print(f"Error fetching related blogs: {e}")
+        print(f"Error fetching blogs: {e}")
         return ""
     finally:
         if conn:
             await conn.close()
 
     cards_html = []
-    for blog in latest_blogs:
+    for blog in all_blogs:
         blog_content = json.loads(blog['blog'])
         
         image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
@@ -865,7 +864,7 @@ async def get_cards(current_slug: str):
         author = "Suflex Media"
         date = blog['created_at'].strftime('%b %d, %Y') if blog['created_at'] else ''
 
-        card_html = f"""<a href="/blog/{blog['slug']}" class="flex">
+        card_html = f"""<a href="/blog/{blog['slug']}" class="flex related-blog-card">
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden flex flex-col flex-1 hover:shadow-lg transition-shadow duration-300">
                     <!-- Card image -->
                     <div class="h-48 overflow-hidden flex-shrink-0">
@@ -910,23 +909,85 @@ async def get_more_blogs_section(data: dict):
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(53, 51, 205, 0.3);
         }
+        
+        .related-blogs-carousel-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .related-blogs-carousel-wrapper {
+            overflow: hidden;
+        }
+        .related-blogs-carousel {
+            display: flex;
+            gap: 1.5rem; /* 24px */
+            transition: transform 0.5s ease-in-out;
+        }
+        .related-blog-card {
+            flex: 0 0 calc((100% - 3rem) / 3); /* 3 cards visible, with gap */
+        }
+        
+        .related-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+        .related-carousel-arrow:hover {
+            background-color: white;
+        }
+        .related-carousel-arrow.left {
+            left: 10px;
+        }
+        .related-carousel-arrow.right {
+            right: 10px;
+        }
+        .related-carousel-arrow svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            .related-blog-card {
+                flex: 0 0 calc((100% - 1.5rem) / 2); /* 2 cards visible */
+            }
+        }
+        @media (max-width: 768px) {
+            .related-blog-card {
+                flex: 0 0 80%; /* 1 card visible */
+            }
+        }
     </style>
     
     <section class="py-12 px-4 more_blogs">
-    <hr class="border-t border-black my-8 md:my-12 w-full md:w-[90%] lg:w-[80rem] mx-auto" />
-    <div class="max-w-6xl mx-auto">
-        <!-- Heading -->
-        <h2 class="text-4xl font-serif text-center mb-10 text-gray-800">Related Articles and Topics</h2>
-        
-        <!-- Main content container -->
-        <div class="flex flex-col gap-6">
-            <!-- Articles container -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards -->
-                [[cards]]
+        <hr class="border-t border-black my-8 md:my-12 w-full md:w-[90%] lg:w-[80rem] mx-auto" />
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-serif text-center mb-10 text-gray-800">Related Articles and Topics</h2>
+            
+            <div class="related-blogs-carousel-container">
+                <button class="related-carousel-arrow left" id="related-carousel-arrow-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </button>
+                <div class="related-blogs-carousel-wrapper">
+                    <div class="related-blogs-carousel" id="related-blogs-carousel">
+                        [[cards]]
+                    </div>
+                </div>
+                <button class="related-carousel-arrow right" id="related-carousel-arrow-right">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                </button>
             </div>
 
-            <!-- See More Button -->
             <div class="flex justify-center mt-8">
                 <a href="/blogs" class="see-more-btn px-8 py-3 text-white font-medium rounded-lg inline-flex items-center gap-2">
                     See More Articles
@@ -936,8 +997,70 @@ async def get_more_blogs_section(data: dict):
                 </a>
             </div>
         </div>
-    </div>
-</section>"""
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('related-blogs-carousel');
+        if (!carousel) return;
+        const items = carousel.querySelectorAll('.related-blog-card');
+        const totalItems = items.length;
+        const leftArrow = document.getElementById('related-carousel-arrow-left');
+        const rightArrow = document.getElementById('related-carousel-arrow-right');
+        function getVisibleCards() {
+            if (window.innerWidth >= 1024) return 3;
+            if (window.innerWidth >= 768) return 2;
+            return 1;
+        }
+        function checkCarouselState() {
+            const visibleCards = getVisibleCards();
+            if (totalItems <= visibleCards) {
+                leftArrow.style.display = 'none';
+                rightArrow.style.display = 'none';
+                return false;
+            }
+            leftArrow.style.display = 'flex';
+            rightArrow.style.display = 'flex';
+            return true;
+        }
+        if (!checkCarouselState()) return;
+        let currentIndex = 0;
+        function updateCarousel() {
+            const visibleCards = getVisibleCards();
+            const cardWidth = items[0].offsetWidth;
+            const gap = parseFloat(window.getComputedStyle(carousel).gap) || 0;
+            const offset = -currentIndex * (cardWidth + gap);
+            carousel.style.transform = `translateX(${offset}px)`;
+            
+            const maxIndex = totalItems - visibleCards;
+            leftArrow.style.display = currentIndex > 0 ? 'flex' : 'none';
+            rightArrow.style.display = currentIndex < maxIndex ? 'flex' : 'none';
+        }
+        function showNext() {
+            const visibleCards = getVisibleCards();
+            const maxIndex = totalItems - visibleCards;
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        }
+        function showPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        }
+        leftArrow.addEventListener('click', showPrev);
+        rightArrow.addEventListener('click', showNext);
+        window.addEventListener('resize', () => {
+            currentIndex = 0;
+            checkCarouselState();
+            updateCarousel();
+        });
+        updateCarousel(); // Initial call
+    });
+    </script>
+    """
     current_slug = data.get('slug', '')
     cards_html = await get_cards(current_slug)
     return template.replace("[[cards]]", cards_html)
