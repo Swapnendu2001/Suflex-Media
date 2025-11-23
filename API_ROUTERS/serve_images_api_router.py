@@ -47,10 +47,18 @@ class ImageListResponse(BaseModel):
     message: str
     images: list
 
+class FileUploadResponse(BaseModel):
+    status: str
+    message: str
+    object_name: str
+    file_name: str
+    file_size: int
+    public_url: str
+
 @router.get("/list-images")
 async def list_images():
     """
-    API endpoint to list all images from MinIO bucket
+    API endpoint to list only image files from MinIO bucket (excludes PDFs)
     Returns list of image objects with their names and public URLs
     """
     print("Image list request received")
@@ -60,20 +68,58 @@ async def list_images():
         
         images = []
         for obj in objects:
+            if not obj.object_name.lower().endswith('.pdf'):
+                public_url = f"{MINIO_PUBLIC_ENDPOINT}/{MINIO_BUCKET_NAME}/{obj.object_name}"
+                images.append({
+                    "object_name": obj.object_name,
+                    "public_url": public_url,
+                    "size": obj.size,
+                    "last_modified": obj.last_modified.isoformat() if obj.last_modified else None
+                })
+        
+        print(f"Found {len(images)} images in bucket (excluding PDFs)")
+        
+        return ImageListResponse(
+            status="success",
+            message=f"Found {len(images)} images",
+            images=images
+        )
+            
+    except S3Error as e:
+        print(f"MinIO error: {e}")
+        raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/list-pdfs")
+async def list_pdfs():
+    """
+    API endpoint to list all files from MinIO bucket (both images and PDFs)
+    Returns list of file objects with their names and public URLs
+    Frontend filters them by type
+    """
+    print("File list request received")
+    
+    try:
+        objects = minio_client.list_objects(MINIO_BUCKET_NAME)
+        
+        files = []
+        for obj in objects:
             public_url = f"{MINIO_PUBLIC_ENDPOINT}/{MINIO_BUCKET_NAME}/{obj.object_name}"
-            images.append({
+            files.append({
                 "object_name": obj.object_name,
                 "public_url": public_url,
                 "size": obj.size,
                 "last_modified": obj.last_modified.isoformat() if obj.last_modified else None
             })
         
-        print(f"Found {len(images)} images in bucket")
+        print(f"Found {len(files)} files in bucket")
         
         return ImageListResponse(
             status="success",
-            message=f"Found {len(images)} images",
-            images=images
+            message=f"Found {len(files)} files",
+            images=files
         )
             
     except S3Error as e:
@@ -122,6 +168,83 @@ async def upload_image(file: UploadFile = File(...)):
             object_name=object_name,
             file_name=file.filename,
             file_size=image_size,
+            public_url=public_url
+        )
+            
+    except S3Error as e:
+        print(f"MinIO error: {e}")
+        raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.post("/upload-file")
+async def upload_file(file: UploadFile = File(...)):
+    """
+    API endpoint to upload files (including PDFs) to MinIO bucket
+    Accepts multipart/form-data with file
+    Preserves original filename, checks for duplicates
+    Returns object name and public URL for direct access
+    No size limit enforced
+    """
+    print(f"File upload request - Filename: {file.filename}")
+    
+    try:
+        file_data = await file.read()
+        file_size = len(file_data)
+        
+        original_filename = file.filename
+        object_name = original_filename
+        is_duplicate = False
+        
+        try:
+            minio_client.stat_object(MINIO_BUCKET_NAME, object_name)
+            is_duplicate = True
+            
+            base_name = original_filename.rsplit('.', 1)[0] if '.' in original_filename else original_filename
+            extension = original_filename.rsplit('.', 1)[1] if '.' in original_filename else ''
+            
+            counter = 1
+            while True:
+                object_name = f"{base_name}_{counter}.{extension}" if extension else f"{base_name}_{counter}"
+                try:
+                    minio_client.stat_object(MINIO_BUCKET_NAME, object_name)
+                    counter += 1
+                except S3Error as e:
+                    if e.code == 'NoSuchKey':
+                        break
+                    raise
+            
+            print(f"Duplicate found, using name: {object_name}")
+        except S3Error as e:
+            if e.code != 'NoSuchKey':
+                raise
+        
+        print(f"Processing upload - Name: {object_name}, Size: {file_size} bytes")
+        
+        from io import BytesIO
+        minio_client.put_object(
+            bucket_name=MINIO_BUCKET_NAME,
+            object_name=object_name,
+            data=BytesIO(file_data),
+            length=file_size,
+            content_type=file.content_type or 'application/octet-stream'
+        )
+        
+        public_url = f"{MINIO_PUBLIC_ENDPOINT}/{MINIO_BUCKET_NAME}/{object_name}"
+        
+        message = "File uploaded successfully"
+        if is_duplicate:
+            message = f"File uploaded as '{object_name}' (original name already exists)"
+        
+        print(f"File uploaded successfully - Object: {object_name}")
+        
+        return FileUploadResponse(
+            status="success",
+            message=message,
+            object_name=object_name,
+            file_name=original_filename,
+            file_size=file_size,
             public_url=public_url
         )
             
