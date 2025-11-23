@@ -415,6 +415,10 @@ body {
     padding: 0;
 }
 
+.editors-choice-section-mobile {
+    display: none;
+}
+
 .editors-choice-carousel-container {
     width: 100%;
     overflow: hidden;
@@ -428,12 +432,42 @@ body {
 
 .editors-choice-carousel {
     display: flex;
-    gap: 2vw;
+    gap: 3vw;
     transition: transform 0.5s ease;
 }
 
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 0.1vw solid #ddd;
+    cursor: pointer;
+    padding: 1vw;
+    z-index: 10;
+    border-radius: 50%;
+    width: 3vw;
+    height: 3vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-arrow.left {
+    left: 1vw;
+}
+
+.carousel-arrow.right {
+    right: 1vw;
+}
+
+.carousel-arrow svg {
+    width: 1.5vw;
+    height: 1.5vw;
+}
+
 .editors-choice-card {
-    flex: 0 0 calc(33.333% - 1.333vw);
+    flex: 0 0 calc((100% - 6vw) / 3);
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-radius: 1.5vw;
     padding: 2vw;
@@ -697,6 +731,69 @@ body {
 }
 
 @media (max-width: 768px) {
+    .editors-choice-section {
+        display: none;
+    }
+
+    .editors-choice-section-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 6vh 5vw;
+    }
+
+    .editors-choice-carousel-container-mobile {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .editors-choice-carousel-wrapper-mobile {
+        overflow: hidden;
+    }
+
+    .editors-choice-carousel-mobile {
+        display: flex;
+        gap: 4vw;
+        transition: transform 0.5s ease;
+    }
+
+    .carousel-arrow-mobile {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 0.1vw solid #ddd;
+        cursor: pointer;
+        padding: 2vw;
+        z-index: 10;
+        border-radius: 50%;
+        width: 6vw;
+        height: 6vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .carousel-arrow-mobile.left {
+        left: 2vw;
+    }
+
+    .carousel-arrow-mobile.right {
+        right: 2vw;
+    }
+
+    .carousel-arrow-mobile svg {
+        width: 3vw;
+        height: 3vw;
+    }
+
+    .editors-choice-section-mobile .blog-card {
+        flex: 0 0 80vw;
+        height: auto;
+    }
+
     .blogs-section {
         padding: 6vh 5vw;
     }
@@ -751,6 +848,9 @@ body {
         width: 10vw;
         height: 10vw;
         border-width: 0.4vw;
+        position: absolute;
+        right: 1vw;
+        bottom: -2vw;
     }
 
     .blog-arrow svg {

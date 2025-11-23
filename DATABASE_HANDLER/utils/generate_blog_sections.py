@@ -22,7 +22,7 @@ async def get_blog_data():
         all_blogs_query = """
             SELECT id, blog, date, created_at, editors_choice, slug, type
             FROM blogs
-            WHERE isdeleted = FALSE
+            WHERE isdeleted = FALSE AND type = 'BLOG'
             ORDER BY created_at DESC
         """
         all_blogs = await conn.fetch(all_blogs_query)

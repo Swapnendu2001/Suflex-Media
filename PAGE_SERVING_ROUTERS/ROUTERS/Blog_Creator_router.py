@@ -829,34 +829,15 @@ async def get_faq_section():
     """
 
 
-async def get_cards(current_slug: str):
+async def get_cards(other_blogs: list):
     """
-    Fetch the latest 3 related blogs, excluding the current one.
+    Generate cards for other blogs.
     """
-    print(f"Fetching related blogs, excluding current one: {current_slug}")
-    conn = None
-    try:
-        conn = await asyncpg.connect(DATABASE_URL)
-        latest_blogs = await conn.fetch(
-            """
-            SELECT slug, blog, created_at
-            FROM blogs
-            WHERE isdeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG') AND slug != $1
-            ORDER BY created_at DESC
-            LIMIT 3
-            """,
-            current_slug
-        )
-    except Exception as e:
-        print(f"Error fetching related blogs: {e}")
-        return ""
-    finally:
-        if conn:
-            await conn.close()
+    print(f"Generating cards for {len(other_blogs)} other blogs.")
 
     cards_html = []
-    for blog in latest_blogs:
-        blog_content = json.loads(blog['blog'])
+    for blog in other_blogs:
+        blog_content = json.loads(blog['blog']) if isinstance(blog['blog'], str) else blog['blog']
         
         image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
         image_alt = blog_content.get('mainImageAlt', 'Blog Image')
@@ -865,7 +846,7 @@ async def get_cards(current_slug: str):
         author = "Suflex Media"
         date = blog['created_at'].strftime('%b %d, %Y') if blog['created_at'] else ''
 
-        card_html = f"""<a href="/blog/{blog['slug']}" class="flex">
+        card_html = f"""<a href="/blog/{blog['slug']}" class="flex related-blog-card">
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden flex flex-col flex-1 hover:shadow-lg transition-shadow duration-300">
                     <!-- Card image -->
                     <div class="h-48 overflow-hidden flex-shrink-0">
@@ -888,7 +869,7 @@ async def get_cards(current_slug: str):
     return "\n".join(cards_html)
 
 
-async def get_more_blogs_section(data: dict):
+async def get_more_blogs_section(data: dict, other_blogs: list):
     template = r"""
     <style>
         .more_blogs {
@@ -910,23 +891,85 @@ async def get_more_blogs_section(data: dict):
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(53, 51, 205, 0.3);
         }
+        
+        .related-blogs-carousel-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .related-blogs-carousel-wrapper {
+            overflow: hidden;
+        }
+        .related-blogs-carousel {
+            display: flex;
+            gap: 1.5rem; /* 24px */
+            transition: transform 0.5s ease-in-out;
+        }
+        .related-blog-card {
+            flex: 0 0 calc((100% - 3rem) / 3); /* 3 cards visible, with gap */
+        }
+        
+        .related-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+        .related-carousel-arrow:hover {
+            background-color: white;
+        }
+        .related-carousel-arrow.left {
+            left: 10px;
+        }
+        .related-carousel-arrow.right {
+            right: 10px;
+        }
+        .related-carousel-arrow svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            .related-blog-card {
+                flex: 0 0 calc((100% - 1.5rem) / 2); /* 2 cards visible */
+            }
+        }
+        @media (max-width: 768px) {
+            .related-blog-card {
+                flex: 0 0 80%; /* 1 card visible */
+            }
+        }
     </style>
     
     <section class="py-12 px-4 more_blogs">
-    <hr class="border-t border-black my-8 md:my-12 w-full md:w-[90%] lg:w-[80rem] mx-auto" />
-    <div class="max-w-6xl mx-auto">
-        <!-- Heading -->
-        <h2 class="text-4xl font-serif text-center mb-10 text-gray-800">Related Articles and Topics</h2>
-        
-        <!-- Main content container -->
-        <div class="flex flex-col gap-6">
-            <!-- Articles container -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards -->
-                [[cards]]
+        <hr class="border-t border-black my-8 md:my-12 w-full md:w-[90%] lg:w-[80rem] mx-auto" />
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-serif text-center mb-10 text-gray-800">Related Articles and Topics</h2>
+            
+            <div class="related-blogs-carousel-container">
+                <button class="related-carousel-arrow left" id="related-carousel-arrow-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </button>
+                <div class="related-blogs-carousel-wrapper">
+                    <div class="related-blogs-carousel" id="related-blogs-carousel">
+                        [[cards]]
+                    </div>
+                </div>
+                <button class="related-carousel-arrow right" id="related-carousel-arrow-right">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                </button>
             </div>
 
-            <!-- See More Button -->
             <div class="flex justify-center mt-8">
                 <a href="/blogs" class="see-more-btn px-8 py-3 text-white font-medium rounded-lg inline-flex items-center gap-2">
                     See More Articles
@@ -936,10 +979,71 @@ async def get_more_blogs_section(data: dict):
                 </a>
             </div>
         </div>
-    </div>
-</section>"""
-    current_slug = data.get('slug', '')
-    cards_html = await get_cards(current_slug)
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('related-blogs-carousel');
+        if (!carousel) return;
+        const items = carousel.querySelectorAll('.related-blog-card');
+        const totalItems = items.length;
+        const leftArrow = document.getElementById('related-carousel-arrow-left');
+        const rightArrow = document.getElementById('related-carousel-arrow-right');
+        function getVisibleCards() {
+            if (window.innerWidth >= 1024) return 3;
+            if (window.innerWidth >= 768) return 2;
+            return 1;
+        }
+        function checkCarouselState() {
+            const visibleCards = getVisibleCards();
+            if (totalItems <= visibleCards) {
+                leftArrow.style.display = 'none';
+                rightArrow.style.display = 'none';
+                return false;
+            }
+            leftArrow.style.display = 'flex';
+            rightArrow.style.display = 'flex';
+            return true;
+        }
+        if (!checkCarouselState()) return;
+        let currentIndex = 0;
+        function updateCarousel() {
+            const visibleCards = getVisibleCards();
+            const cardWidth = items[0].offsetWidth;
+            const gap = parseFloat(window.getComputedStyle(carousel).gap) || 0;
+            const offset = -currentIndex * (cardWidth + gap);
+            carousel.style.transform = `translateX(${offset}px)`;
+            
+            const maxIndex = totalItems - visibleCards;
+            leftArrow.style.display = currentIndex > 0 ? 'flex' : 'none';
+            rightArrow.style.display = currentIndex < maxIndex ? 'flex' : 'none';
+        }
+        function showNext() {
+            const visibleCards = getVisibleCards();
+            const maxIndex = totalItems - visibleCards;
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        }
+        function showPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        }
+        leftArrow.addEventListener('click', showPrev);
+        rightArrow.addEventListener('click', showNext);
+        window.addEventListener('resize', () => {
+            currentIndex = 0;
+            checkCarouselState();
+            updateCarousel();
+        });
+        updateCarousel(); // Initial call
+    });
+    </script>
+    """
+    cards_html = await get_cards(other_blogs)
     return template.replace("[[cards]]", cards_html)
 
 
@@ -989,23 +1093,23 @@ async def get_blog_hero_section(data: dict):
 <article class="relative mobile-hero-article max-w-[95%]">
     <div class="relative w-full h-[300px] md:h-[478px]">
         <div class="absolute inset-0 bg-cover bg-center"></div>
-        <img src="{data['mainImageUrl']}" alt="{data['mainImageAlt']}"
+        <img src="{data.get('mainImageUrl', 'https://picsum.photos/seed/default/1200/600')}" alt="{data.get('mainImageAlt', data.get('blogTitle', 'Blog Image'))}"
             class="w-full h-full object-cover mix-blend-multiply" />
     </div>
     <div
         class="relative bg-white mobile-hero-content md:w-full w-full md:ml-[3.3rem] ml-0 max-w-[1175px] h-auto mx-auto -mt-[40px] sm:-mt-[60px] md:-mt-[76px] p-4 sm:p-6 md:p-8 z-10 ">
         <h1
             class="font-jakarta font-medium text-[28px] sm:text-[34px] md:text-[42px] lg:text-[50px] leading-[1.2] md:leading-[1.25] capitalize text-black mb-3 md:mb-4 text-center hero-text">
-            {data['blogTitle']}
+            {data.get('blogTitle', 'Untitled Blog')}
         </h1>
         <div class="flex justify-center items-center gap-2 text-center mb-4">
             <p class="font-jakarta font-normal text-[11px] sm:text-[12px] md:text-[14px] leading-[100.9%] text-black">
-                {data['blogDate']} </p>
+                {data.get('blogDate', '')} </p>
         </div>
     </div>
     <p
         class="font-jakarta font-medium text-[18px] md:text-[22px] leading-[26px] md:leading-[30px] text-[#636363] text-center max-w-[1175px] mx-auto px-2 md:px-0">
-        {data['blogSummary']}
+        {data.get('blogSummary', '')}
     </p>
     <hr class="border-t border-black my-8 md:my-12 w-full md:w-[90%] lg:w-[80rem] mx-auto" />
 </article>"""
@@ -1066,14 +1170,21 @@ async def _generate_toc_sections(data):
     """
     # Filter for headers only
     headers = ["h1", "h2"]
-    temp_list = [item for item in data if item["type"] in headers]
+    temp_list = [item for item in data if item.get("type") in headers]
 
     final_product = []
     sub_list = []
     base_template = None
 
     for item in temp_list:
-        if item["type"] == "h1":
+        item_type = item.get("type")
+        item_id = item.get("id")
+        item_content = item.get("content")
+
+        if not item_id or not item_content:
+            continue
+
+        if item_type == "h1":
             # If we have a previous h1 section, finalize it
             if base_template is not None:
                 sub_categories = "\n".join(sub_list) if sub_list else ""
@@ -1084,24 +1195,24 @@ async def _generate_toc_sections(data):
 
             # Start new h1 section
             sub_list = []
-            base_template = f"""<div class="mb-3 toc-section" data-section-id="{item['id']}">
-                        <a href="#{item['id']}"
-                            data-toggle-target="#sub-{item['id']}"
+            base_template = f"""<div class="mb-3 toc-section" data-section-id="{item_id}">
+                        <a href="#{item_id}"
+                            data-toggle-target="#sub-{item_id}"
                             class="toc-h2-link flex items-center justify-between mt-1 mb-3 no-underline text-gray-800 hover:text-[#017AFF] transition-colors duration-200 toc-link">
-                            <div class="text-base font-medium">{item['content']}</div>
+                            <div class="text-base font-medium">{item_content}</div>
                             <i class="ph ph-caret-down text-xs ml-1 toc-arrow transition-transform duration-300"></i>
                         </a>
-                        <div id="sub-{item['id']}"
+                        <div id="sub-{item_id}"
                             class="toc-subcategories hidden pl-4 mb-3 space-y-2">
                             [[sub_categories]]
                         </div>
                     </div>"""
 
-        elif item["type"] == "h2":
+        elif item_type == "h2":
             # Add h2 as subcategory
-            sub_template = f"""                            <a href="#{item['id']}"
+            sub_template = f"""                            <a href="#{item_id}"
                                 class="flex items-center mt-1 no-underline text-gray-600 hover:text-[#017AFF] transition-colors duration-200 toc-link border-l-2 border-gray-200 pl-3 hover:border-[#017AFF]">
-                                <div class="text-sm">{item['content']}</div>
+                                <div class="text-sm">{item_content}</div>
                             </a>"""
             sub_list.append(sub_template)
 
@@ -1158,50 +1269,57 @@ async def generate_desktop_toc(data):
     return complete_toc
 
 
-async def get_blog_content(data: dict):
+async def get_blog_content(data: list):
     content = []
     for i in data:
-        if i["type"] == "text":
+        item_type = i.get("type")
+        item_content = i.get("content", "")
+        item_id = i.get("id", "")
+        if item_type == "text":
             content.append(
-                f"""<p class="font-jakarta font-medium text-[15px] md:text-[16px] leading-[26px] md:leading-[30px] text-black" >{i['content']}</p>"""
+                f"""<p class="font-jakarta font-medium text-[15px] md:text-[16px] leading-[26px] md:leading-[30px] text-black" >{item_content}</p>"""
             )
-        if i["type"] == "h1":
+        elif item_type == "h1":
             content.append(
-                f"""<h1 id="{i['id']}" class="font-jakarta font-bold text-[28px] md:text-[36px] leading-[32px] md:leading-[40px] text-black scroll-mt-20" >{i['content']}</h1>"""
+                f"""<h1 id="{item_id}" class="font-jakarta font-bold text-[28px] md:text-[36px] leading-[32px] md:leading-[40px] text-black scroll-mt-20" >{item_content}</h1>"""
             )
-        if i["type"] == "h2":
+        elif item_type == "h2":
             content.append(
-                f"""<h2 id="{i['id']}" class="font-jakarta font-medium text-[22px] md:text-[28px] leading-[28px] md:leading-[30px] text-black scroll-mt-20" >{i['content']}</h2>"""
+                f"""<h2 id="{item_id}" class="font-jakarta font-medium text-[22px] md:text-[28px] leading-[28px] md:leading-[30px] text-black scroll-mt-20" >{item_content}</h2>"""
             )
-        if i["type"] == "h3":
+        elif item_type == "h3":
             content.append(
-                f"""<h3  class="font-jakarta font-medium text-[20px] md:text-[24px] leading-[26px] md:leading-[28px] text-black scroll-mt-20" >{i['content']}</h3>"""
+                f"""<h3  class="font-jakarta font-medium text-[20px] md:text-[24px] leading-[26px] md:leading-[28px] text-black scroll-mt-20" >{item_content}</h3>"""
             )
-        if i["type"] == "h4":
+        elif item_type == "h4":
             content.append(
-                f"""<h4  class="font-jakarta font-medium text-[18px] md:text-[22px] leading-[24px] md:leading-[26px] text-black scroll-mt-20" >{i['content']}</h4>"""
+                f"""<h4  class="font-jakarta font-medium text-[18px] md:text-[22px] leading-[24px] md:leading-[26px] text-black scroll-mt-20" >{item_content}</h4>"""
             )
-        if i["type"] == "h5":
+        elif item_type == "h5":
             content.append(
-                f"""<h5  class="font-jakarta font-medium text-[16px] md:text-[20px] leading-[22px] md:leading-[24px] text-black scroll-mt-20" >{i['content']}</h5>"""
+                f"""<h5  class="font-jakarta font-medium text-[16px] md:text-[20px] leading-[22px] md:leading-[24px] text-black scroll-mt-20" >{item_content}</h5>"""
             )
-        if i["type"] == "h6":
+        elif item_type == "h6":
             content.append(
-                f"""<h6  class="font-jakarta font-medium text-[14px] md:text-[18px] leading-[20px] md:leading-[22px] text-black scroll-mt-20" >{i['content']}</h6>"""
+                f"""<h6  class="font-jakarta font-medium text-[14px] md:text-[18px] leading-[20px] md:leading-[22px] text-black scroll-mt-20" >{item_content}</h6>"""
             )
-        if i["type"] == "image":
-            content.append(
-                f"""<div class="w-full h-[120px] sm:h-[160px] md:h-[236px] my-8 md:my-12"><img src="{i['content']['url']}" alt="{i['content']['alt']}" class="w-full h-full object-cover"/></div>"""
-            )
-    content = "\n".join(content)
-    return f"""<section class="max-w-[43rem] space-y-6 md:space-y-5 text-justify order-1 lg:order-2">{content}</section>"""
+        elif item_type == "image":
+            if isinstance(item_content, dict):
+                url = item_content.get('url', '')
+                alt = item_content.get('alt', 'image')
+                content.append(
+                    f"""<div class="w-full h-[120px] sm:h-[160px] md:h-[236px] my-8 md:my-12"><img src="{url}" alt="{alt}" class="w-full h-full object-cover"/></div>"""
+                )
+    content_str = "\n".join(content)
+    return f"""<section class="max-w-[43rem] space-y-6 md:space-y-5 text-justify order-1 lg:order-2">{content_str}</section>"""
 
 
 async def get_blog_body(data: dict):
     hero_section = await get_blog_hero_section(data)
-    mobile_toc = await generate_mobile_toc(data["dynamicSections"])
-    desktop_toc = await generate_desktop_toc(data["dynamicSections"])
-    blog_content = await get_blog_content(data["dynamicSections"])
+    dynamic_sections = data.get("dynamicSections", [])
+    mobile_toc = await generate_mobile_toc(dynamic_sections)
+    desktop_toc = await generate_desktop_toc(dynamic_sections)
+    blog_content = await get_blog_content(dynamic_sections)
 
     return f"""
         <style>
@@ -2140,11 +2258,11 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
 </html>"""
 
 
-async def create_blog_html(data: str) -> str:
+async def create_blog_html(data: dict, other_blogs: list = []) -> str:
     l = []
     l.append(await getHeader())
     l.append(await get_blog_body(data))
-    l.append(await get_more_blogs_section(data))
+    l.append(await get_more_blogs_section(data, other_blogs))
     l.append(await get_faq_section())
     l.append(await getFooter())
 
@@ -2188,32 +2306,47 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         conn = await asyncpg.connect(DATABASE_URL)
         print(f"[DEBUG] Database connection established")
         
-        print(f"[DEBUG] Querying for blog with slug: {slug}")
-        blog_record = await conn.fetchrow(
+        print(f"[DEBUG] Querying for all blogs")
+        all_blogs = await conn.fetch(
             """
-            SELECT id, blog, status, date, slug, isDeleted
+            SELECT id, blog, status, date, slug, isDeleted, created_at
             FROM blogs
-            WHERE slug = $1 AND isDeleted = FALSE
-            """,
-            slug
+            WHERE isDeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG')
+            ORDER BY created_at DESC
+            """
         )
         
         await conn.close()
         print(f"[DEBUG] Database connection closed")
         
+        blog_record = None
+        other_blogs = []
+        for blog in all_blogs:
+            if blog['slug'] == slug:
+                blog_record = blog
+            else:
+                other_blogs.append(blog)
+
         if not blog_record:
             print(f"[DEBUG] Blog not found for slug: {slug}")
             raise HTTPException(status_code=404, detail=f"Blog post not found: {slug}")
         
         print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
-        print(f"[DEBUG] Blog data type: {type(blog_record['blog'])}")
-        print(f"[DEBUG] Blog data keys: {list(blog_record['blog'].keys()) if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog']).keys()}")
         
         blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
-        blog_data['slug'] = slug
+        
+        # Process and enrich the current blog's data for rendering
+        blog_data['slug'] = blog_record['slug']
+        
+        # Use the 'date' column for the blog post date, fallback to 'created_at'
+        display_date = blog_record.get('date') or blog_record.get('created_at')
+        if display_date:
+            # Format the date for display in the hero section
+            blog_data['blogDate'] = display_date.strftime('%B %d, %Y')
+
         print(f"[DEBUG] Rendering blog HTML...")
         
-        html_content = await create_blog_html(blog_data)
+        html_content = await create_blog_html(blog_data, other_blogs)
         print(f"[DEBUG] HTML generated successfully, length: {len(html_content)}")
         print("=" * 80)
         
@@ -2244,7 +2377,7 @@ async def admin_blog_preview(request: Request):
         return {
             "status": "success",
             "message": "Preview data received and logged to console",
-            "data": await create_blog_html(data)
+            "data": await create_blog_html(data, [])
         }
         
     except Exception as e:
