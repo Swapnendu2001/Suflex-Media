@@ -108,14 +108,33 @@ class UpdateBlogRequest(BaseModel):
         return v
 
 def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, Any]]:
-    return [
-        {
+    formatted_blogs = []
+    for blog in blogs_list_raw:
+        # Ensure blogContent is a dictionary
+        blog_content_dict = blog['blogContent']
+        if isinstance(blog_content_dict, str):
+            try:
+                blog_content_dict = json.loads(blog_content_dict)
+            except json.JSONDecodeError:
+                logger.error(f"Failed to decode blogContent for blog ID {blog['id']}: {blog_content_dict}")
+                blog_content_dict = {} # Fallback to empty dict
+        
+        # Ensure keyword is a dictionary
+        keyword_dict = blog['keyword']
+        if isinstance(keyword_dict, str):
+            try:
+                keyword_dict = json.loads(keyword_dict)
+            except json.JSONDecodeError:
+                logger.error(f"Failed to decode keyword for blog ID {blog['id']}: {keyword_dict}")
+                keyword_dict = {} # Fallback to empty dict
+
+        formatted_blogs.append({
             "id": str(blog['id']),
-            "blogContent": blog['blogContent'],
+            "blogContent": blog_content_dict,
             "status": blog['status'],
             "date": blog['date'].isoformat() if blog['date'] else None,
-            "keyword": blog['keyword'],
-            "category": blog['blogContent'].get('blogCategory', 'General') if isinstance(blog['blogContent'], dict) else json.loads(blog['blogContent']).get('blogCategory', 'General'),
+            "keyword": keyword_dict,
+            "category": blog_content_dict.get('blogCategory', 'General'),
             "slug": blog['slug'],
             "type": blog['type'],
             "redirect_url": blog['redirect_url'],
@@ -123,9 +142,8 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
             "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
             "updated_at": blog['updated_at'].isoformat() if blog['updated_at'] else None,
             "editors_choice": blog.get('editors_choice', 'N')
-        }
-        for blog in blogs_list_raw
-    ]
+        })
+    return formatted_blogs
 
 @router.get("/blogs")
 async def get_blogs(
@@ -138,16 +156,20 @@ async def get_blogs(
     - Use purpose=landing_page to get blogs structured for the landing page sections.
     """
     try:
+        logger.debug(f"Attempting to connect to database with URL: {DATABASE_URL}")
         conn = await asyncpg.connect(DATABASE_URL)
+        logger.debug("Successfully connected to database.")
 
         if purpose == 'landing_page':
             query = """
                 SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
                 FROM blogs
-                WHERE isdeleted = FALSE AND status = 'published' AND type = '{ContentTypeConstants.BLOG}'
+                WHERE isdeleted = FALSE AND status = 'published'
                 ORDER BY date DESC
             """
+            logger.debug(f"Executing query for landing_page: {query}")
             all_blogs = await conn.fetch(query)
+            logger.debug(f"Fetched {len(all_blogs)} blogs for landing_page. Raw data: {all_blogs}")
             
             editors_choice_blogs = [b for b in all_blogs if b['editors_choice'] == 'Y']
             other_blogs = [b for b in all_blogs if b['editors_choice'] != 'Y']
@@ -183,7 +205,9 @@ async def get_blogs(
                     ORDER BY date DESC
                 """
             
+            logger.debug(f"Executing query for general blogs: {query}")
             blogs = await conn.fetch(query)
+            logger.debug(f"Fetched {len(blogs)} general blogs. Raw data: {blogs}")
             await conn.close()
             
             blogs_list = _format_blog_list(blogs)
@@ -240,11 +264,11 @@ async def create_blog(blog_data: CreateBlogRequest, current_user: Dict[str, Any]
             "message": "Blog created successfully",
             "blog": {
                 "id": str(new_blog['id']),
-                "blogContent": new_blog['blogContent'],
+                "blogContent": json.loads(new_blog['blogContent']) if isinstance(new_blog['blogContent'], str) else new_blog['blogContent'],
                 "status": new_blog['status'],
                 "date": new_blog['date'].isoformat() if new_blog['date'] else None,
-                "keyword": new_blog['keyword'],
-                "category": new_blog['blogContent'].get('blogCategory', 'General') if isinstance(new_blog['blogContent'], dict) else json.loads(new_blog['blogContent']).get('blogCategory', 'General'),
+                "keyword": json.loads(new_blog['keyword']) if isinstance(new_blog['keyword'], str) else new_blog['keyword'],
+                "category": (json.loads(new_blog['blogContent']).get('blogCategory', 'General') if isinstance(new_blog['blogContent'], str) else new_blog['blogContent'].get('blogCategory', 'General')),
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
@@ -343,11 +367,11 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
             "message": "Blog updated successfully",
             "blog": {
                 "id": str(updated_blog['id']),
-                "blogContent": updated_blog['blogContent'],
+                "blogContent": json.loads(updated_blog['blogContent']) if isinstance(updated_blog['blogContent'], str) else updated_blog['blogContent'],
                 "status": updated_blog['status'],
                 "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
-                "keyword": updated_blog['keyword'],
-                "category": updated_blog['blogContent'].get('blogCategory', 'General') if isinstance(updated_blog['blogContent'], dict) else json.loads(updated_blog['blogContent']).get('blogCategory', 'General'),
+                "keyword": json.loads(updated_blog['keyword']) if isinstance(updated_blog['keyword'], str) else updated_blog['keyword'],
+                "category": (json.loads(updated_blog['blogContent']).get('blogCategory', 'General') if isinstance(updated_blog['blogContent'], str) else updated_blog['blogContent'].get('blogCategory', 'General')),
                 "slug": updated_blog['slug'],
                 "type": updated_blog['type'],
                 "redirect_url": updated_blog['redirect_url'],

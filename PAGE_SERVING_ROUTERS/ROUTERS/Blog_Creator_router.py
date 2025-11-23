@@ -839,8 +839,8 @@ async def get_cards(other_blogs: list):
     print(f"Generating cards for {len(other_blogs)} other blogs.")
 
     cards_html = []
-    for blog in other_blogs:
-        blog_content = json.loads(blog['blogContent']) if isinstance(blog['blogContent'], str) else blog['blogContent']
+    for blog in other_blogs[:10]:
+        blog_content = json.loads(blog['blogcontent']) if isinstance(blog['blogcontent'], str) else blog['blogcontent']
         
         image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
         image_alt = blog_content.get('mainImageAlt', 'Blog Image')
@@ -2314,7 +2314,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
             """
             SELECT id, blogContent, status, date, slug, isDeleted, created_at
             FROM blogs
-            WHERE isDeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG')
+            WHERE isDeleted = FALSE
             ORDER BY created_at DESC
             """
         )
@@ -2336,7 +2336,18 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         
         print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
         
-        blog_data = blog_record['blogContent'] if isinstance(blog_record['blogContent'], dict) else json.loads(blog_record['blogContent'])
+        blog_content_raw = blog_record.get('blogcontent')
+        blog_data = {}
+        if blog_content_raw:
+            if isinstance(blog_content_raw, str):
+                try:
+                    blog_data = json.loads(blog_content_raw)
+                except json.JSONDecodeError:
+                    print(f"[ERROR] Failed to decode blogContent for blog {slug}: {blog_content_raw}")
+            elif isinstance(blog_content_raw, dict):
+                blog_data = blog_content_raw
+            else:
+                print(f"[ERROR] blogContent has unexpected type {type(blog_content_raw)} for blog {slug}: {blog_content_raw}")
         
         # Process and enrich the current blog's data for rendering
         blog_data['slug'] = blog_record['slug']
