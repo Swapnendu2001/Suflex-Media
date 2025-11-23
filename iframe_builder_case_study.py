@@ -1,28 +1,25 @@
-<iframe id="my-flipbook-container" class="w-full h-[100%] max-w-[52rem]" allow="clipboard-write"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads" allowfullscreen="true"
-    style="border:none;overflow:hidden;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);border:1px solid #e5e7eb;background-color:#000;min-height:100%;min-width:100%;"
-    srcdoc='<!DOCTYPE html>
-<html lang=&quot;en&quot;>
+MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset=&quot;UTF-8&quot; />
+    <meta charset="UTF-8" />
     <meta
-        name=&quot;viewport&quot;
-        content=&quot;width=device-width, initial-scale=1.0, viewport-fit=cover&quot;
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>Magazine Flipbook Viewer</title>
 
     <!-- PDF.js -->
-    <script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js&quot;></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <!-- PageFlip (flip.js) -->
-    <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css&quot; />
-    <script src=&quot;https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js&quot;></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: #1a1a1a;
             overflow: hidden;
             height: 100vh;
@@ -69,7 +66,7 @@
         }
 
         /* Make the leading blank page transparent (no white panel on the left) */
-        .page[data-blank=&quot;true&quot;] {
+        .page[data-blank="true"] {
             background: transparent;
             box-shadow: none;
             cursor: default;
@@ -214,7 +211,7 @@
             transform: scale(1.05);
         }
         .url-overlay::after {
-            content: &quot;🔗 CLICK&quot;;
+            content: "🔗 CLICK";
             position: absolute;
             top: -25px;
             left: 50%;
@@ -268,58 +265,54 @@
         body.loading #controls { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
-<body class=&quot;iframe-mode loading&quot;>
-    <div id=&quot;flipbook-container&quot;>
-        <div class=&quot;flipbook&quot; id=&quot;flipbook&quot;></div>
+<body class="iframe-mode loading">
+    <div id="flipbook-container">
+        <div class="flipbook" id="flipbook"></div>
 
         <!-- Navigation Arrows -->
-        <div class=&quot;nav-arrow prev&quot; id=&quot;prevBtn&quot; style=&quot;display: none;&quot;>
-            <svg viewBox=&quot;0 0 24 24&quot;>
-                <path d=&quot;M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z&quot;/>
+        <div class="nav-arrow prev" id="prevBtn" style="display: none;">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
             </svg>
         </div>
-        <div class=&quot;nav-arrow next&quot; id=&quot;nextBtn&quot; style=&quot;display: none;&quot;>
-            <svg viewBox=&quot;0 0 24 24&quot;>
-                <path d=&quot;M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z&quot;/>
+        <div class="nav-arrow next" id="nextBtn" style="display: none;">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
             </svg>
         </div>
 
-        <div id=&quot;globalLoading&quot; class=&quot;page-loading&quot; style=&quot;display: flex;&quot;>
-            <div class=&quot;spinner&quot;></div>
-            <div class=&quot;text&quot;>Loading PDF...</div>
+        <div id="globalLoading" class="page-loading" style="display: flex;">
+            <div class="spinner"></div>
+            <div class="text">Loading PDF...</div>
         </div>
     </div>
 
     <!-- Controls Bar -->
-    <div id=&quot;controls&quot;>
-        <div class=&quot;progress-container&quot;>
-            <span class=&quot;page-info&quot; id=&quot;pageInfo&quot;>1 / 1</span>
-            <div class=&quot;progress-bar&quot; id=&quot;progressBar&quot;>
-                <div class=&quot;progress-fill&quot; id=&quot;progressFill&quot; style=&quot;width: 0%&quot;>
-                    <div class=&quot;progress-thumb&quot; id=&quot;progressThumb&quot;></div>
+    <div id="controls">
+        <div class="progress-container">
+            <span class="page-info" id="pageInfo">1 / 1</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill" style="width: 0%">
+                    <div class="progress-thumb" id="progressThumb"></div>
                 </div>
             </div>
         </div>
 
-        <button class=&quot;control-btn&quot; id=&quot;downloadBtn&quot;>
-            <svg viewBox=&quot;0 0 24 24&quot;>
-                <path d=&quot;M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z&quot;/>
+        <button class="control-btn" id="downloadBtn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
             </svg>
-            <span id=&quot;downloadButtonText&quot;>Download</span>
+            <span id="downloadButtonText">Download</span>
         </button>
 
-        <button class=&quot;control-btn&quot; id=&quot;fullscreenBtn&quot;>
-            <svg viewBox=&quot;0 0 24 24&quot; id=&quot;fullscreenIcon&quot;>
-                <path d=&quot;M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z&quot;/>
+        <button class="control-btn" id="fullscreenBtn">
+            <svg viewBox="0 0 24 24" id="fullscreenIcon">
+                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
             </svg>
-            <span id=&quot;fullscreenText&quot;>Fullscreen</span>
+            <span id="fullscreenText">Fullscreen</span>
         </button>
     </div>
 
-    
-    <script>
-        const INJECTED_PDF_URL = &#39;https://iwyjssxhrcucnrkzkvmt.supabase.co/storage/v1/object/public/magazine-pdfs/CXO%20TechBOT%20October%202024-1-25.pdf&#39;;
-    </script>
     <script>
         // Global variables
         let pdfDoc = null;
@@ -333,24 +326,24 @@
         let hasBlankStart = !(window.innerWidth <= 768);
 
         // Optional: CDN resources for fonts/cmaps if needed by some PDFs
-        const PDFJS_VERSION = &#39;3.11.174&#39;;
+        const PDFJS_VERSION = '3.11.174';
         const CMAP_URL = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`;
         const STANDARD_FONT_DATA_URL = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/standard_fonts/`;
 
         // PDF.js configuration
-        pdfjsLib.GlobalWorkerOptions.workerSrc = &#39;https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js&#39;;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         // Get PDF URL from query params, data attribute, or default
         const urlParams = new URLSearchParams(window.location.search);
-        let pdfUrl = urlParams.get(&#39;pdf&#39;);
-        if (!pdfUrl &amp;&amp; typeof INJECTED_PDF_URL !== &#39;undefined&#39;) {
+        let pdfUrl = urlParams.get('pdf');
+        if (!pdfUrl && typeof INJECTED_PDF_URL !== 'undefined') {
             pdfUrl = INJECTED_PDF_URL;
         }
         if (!pdfUrl) {
-            pdfUrl = &quot;https://iwyjssxhrcucnrkzkvmt.supabase.co/storage/v1/object/public/magazine-pdfs/CXO%20TechBOT%20October%202024-1-25.pdf&quot;;
+            pdfUrl = "https://iwyjssxhrcucnrkzkvmt.supabase.co/storage/v1/object/public/magazine-pdfs/CXO%20TechBOT%20October%202024-1-25.pdf";
         }
-        const qualityParam = (urlParams.get(&#39;quality&#39;) || &#39;&#39;).toLowerCase();
-        const QUALITY_FACTOR = qualityParam === &#39;ultra&#39; ? 2.0 : qualityParam === &#39;high&#39; ? 1.5 : qualityParam === &#39;med&#39; ? 1.2 : 1.0;
+        const qualityParam = (urlParams.get('quality') || '').toLowerCase();
+        const QUALITY_FACTOR = qualityParam === 'ultra' ? 2.0 : qualityParam === 'high' ? 1.5 : qualityParam === 'med' ? 1.2 : 1.0;
 
         // Progressive quality: quick low-res for instant paint, then upgrade to high-res
         function getQuickScale() {
@@ -362,7 +355,7 @@
 
         // Calculate page dimensions (per single page) based on container and PDF aspect
         function calculatePageDimensions() {
-            const container = document.getElementById(&#39;flipbook-container&#39;);
+            const container = document.getElementById('flipbook-container');
             const containerWidth = container.clientWidth;
             const containerHeight = container.clientHeight;
 
@@ -390,12 +383,12 @@
             };
         }
 
-        // Render a page at a given quality (&#39;low&#39; | &#39;high&#39;), caching canvases per page
-        async function renderPage(pageNum, quality = &#39;low&#39;) {
+        // Render a page at a given quality ('low' | 'high'), caching canvases per page
+        async function renderPage(pageNum, quality = 'low') {
             if (!pdfDoc) return null;
 
             const cache = pagesCache[pageNum];
-            if (cache &amp;&amp; ((quality === &#39;low&#39; &amp;&amp; cache.lowCanvas) || (quality === &#39;high&#39; &amp;&amp; cache.highCanvas))) {
+            if (cache && ((quality === 'low' && cache.lowCanvas) || (quality === 'high' && cache.highCanvas))) {
                 return cache;
             }
 
@@ -408,7 +401,7 @@
                     baseViewport = page.getViewport({ scale: 1 });
                     const annotations = await page.getAnnotations();
                     links = annotations
-                        .filter(ann => ann.subtype === &#39;Link&#39; &amp;&amp; ann.url &amp;&amp; ann.rect)
+                        .filter(ann => ann.subtype === 'Link' && ann.url && ann.rect)
                         .map(ann => {
                             try {
                                 const [x1, y1, x2, y2] = baseViewport.convertToViewportRectangle(ann.rect);
@@ -429,8 +422,8 @@
 
                 // Choose render scale based on the actual target canvas size for crisp text
                 let desiredScale;
-                const pageCanvasEl = document.querySelector(`.page[data-page=&quot;${pageNum}&quot;] canvas`);
-                if (pageCanvasEl &amp;&amp; baseViewport) {
+                const pageCanvasEl = document.querySelector(`.page[data-page="${pageNum}"] canvas`);
+                if (pageCanvasEl && baseViewport) {
                     const targetPxW = pageCanvasEl.width || Math.floor(pageCanvasEl.clientWidth * window.devicePixelRatio);
                     const targetPxH = pageCanvasEl.height || Math.floor(pageCanvasEl.clientHeight * window.devicePixelRatio);
                     const scaleW = targetPxW / baseViewport.width;
@@ -441,12 +434,12 @@
                     desiredScale = Math.max(1, displayScale * oversample);
                 } else {
                     // Fallback if page canvas is not in DOM yet
-                    desiredScale = quality === &#39;low&#39; ? getQuickScale() : getHighScale();
+                    desiredScale = quality === 'low' ? getQuickScale() : getHighScale();
                 }
                 const renderViewport = page.getViewport({ scale: desiredScale });
 
-                const canvas = document.createElement(&#39;canvas&#39;);
-                const context = canvas.getContext(&#39;2d&#39;, { alpha: false });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d', { alpha: false });
                 canvas.height = renderViewport.height;
                 canvas.width = renderViewport.width;
 
@@ -459,8 +452,8 @@
                     ...(cache || {}),
                     baseViewport,
                     links,
-                    lowCanvas: quality === &#39;low&#39; ? canvas : (cache ? cache.lowCanvas : null),
-                    highCanvas: quality === &#39;high&#39; ? canvas : (cache ? cache.highCanvas : null),
+                    lowCanvas: quality === 'low' ? canvas : (cache ? cache.lowCanvas : null),
+                    highCanvas: quality === 'high' ? canvas : (cache ? cache.highCanvas : null),
                 };
 
                 return pagesCache[pageNum];
@@ -478,17 +471,17 @@
 
             links.forEach(link => {
                 const [left, top, width, height] = link.rect;
-                const overlay = document.createElement(&#39;div&#39;);
-                overlay.className = &#39;url-overlay&#39;;
+                const overlay = document.createElement('div');
+                overlay.className = 'url-overlay';
                 overlay.style.left = `${(left / bw) * 100}%`;
                 overlay.style.top = `${(top / bh) * 100}%`;
                 overlay.style.width = `${Math.max(0, (width / bw) * 100)}%`;
                 overlay.style.height = `${Math.max(0, (height / bh) * 100)}%`;
                 overlay.dataset.url = link.url;
                 overlay.title = `Click to open: ${link.url}`;
-                overlay.addEventListener(&#39;click&#39;, (e) => {
+                overlay.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    window.open(link.url, &#39;_blank&#39;);
+                    window.open(link.url, '_blank');
                 });
                 pageContent.appendChild(overlay);
             });
@@ -496,24 +489,24 @@
 
         // Create a PageFlip-compatible page shell with canvas
         function createFlipPageShell(pageNum, dimensions) {
-            const page = document.createElement(&#39;div&#39;);
-            page.className = &#39;page&#39;;
+            const page = document.createElement('div');
+            page.className = 'page';
             page.dataset.page = pageNum;
             page.style.width = `${dimensions.width}px`;
             page.style.height = `${dimensions.height}px`;
 
-            const content = document.createElement(&#39;div&#39;);
-            content.className = &#39;page-content&#39;;
-            content.style.width = &#39;100%&#39;;
-            content.style.height = &#39;100%&#39;;
+            const content = document.createElement('div');
+            content.className = 'page-content';
+            content.style.width = '100%';
+            content.style.height = '100%';
 
-            const canvas = document.createElement(&#39;canvas&#39;);
+            const canvas = document.createElement('canvas');
             // Increase backing resolution for sharper text (super-sampling)
             const mult = (isFullscreen ? 3.0 : 2.0) * QUALITY_FACTOR;
             canvas.width = Math.floor(dimensions.width * window.devicePixelRatio * mult);
             canvas.height = Math.floor(dimensions.height * window.devicePixelRatio * mult);
-            canvas.style.width = &#39;100%&#39;;
-            canvas.style.height = &#39;100%&#39;;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
 
             content.appendChild(canvas);
             page.appendChild(content);
@@ -522,16 +515,16 @@
 
         // Create a blank page shell to ensure symmetric animation on first/last flips
         function createBlankPageShell(dimensions) {
-            const page = document.createElement(&#39;div&#39;);
-            page.className = &#39;page&#39;;
-            page.dataset.blank = &#39;true&#39;;
+            const page = document.createElement('div');
+            page.className = 'page';
+            page.dataset.blank = 'true';
             page.style.width = `${dimensions.width}px`;
             page.style.height = `${dimensions.height}px`;
 
-            const content = document.createElement(&#39;div&#39;);
-            content.className = &#39;page-content&#39;;
-            content.style.width = &#39;100%&#39;;
-            content.style.height = &#39;100%&#39;;
+            const content = document.createElement('div');
+            content.className = 'page-content';
+            content.style.width = '100%';
+            content.style.height = '100%';
 
             page.appendChild(content);
             return page;
@@ -539,9 +532,9 @@
 
         // Draw provided source canvas into target canvas (scaled)
         function drawInto(targetCanvas, sourceCanvas) {
-            const ctx = targetCanvas.getContext(&#39;2d&#39;, { alpha: false });
+            const ctx = targetCanvas.getContext('2d', { alpha: false });
             ctx.imageSmoothingEnabled = true;
-            if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = &#39;high&#39;;
+            if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = 'high';
             ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
             ctx.drawImage(
                 sourceCanvas,
@@ -552,11 +545,11 @@
 
         // Upgrade an existing .page canvas to high quality
         async function upgradePageCanvasToHigh(pageNum, dimensions) {
-            const data = await renderPage(pageNum, &#39;high&#39;);
+            const data = await renderPage(pageNum, 'high');
             if (!data) return;
-            const pageEl = document.querySelector(`.page[data-page=&quot;${pageNum}&quot;]`);
+            const pageEl = document.querySelector(`.page[data-page="${pageNum}"]`);
             if (!pageEl) return;
-            const canvas = pageEl.querySelector(&#39;canvas&#39;);
+            const canvas = pageEl.querySelector('canvas');
             if (!canvas) return;
             drawInto(canvas, data.highCanvas);
         }
@@ -564,16 +557,16 @@
         // Rebuild all page canvases at current size/quality (useful after fullscreen/resize)
         function rebuildAllPagesForQuality() {
             const dims = calculatePageDimensions();
-            const pages = document.querySelectorAll(&#39;#flipbook .page&#39;);
+            const pages = document.querySelectorAll('#flipbook .page');
             pages.forEach((pageEl) => {
-                if (pageEl.dataset.blank === &#39;true&#39;) return;
-                const canvas = pageEl.querySelector(&#39;canvas&#39;);
+                if (pageEl.dataset.blank === 'true') return;
+                const canvas = pageEl.querySelector('canvas');
                 if (!canvas) return;
                 const dpr = window.devicePixelRatio || 1;
                 const mult = (isFullscreen ? 3.0 : 2.0) * QUALITY_FACTOR;
                 const targetW = Math.floor(dims.width * dpr * mult);
                 const targetH = Math.floor(dims.height * dpr * mult);
-                if (canvas.width === targetW &amp;&amp; canvas.height === targetH) return;
+                if (canvas.width === targetW && canvas.height === targetH) return;
                 canvas.width = targetW;
                 canvas.height = targetH;
                 const pageNum = parseInt(pageEl.dataset.page, 10);
@@ -585,30 +578,30 @@
 
         // Update controls
         function updateControls() {
-            document.getElementById(&#39;pageInfo&#39;).textContent = `${currentPage} / ${totalPages}`;
+            document.getElementById('pageInfo').textContent = `${currentPage} / ${totalPages}`;
             const progress = totalPages > 1 ? ((currentPage - 1) / (totalPages - 1)) * 100 : 0;
-            document.getElementById(&#39;progressFill&#39;).style.width = `${progress}%`;
+            document.getElementById('progressFill').style.width = `${progress}%`;
 
-            const prevBtn = document.getElementById(&#39;prevBtn&#39;);
-            const nextBtn = document.getElementById(&#39;nextBtn&#39;);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
 
             if (currentPage <= 1) {
-                prevBtn.classList.add(&#39;disabled&#39;);
+                prevBtn.classList.add('disabled');
             } else {
-                prevBtn.classList.remove(&#39;disabled&#39;);
+                prevBtn.classList.remove('disabled');
             }
 
             if (currentPage >= totalPages) {
-                nextBtn.classList.add(&#39;disabled&#39;);
+                nextBtn.classList.add('disabled');
             } else {
-                nextBtn.classList.remove(&#39;disabled&#39;);
+                nextBtn.classList.remove('disabled');
             }
         }
 
         // Progress bar drag functionality
         function initProgressBar() {
-            const progressBar = document.getElementById(&#39;progressBar&#39;);
-            const progressThumb = document.getElementById(&#39;progressThumb&#39;);
+            const progressBar = document.getElementById('progressBar');
+            const progressThumb = document.getElementById('progressThumb');
 
             function updateProgressFromMouse(e) {
                 const rect = progressBar.getBoundingClientRect();
@@ -620,32 +613,32 @@
                 }
             }
 
-            progressThumb.addEventListener(&#39;mousedown&#39;, (e) => {
+            progressThumb.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 e.preventDefault();
             });
 
-            document.addEventListener(&#39;mousemove&#39;, (e) => {
+            document.addEventListener('mousemove', (e) => {
                 if (isDragging) updateProgressFromMouse(e);
             });
 
-            document.addEventListener(&#39;mouseup&#39;, () => {
+            document.addEventListener('mouseup', () => {
                 isDragging = false;
             });
 
-            progressBar.addEventListener(&#39;click&#39;, (e) => {
+            progressBar.addEventListener('click', (e) => {
                 if (!isDragging) updateProgressFromMouse(e);
             });
         }
 
         // Navigation buttons using PageFlip
-        document.getElementById(&#39;prevBtn&#39;).addEventListener(&#39;click&#39;, () => {
+        document.getElementById('prevBtn').addEventListener('click', () => {
             if (!pageFlip) return;
             if (currentPage <= 1) return;
             pageFlip.flipPrev();
         });
 
-        document.getElementById(&#39;nextBtn&#39;).addEventListener(&#39;click&#39;, () => {
+        document.getElementById('nextBtn').addEventListener('click', () => {
             if (!pageFlip) return;
             if (currentPage >= totalPages) return;
             pageFlip.flipNext();
@@ -653,21 +646,21 @@
 
         // Download button
         // Prefer direct, user-gesture download inside iframe via same-origin proxy derived from parent origin.
-        document.getElementById(&#39;downloadBtn&#39;).addEventListener(&#39;click&#39;, () => {
-            const filename = (pdfUrl.split(&#39;/&#39;).pop() || &#39;document.pdf&#39;);
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const filename = (pdfUrl.split('/').pop() || 'document.pdf');
             try {
                 // document.referrer contains the parent page URL for srcdoc iframes
                 const parentOrigin = (() => {
                     try { return new URL(document.referrer).origin; } catch { return null; }
                 })();
                 if (parentOrigin) {
-                    const proxiedUrl = `${parentOrigin}/download_proxy?pdf=${encodeURIComponent(pdfUrl)}&amp;filename=${encodeURIComponent(filename)}`;
-                    const a = document.createElement(&#39;a&#39;);
+                    const proxiedUrl = `${parentOrigin}/download_proxy?pdf=${encodeURIComponent(pdfUrl)}&filename=${encodeURIComponent(filename)}`;
+                    const a = document.createElement('a');
                     a.href = proxiedUrl;
                     a.download = filename;
-                    a.target = &#39;_blank&#39;;
-                    a.rel = &#39;noopener&#39;;
-                    a.style.display = &#39;none&#39;;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.style.display = 'none';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -677,16 +670,16 @@
                 // fall through to fallback
             }
             // Fallback: ask parent to perform the download
-            if (window.parent &amp;&amp; window.parent !== window) {
-                window.parent.postMessage({ action: &#39;download&#39;, pdfUrl, filename }, &#39;*&#39;);
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ action: 'download', pdfUrl, filename }, '*');
             } else {
                 // Last resort: open the PDF directly
-                const a = document.createElement(&#39;a&#39;);
+                const a = document.createElement('a');
                 a.href = pdfUrl;
                 a.download = filename;
-                a.target = &#39;_blank&#39;;
-                a.rel = &#39;noopener&#39;;
-                a.style.display = &#39;none&#39;;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.style.display = 'none';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -694,7 +687,7 @@
         });
 
         // Fullscreen button
-        document.getElementById(&#39;fullscreenBtn&#39;).addEventListener(&#39;click&#39;, () => {
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
             if (!isFullscreen) {
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen();
@@ -720,19 +713,19 @@
                            document.webkitFullscreenElement ||
                            document.msFullscreenElement;
 
-            const fullscreenIcon = document.getElementById(&#39;fullscreenIcon&#39;);
-            const fullscreenText = document.getElementById(&#39;fullscreenText&#39;);
+            const fullscreenIcon = document.getElementById('fullscreenIcon');
+            const fullscreenText = document.getElementById('fullscreenText');
 
             if (isFullscreen) {
-                document.body.classList.remove(&#39;iframe-mode&#39;);
-                document.body.classList.add(&#39;fullscreen-mode&#39;);
-                fullscreenIcon.innerHTML = &#39;<path d=&quot;M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z&quot;/>&#39;;
-                fullscreenText.textContent = &#39;Exit Fullscreen&#39;;
+                document.body.classList.remove('iframe-mode');
+                document.body.classList.add('fullscreen-mode');
+                fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+                fullscreenText.textContent = 'Exit Fullscreen';
             } else {
-                document.body.classList.add(&#39;iframe-mode&#39;);
-                document.body.classList.remove(&#39;fullscreen-mode&#39;);
-                fullscreenIcon.innerHTML = &#39;<path d=&quot;M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z&quot;/>&#39;;
-                fullscreenText.textContent = &#39;Fullscreen&#39;;
+                document.body.classList.add('iframe-mode');
+                document.body.classList.remove('fullscreen-mode');
+                fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+                fullscreenText.textContent = 'Fullscreen';
             }
 
             // Trigger PageFlip to recalc and fit container automatically
@@ -746,37 +739,37 @@
             }
         }
 
-        document.addEventListener(&#39;fullscreenchange&#39;, handleFullscreenChange);
-        document.addEventListener(&#39;webkitfullscreenchange&#39;, handleFullscreenChange);
-        document.addEventListener(&#39;msfullscreenchange&#39;, handleFullscreenChange);
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
         // Listen for messages from parent (iframe control)
-        window.addEventListener(&#39;message&#39;, (event) => {
+        window.addEventListener('message', (event) => {
             const msg = event.data || {};
             const msgType = msg.type || msg.action;
 
-            if (msgType === &#39;flipToPage&#39;) {
+            if (msgType === 'flipToPage') {
                 if (pageFlip) {
                     const tp = Math.max(1, Math.min(totalPages, msg.page || 1));
                     pageFlip.turnToPage(hasBlankStart ? tp : tp - 1);
                 }
-            } else if (msgType === &#39;nextPage&#39;) {
-                if (pageFlip &amp;&amp; currentPage < totalPages) pageFlip.flipNext();
-            } else if (msgType === &#39;prevPage&#39;) {
-                if (pageFlip &amp;&amp; currentPage > 1) pageFlip.flipPrev();
-            } else if (msgType === &#39;toggleFullscreen&#39;) {
-                document.getElementById(&#39;fullscreenBtn&#39;).click();
-            } else if (msgType === &#39;download&#39;) {
+            } else if (msgType === 'nextPage') {
+                if (pageFlip && currentPage < totalPages) pageFlip.flipNext();
+            } else if (msgType === 'prevPage') {
+                if (pageFlip && currentPage > 1) pageFlip.flipPrev();
+            } else if (msgType === 'toggleFullscreen') {
+                document.getElementById('fullscreenBtn').click();
+            } else if (msgType === 'download') {
                 // Trigger the download flow (which posts back to parent for actual download)
-                document.getElementById(&#39;downloadBtn&#39;).click();
+                document.getElementById('downloadBtn').click();
             }
         });
 
         // Initialize PDF and PageFlip
         function initPDF() {
-            const flipbook = document.getElementById(&#39;flipbook&#39;);
-            document.getElementById(&#39;prevBtn&#39;).style.display = &#39;flex&#39;;
-            document.getElementById(&#39;nextBtn&#39;).style.display = &#39;flex&#39;;
+            const flipbook = document.getElementById('flipbook');
+            document.getElementById('prevBtn').style.display = 'flex';
+            document.getElementById('nextBtn').style.display = 'flex';
             initProgressBar();
 
             // Start loading PDF (fast-first-page)
@@ -792,11 +785,11 @@
             });
 
             loadingTask.onProgress = function (progress) {
-                const loader = document.getElementById(&#39;globalLoading&#39;);
+                const loader = document.getElementById('globalLoading');
                 if (!loader) return;
                 if (progress.total > 0) {
                     const percent = Math.round((progress.loaded / progress.total) * 100);
-                    const textEl = loader.querySelector(&#39;.text&#39;);
+                    const textEl = loader.querySelector('.text');
                     if (textEl) textEl.textContent = `Loading PDF: ${percent}%`;
                 }
             };
@@ -809,11 +802,11 @@
                 const firstPage = await pdfDoc.getPage(1);
                 viewport = firstPage.getViewport({ scale: 1 });
 
-                document.getElementById(&#39;pageInfo&#39;).textContent = `1 / ${totalPages}`;
+                document.getElementById('pageInfo').textContent = `1 / ${totalPages}`;
                 const dims = calculatePageDimensions();
 
                 // Build DOM shells for all pages
-                flipbook.innerHTML = &#39;&#39;;
+                flipbook.innerHTML = '';
                 const pageEls = [];
                 if (hasBlankStart) {
                     const blank = createBlankPageShell(dims);
@@ -827,18 +820,18 @@
                     // Render first pages at high quality for readability; others low then upgrade
                     setTimeout(async () => {
                         if (i <= 2) {
-                            const dataHigh = await renderPage(i, &#39;high&#39;);
+                            const dataHigh = await renderPage(i, 'high');
                             if (dataHigh) {
                                 drawInto(canvas, dataHigh.highCanvas);
-                                if (dataHigh.links &amp;&amp; dataHigh.links.length > 0) {
+                                if (dataHigh.links && dataHigh.links.length > 0) {
                                     addUrlOverlays(content, dataHigh.links, dataHigh.baseViewport, dims);
                                 }
                             }
                         } else {
-                            const dataLow = await renderPage(i, &#39;low&#39;);
+                            const dataLow = await renderPage(i, 'low');
                             if (dataLow) {
                                 drawInto(canvas, dataLow.lowCanvas);
-                                if (dataLow.links &amp;&amp; dataLow.links.length > 0) {
+                                if (dataLow.links && dataLow.links.length > 0) {
                                     addUrlOverlays(content, dataLow.links, dataLow.baseViewport, dims);
                                 }
                                 // Upgrade to high in background
@@ -850,7 +843,7 @@
 
                 // If we have a leading blank and an even number of PDF pages,
                 // append a trailing blank to keep the last spread symmetrical (all soft pages).
-                if (hasBlankStart &amp;&amp; (totalPages % 2 === 0)) {
+                if (hasBlankStart && (totalPages % 2 === 0)) {
                     const trailingBlank = createBlankPageShell(dims);
                     flipbook.appendChild(trailingBlank);
                 }
@@ -859,7 +852,7 @@
                 pageFlip = new St.PageFlip(flipbook, {
                     width: Math.max(320, dims.width),
                     height: Math.max(400, dims.height),
-                    size: (window.innerWidth <= 768 || document.getElementById(&#39;flipbook-container&#39;).clientWidth <= 768) ? &#39;fixed&#39; : &#39;stretch&#39;,       // force single-page on mobile; stretch on larger screens
+                    size: (window.innerWidth <= 768 || document.getElementById('flipbook-container').clientWidth <= 768) ? 'fixed' : 'stretch',       // force single-page on mobile; stretch on larger screens
                     minWidth: 300,
                     maxWidth: 4000,
                     minHeight: 400,
@@ -873,20 +866,20 @@
                     mobileScrollSupport: true
                 });
 
-                pageFlip.loadFromHTML(document.querySelectorAll(&#39;#flipbook .page&#39;));
+                pageFlip.loadFromHTML(document.querySelectorAll('#flipbook .page'));
                 if (hasBlankStart) pageFlip.turnToPage(1);
 
                 // Events
-                pageFlip.on(&#39;flip&#39;, (e) => {
+                pageFlip.on('flip', (e) => {
                     const idx = (e.data || 0);
                     currentPage = hasBlankStart ? Math.min(totalPages, Math.max(1, idx)) : Math.min(totalPages, idx + 1);
                     updateControls();
                     if (window.parent !== window) {
                         window.parent.postMessage({
-                            type: &#39;pageChange&#39;,
+                            type: 'pageChange',
                             currentPage: currentPage,
                             totalPages: totalPages
-                        }, &#39;*&#39;);
+                        }, '*');
                     }
                     // Ensure current spread renders in high resolution immediately
                     const dims = calculatePageDimensions();
@@ -901,25 +894,25 @@
                 updateControls();
 
                 // Remove loading overlay
-                const loader = document.getElementById(&#39;globalLoading&#39;);
-                if (loader) loader.style.display = &#39;none&#39;;
-                document.body.classList.remove(&#39;loading&#39;);
+                const loader = document.getElementById('globalLoading');
+                if (loader) loader.style.display = 'none';
+                document.body.classList.remove('loading');
 
                 // Preload additional pages (render low if missing)
                 preloadPages(2, 8);
 
                 if (window.parent !== window) {
                     window.parent.postMessage({
-                        type: &#39;flipbookReady&#39;,
+                        type: 'flipbookReady',
                         totalPages: totalPages
-                    }, &#39;*&#39;);
+                    }, '*');
                 }
             }).catch(error => {
-                console.error(&#39;Error loading PDF:&#39;, error);
-                document.getElementById(&#39;globalLoading&#39;).innerHTML = `
-                    <div style=&quot;color: white; text-align: center; padding: 20px;&quot;>
+                console.error('Error loading PDF:', error);
+                document.getElementById('globalLoading').innerHTML = `
+                    <div style="color: white; text-align: center; padding: 20px;">
                         <h3>Error loading PDF</h3>
-                        <p>${error.message || &#39;Please try refreshing the page&#39;}</p>
+                        <p>${error.message || 'Please try refreshing the page'}</p>
                     </div>
                 `;
             });
@@ -935,14 +928,14 @@
             }
             pagesToLoad.forEach(pageNum => {
                 setTimeout(() => {
-                    renderPage(pageNum, &#39;low&#39;).catch(() => {});
+                    renderPage(pageNum, 'low').catch(() => {});
                 }, (pageNum - startPage) * 100);
             });
         }
 
         // Handle window resize (PageFlip autoresizes; call update to recalc)
         let resizeTimeout;
-        window.addEventListener(&#39;resize&#39;, () => {
+        window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 if (pageFlip) {
@@ -953,15 +946,15 @@
         });
 
         // Keyboard navigation
-        document.addEventListener(&#39;keydown&#39;, (e) => {
+        document.addEventListener('keydown', (e) => {
             if (!pageFlip) return;
-            if (e.key === &#39;ArrowLeft&#39;) {
-                if (hasBlankStart &amp;&amp; currentPage <= 1) return; // prevent flipping to leading blank
+            if (e.key === 'ArrowLeft') {
+                if (hasBlankStart && currentPage <= 1) return; // prevent flipping to leading blank
                 pageFlip.flipPrev();
-            } else if (e.key === &#39;ArrowRight&#39;) {
+            } else if (e.key === 'ArrowRight') {
                 pageFlip.flipNext();
-            } else if (e.key === &#39;f&#39; || e.key === &#39;F&#39;) {
-                document.getElementById(&#39;fullscreenBtn&#39;).click();
+            } else if (e.key === 'f' || e.key === 'F') {
+                document.getElementById('fullscreenBtn').click();
             }
         });
 
@@ -971,36 +964,77 @@
 </body>
 </html>
 
-'></iframe>
-<script>
-    (function () {
-        var iframeEl = document.getElementById('my-flipbook-container');
-        function triggerDownload(url, filename) {
-            try {
-                var safeName = filename || (url ? url.split('/').pop() : 'document.pdf') || 'document.pdf';
-                var proxiedUrl = window.location.origin + "/download_proxy?pdf=" + encodeURIComponent(url) + "&filename=" + encodeURIComponent(safeName);
-                var a = document.createElement('a');
-                a.href = proxiedUrl;
-                a.download = safeName;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            } catch (err) {
-                console.error('Parent download error:', err);
-            }
-        }
-        window.addEventListener('message', function (event) {
-            try {
-                if (!iframeEl || event.source !== iframeEl.contentWindow) return;
-                var data = event.data || {};
-                var type = data.type || data.action;
-                if (type === 'download' || type === 'downloadResponse') {
-                    triggerDownload(data.pdfUrl, data.filename);
-                }
-            } catch (e) {
-                console.error('Parent message handler error:', e);
-            }
-        });
-    })();
-</script>
+"""
+
+def get_raw_html(pdf_url):
+    """
+    Generate clean iframe HTML for PDF viewer without ad banners.
+    
+    Args:
+        pdf_url: URL or filename of the PDF to display
+        
+    Returns:
+        Complete iframe HTML with embedded PDF viewer and download handler
+    """
+    if not pdf_url:
+        raise ValueError("PDF URL must be provided")
+    
+    pdf_injection = f"""
+    <script>
+        const INJECTED_PDF_URL = '{pdf_url}';
+    </script>
+    """
+    
+    raw_html = MAGAZINE_IFRAME_CONTENT.replace('<script>', pdf_injection + '<script>', 1)
+    escaped_html = raw_html.replace('&', '&amp;').replace("'", '&#39;').replace('"', '&quot;')
+
+    iframe = f"""<iframe
+                id="my-flipbook-container"
+                class="w-full h-[100%] max-w-[52rem]"
+                allow="clipboard-write"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+                allowfullscreen="true"
+                style="border:none;overflow:hidden;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);border:1px solid #e5e7eb;background-color:#000;min-height:100%;min-width:100%;"
+                srcdoc='{escaped_html}'
+              ></iframe>""" + """
+              <script>
+                (function () {
+                  var iframeEl = document.getElementById('my-flipbook-container');
+                  function triggerDownload(url, filename) {
+                    try {
+                      var safeName = filename || (url ? url.split('/').pop() : 'document.pdf') || 'document.pdf';
+                      var proxiedUrl = window.location.origin + "/download_proxy?pdf=" + encodeURIComponent(url) + "&filename=" + encodeURIComponent(safeName);
+                      var a = document.createElement('a');
+                      a.href = proxiedUrl;
+                      a.download = safeName;
+                      a.style.display = 'none';
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                    } catch (err) {
+                      console.error('Parent download error:', err);
+                    }
+                  }
+                  window.addEventListener('message', function (event) {
+                    try {
+                      if (!iframeEl || event.source !== iframeEl.contentWindow) return;
+                      var data = event.data || {};
+                      var type = data.type || data.action;
+                      if (type === 'download' || type === 'downloadResponse') {
+                        triggerDownload(data.pdfUrl, data.filename);
+                      }
+                    } catch (e) {
+                      console.error('Parent message handler error:', e);
+                    }
+                  });
+                })();
+              </script>
+    """
+    return iframe
+
+
+if __name__ == "__main__":
+    test_pdf_url = "CXO%20TechBOT%20October%202024-1-25.pdf"
+    
+    with open("trial.html", "w", encoding="utf-8") as f:
+        f.write(get_raw_html(test_pdf_url))
