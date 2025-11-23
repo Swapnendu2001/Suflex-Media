@@ -225,7 +225,7 @@ async def getHeader():
         <a href="/">Home</a>
         <a href="/about">About Us</a>
         <a href="/services">Services</a>
-        <a href="/portfolio">Portfolio</a>
+        <a href="/portfolio">Case Study</a>
         <a href="/blogs">Blog</a>
         <!-- <a href="/careers">Careers</a> -->
         <a href="/contact" class="contact-us">
@@ -304,7 +304,7 @@ async def getFooter():
       .footer .footer-content {
         display: flex;
         justify-content: space-around;
-        width: 100vw;
+        width: 80vw;
         align-items: flex-start;
         padding: 0 5vw;
         margin-right: 3vw;
@@ -473,6 +473,9 @@ async def getFooter():
           <a href="/about">About Us</a>
           <a href="/services">Services</a>
           <a href="/blogs">Blog</a>
+          <a href="/cancellation-and-refund-policy">Cancellation and Refund Policy</a>
+          <a href="/terms-of-service">Terms of Service</a>
+          <a href="/privacy-policy">Privacy Policy</a>
           <!-- <a href="/careers">Careers</a> -->
         </div>
         <div class="footer-section">
