@@ -7,6 +7,10 @@ from typing import Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from trial import get_raw_html
 
 load_dotenv()
 
@@ -156,9 +160,10 @@ def generate_head_section(blog_data: Dict[str, Any], case_study_date: str) -> st
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="/css/case_study.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <script type="application/ld+json">
         {{
@@ -174,7 +179,49 @@ def generate_head_section(blog_data: Dict[str, Any], case_study_date: str) -> st
 </head>
 
 <body>
-    <a href="#main" class="visually-hidden">Skip to content</a>
+    <a href="#main" class="visually-hidden">Skip to content</a>"""
+
+
+def generate_header_section() -> str:
+    """
+    Generate the header section with navigation
+    """
+    return """
+    <header class="header">
+        <div class="logo">
+            <a href="/"><img src="/images/logo_header.png" alt="Suflex Media Logo"></a>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
+            <div class="dropdown">
+                <span class="dropdown-toggle">Services <i data-lucide="chevron-down" class="dropdown-arrow"></i></span>
+                <div class="dropdown-menu">
+                    <a href="/ghostwriting">Book Writing</a>
+                    <a href="/linkedin-branding">LinkedIn Branding</a>
+                    <a href="/content-writing">Content Writing</a>
+                    <a href="/performance-marketing">Performance Marketing</a>
+                    <a href="/website-development">Website Development</a>
+                    <a href="/seo">Search Engine Optimisation</a>
+                </div>
+            </div>
+            <a href="/portfolio">Portfolio</a>
+            <a href="/blogs" class="active">Blog</a>
+            <a href="/contact" class="contact-us">
+                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+                <span>Contact Us</span>
+            </a>
+        </nav>
+        <a href="/contact" class="contact-us">
+            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+            <span>Contact Us</span>
+        </a>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
 
     <main id="main" class="wrap" role="main" aria-labelledby="title">"""
 
@@ -393,17 +440,90 @@ def generate_impact_section(blog_data: Dict[str, Any]) -> str:
     return section
 
 
+def generate_pdf_viewer_section(pdf_url: Optional[str]) -> str:
+    """
+    Generate the PDF viewer iframe section
+    """
+    if not pdf_url:
+        return ""
+    
+    iframe_html = get_raw_html(pdf_url)
+    
+    return f"""
+        <section class="section pdf-viewer-section" aria-label="PDF Viewer">
+            <h2>View Full Case Study</h2>
+            <div class="pdf-container" style="width: 100%; min-height: 800px; display: flex; justify-content: center; align-items: center; background: #1a1a1a; border-radius: 8px; overflow: hidden;">
+                {iframe_html}
+            </div>
+        </section>"""
+
+
 def generate_footer_section(blog_data: Dict[str, Any]) -> str:
     """
     Generate the footer section
     """
-    title = blog_data.get('blogTitle', 'Case Study')
-    
-    return f"""
-        <footer class="page-footer">
-            © 2025 • Case Study • {title}
-        </footer>
+    return """
     </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section cta">
+                <h2>Ready to grow your<br>business?</h2>
+                <a href="/contact" class="button">Book a free strategy call</a>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About Us</a>
+                <a href="/services">Services</a>
+                <a href="/blogs">Blog</a>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <a href="/ghostwriting">Book Writing</a>
+                <a href="/linkedin-branding">LinkedIn Branding</a>
+                <a href="/content-writing">Content Writing</a>
+                <a href="/performance-marketing">Performance Marketing</a>
+                <a href="/website-development">Website Development</a>
+            </div>
+            <div class="footer-section social-section">
+                <h3>Social Links</h3>
+                <div class="social-links">
+                    <a href="#"><img src="/icons/instagram.png" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
+                    <a href="#"><img src="/icons/x.png" alt="X"></a>
+                </div>
+            </div>
+            <div class="footer-section contact-section">
+                <h3>Contact Us</h3>
+                <a href="mailto:hello@suflexmedia.com">hello@suflexmedia.com</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-logo">
+                <img src="/images/logo_header.png" alt="Suflex Media Logo">
+            </div>
+            <div class="copyright">
+                <p>Copyright © 2025 SuflexMedia | All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const originalTitle = document.title;
+        const awayTitle = "😢 Missing you already!";
+        
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = awayTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+        
+        lucide.createIcons();
+    </script>
+    <script src="/js/case_study.js"></script>
 </body>
 
 </html>"""
@@ -416,9 +536,11 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     blog_json_str = case_study_data.get('blog', '{}')
     blog_data = parse_blog_json(blog_json_str)
     case_study_date = case_study_data.get('date', '')
+    pdf_url = case_study_data.get('pdf_url', 'https://iwyjssxhrcucnrkzkvmt.supabase.co/storage/v1/object/public/magazine-pdfs/CXO%20TechBOT%20October%202024-1-25.pdf')
     
     html_parts = [
         generate_head_section(blog_data, case_study_date),
+        generate_header_section(),
         generate_article_header(blog_data, case_study_date),
         generate_hero_section(blog_data),
         generate_summary_section(blog_data),
@@ -427,6 +549,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
         generate_story_section(blog_data),
         generate_result_section(blog_data),
         generate_impact_section(blog_data),
+        generate_pdf_viewer_section(pdf_url),
         generate_footer_section(blog_data)
     ]
     
@@ -442,16 +565,16 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
         
         if by_slug:
             query = """
-                SELECT id, slug, blog, status, type, date, keyword, preview, 
-                       editors_choice, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, slug, blog, status, type, date, keyword, preview,
+                       editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE slug = $1 AND isdeleted = FALSE
                 LIMIT 1
             """
         else:
             query = """
-                SELECT id, slug, blog, status, type, date, keyword, preview, 
-                       editors_choice, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, slug, blog, status, type, date, keyword, preview,
+                       editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE id = $1 AND isdeleted = FALSE
                 LIMIT 1
@@ -472,6 +595,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
                 "preview": case_study['preview'],
                 "editors_choice": case_study['editors_choice'],
                 "redirect_url": case_study['redirect_url'],
+                "pdf_url": case_study['pdf_url'],
                 "isdeleted": case_study['isdeleted'],
                 "created_at": case_study['created_at'].isoformat() if case_study['created_at'] else None,
                 "updated_at": case_study['updated_at'].isoformat() if case_study['updated_at'] else None

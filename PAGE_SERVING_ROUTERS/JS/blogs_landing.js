@@ -54,29 +54,46 @@ function setupCarousel() {
 
     let currentIndex = 0;
     const totalItems = items.length;
-    const cardWidth = items[0].offsetWidth + parseInt(window.getComputedStyle(items[0]).marginRight);
+    const maxIndex = totalItems - 3;
+    const autoScrollInterval = 2500;
+    let autoScrollTimer;
 
-    const leftArrow = document.getElementById('carousel-arrow-left');
-    const rightArrow = document.getElementById('carousel-arrow-right');
+    function getCardWidth() {
+        const firstCard = items[0];
+        return firstCard.offsetWidth + parseFloat(window.getComputedStyle(carousel).gap || 0);
+    }
 
     function updateCarousel() {
+        const cardWidth = getCardWidth();
         const offset = -currentIndex * cardWidth;
         carousel.style.transform = `translateX(${offset}px)`;
     }
 
-    leftArrow.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarousel();
+    function autoScroll() {
+        currentIndex++;
+        if (currentIndex > maxIndex) {
+            currentIndex = 0;
         }
-    });
+        updateCarousel();
+    }
 
-    rightArrow.addEventListener('click', () => {
-        if (currentIndex < totalItems - 3) {
-            currentIndex++;
-            updateCarousel();
+    function startAutoScroll() {
+        stopAutoScroll();
+        autoScrollTimer = setInterval(autoScroll, autoScrollInterval);
+    }
+
+    function stopAutoScroll() {
+        if (autoScrollTimer) {
+            clearInterval(autoScrollTimer);
         }
-    });
+    }
+
+    carousel.parentElement.addEventListener('mouseenter', stopAutoScroll);
+    carousel.parentElement.addEventListener('mouseleave', startAutoScroll);
+
+    window.addEventListener('resize', updateCarousel);
+
+    startAutoScroll();
 }
 
 function setupPagination() {
@@ -108,6 +125,12 @@ function setupPagination() {
 
     function createPaginationControls() {
         let paginationHTML = '';
+        
+        if (totalPages <= 1) {
+            pagination.style.display = 'none';
+            return;
+        }
+        
         if (totalPages <= 5) {
             for (let i = 1; i <= totalPages; i++) {
                 paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
@@ -117,24 +140,30 @@ function setupPagination() {
                 paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}">Prev</button>`;
             }
 
-            paginationHTML += `<button class="page-btn ${1 === currentPage ? 'active' : ''}" data-page="1">1</button>`;
-
-            if (currentPage > 3) {
-                paginationHTML += `<span class="page-dots">...</span>`;
+            const showPages = new Set();
+            
+            if (currentPage > 1) {
+                showPages.add(currentPage - 1);
             }
-
-            if (currentPage > 2 && currentPage < totalPages - 1) {
-                paginationHTML += `<button class="page-btn active" data-page="${currentPage}">${currentPage}</button>`;
+            showPages.add(currentPage);
+            if (currentPage < totalPages) {
+                showPages.add(currentPage + 1);
             }
-
-            if (currentPage < totalPages - 2) {
-                paginationHTML += `<span class="page-dots">...</span>`;
-            }
-
-            paginationHTML += `<button class="page-btn ${totalPages === currentPage ? 'active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
+            showPages.add(totalPages);
+            
+            const sortedPages = Array.from(showPages).sort((a, b) => a - b);
+            
+            let prevPage = 0;
+            sortedPages.forEach(page => {
+                if (prevPage > 0 && page > prevPage + 1) {
+                    paginationHTML += `<span class="page-dots">...</span>`;
+                }
+                paginationHTML += `<button class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">${page}</button>`;
+                prevPage = page;
+            });
 
             if (currentPage < totalPages) {
-                paginationHTML += `<button class="page-btn next-btn" data-page="${currentPage + 1}">Next page <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3.75L14.25 9L9 14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+                paginationHTML += `<button class="page-btn next-btn" data-page="${currentPage + 1}">Next <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 9H14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3.75L14.25 9L9 14.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
             }
         }
         pagination.innerHTML = paginationHTML;
