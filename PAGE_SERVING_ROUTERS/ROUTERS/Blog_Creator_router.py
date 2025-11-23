@@ -949,7 +949,7 @@ async def get_more_blogs_section(data: dict, other_blogs: list):
         }
         @media (max-width: 768px) {
             .related-blog-card {
-                flex: 0 0 80%; /* 1 card visible */
+                flex: 0 0 100%; /* 1 card visible */
             }
         }
     </style>

@@ -107,17 +107,41 @@ class UpdateBlogRequest(BaseModel):
                 raise ValueError('Redirect URL must start with http:// or https://')
         return v
 
+def _parse_blog_content_from_db(blog_content_raw: Any, blog_id: str) -> Dict[str, Any]:
+    parsed_content = {}
+    if isinstance(blog_content_raw, str):
+        try:
+            parsed_content = json.loads(blog_content_raw)
+        except json.JSONDecodeError:
+            logger.error(f"Failed to decode blogcontent JSON for blog ID {blog_id}: {blog_content_raw}")
+            return {} # Return empty dict on decode failure
+    elif isinstance(blog_content_raw, dict):
+        parsed_content = blog_content_raw
+    else:
+        logger.warning(f"Unexpected type for blogcontent for blog ID {blog_id}: {type(blog_content_raw)}. Expected str or dict.")
+        return {}
+    
+    # The admin_save_blog endpoint saves the entire request body, which has a 'blogContent' key.
+    # So, we need to check if the actual content is nested under 'blogcontent' (lowercase) or 'blogContent' (camelCase)
+    # The user feedback specifically asks for lowercase 'blogcontent'.
+    
+    actual_blog_content = {}
+    if 'blogcontent' in parsed_content and isinstance(parsed_content['blogcontent'], dict):
+        actual_blog_content = parsed_content['blogcontent']
+    elif 'blogContent' in parsed_content and isinstance(parsed_content['blogContent'], dict):
+        # Fallback for existing data that might use camelCase, but log a warning
+        logger.warning(f"Using camelCase 'blogContent' for blog ID {blog_id}. Consider updating data to use 'blogcontent'.")
+        actual_blog_content = parsed_content['blogContent']
+    else:
+        # If no nested 'blogcontent' or 'blogContent', assume the parsed_content itself is the blog content
+        actual_blog_content = parsed_content
+    
+    return actual_blog_content
+
 def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, Any]]:
     formatted_blogs = []
     for blog in blogs_list_raw:
-        # Ensure blogContent is a dictionary
-        blog_content_dict = blog['blogContent']
-        if isinstance(blog_content_dict, str):
-            try:
-                blog_content_dict = json.loads(blog_content_dict)
-            except json.JSONDecodeError:
-                logger.error(f"Failed to decode blogContent for blog ID {blog['id']}: {blog_content_dict}")
-                blog_content_dict = {} # Fallback to empty dict
+        actual_blog_content = _parse_blog_content_from_db(blog['blogcontent'], str(blog['id']))
         
         # Ensure keyword is a dictionary
         keyword_dict = blog['keyword']
@@ -128,13 +152,18 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
                 logger.error(f"Failed to decode keyword for blog ID {blog['id']}: {keyword_dict}")
                 keyword_dict = {} # Fallback to empty dict
 
+        blog_category = actual_blog_content.get('blogcategory')
+        if blog_category is None:
+            logger.warning(f"Blog category not found for blog ID {blog['id']}. Defaulting to 'General'.")
+            blog_category = 'General'
+
         formatted_blogs.append({
             "id": str(blog['id']),
-            "blogContent": blog_content_dict,
+            "blogContent": actual_blog_content,
             "status": blog['status'],
             "date": blog['date'].isoformat() if blog['date'] else None,
             "keyword": keyword_dict,
-            "category": blog_content_dict.get('blogCategory', 'General'),
+            "category": blog_category,
             "slug": blog['slug'],
             "type": blog['type'],
             "redirect_url": blog['redirect_url'],
@@ -144,6 +173,7 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
             "editors_choice": blog.get('editors_choice', 'N')
         })
     return formatted_blogs
+
 
 @router.get("/blogs")
 async def get_blogs(
@@ -264,11 +294,11 @@ async def create_blog(blog_data: CreateBlogRequest, current_user: Dict[str, Any]
             "message": "Blog created successfully",
             "blog": {
                 "id": str(new_blog['id']),
-                "blogContent": json.loads(new_blog['blogContent']) if isinstance(new_blog['blogContent'], str) else new_blog['blogContent'],
+                "blogContent": _parse_blog_content_from_db(new_blog['blogcontent'], str(new_blog['id'])),
                 "status": new_blog['status'],
                 "date": new_blog['date'].isoformat() if new_blog['date'] else None,
                 "keyword": json.loads(new_blog['keyword']) if isinstance(new_blog['keyword'], str) else new_blog['keyword'],
-                "category": (json.loads(new_blog['blogContent']).get('blogCategory', 'General') if isinstance(new_blog['blogContent'], str) else new_blog['blogContent'].get('blogCategory', 'General')),
+                "category": _parse_blog_content_from_db(new_blog['blogcontent'], str(new_blog['id'])).get('blogcategory', 'General'),
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
@@ -367,11 +397,11 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
             "message": "Blog updated successfully",
             "blog": {
                 "id": str(updated_blog['id']),
-                "blogContent": json.loads(updated_blog['blogContent']) if isinstance(updated_blog['blogContent'], str) else updated_blog['blogContent'],
+                "blogContent": _parse_blog_content_from_db(updated_blog['blogcontent'], str(updated_blog['id'])),
                 "status": updated_blog['status'],
                 "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
                 "keyword": json.loads(updated_blog['keyword']) if isinstance(updated_blog['keyword'], str) else updated_blog['keyword'],
-                "category": (json.loads(updated_blog['blogContent']).get('blogCategory', 'General') if isinstance(updated_blog['blogContent'], str) else updated_blog['blogContent'].get('blogCategory', 'General')),
+                "category": _parse_blog_content_from_db(updated_blog['blogcontent'], str(updated_blog['id'])).get('blogcategory', 'General'),
                 "slug": updated_blog['slug'],
                 "type": updated_blog['type'],
                 "redirect_url": updated_blog['redirect_url'],
