@@ -440,6 +440,7 @@ body {
     max-width: 17vw;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .portfolio-hero-card:hover {

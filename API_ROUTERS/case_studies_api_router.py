@@ -23,6 +23,7 @@ class CreateCaseStudyRequest(BaseModel):
     redirect_url: Optional[str] = None
 
 class UpdateCaseStudyRequest(BaseModel):
+    blog: Optional[Dict[str, Any]] = None
     blogContent: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
@@ -107,6 +108,13 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest, current_use
         case_study_content = case_study_data.blogContent.copy() if case_study_data.blogContent else {}
         content_type = case_study_content.get('contentType', ContentTypeConstants.CASE_STUDY)
         
+        blog_title = case_study_content.get('blogTitle')
+        preview_data = case_study_data.preview
+        if preview_data is None:
+            preview_data = {}
+        if blog_title:
+            preview_data['blogTitle'] = blog_title
+        
         new_case_study = await conn.fetchrow(
             """
             INSERT INTO case_studies (case_study, status, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted)
@@ -116,7 +124,7 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest, current_use
             json.dumps(case_study_content),
             case_study_data.status,
             json.dumps(case_study_data.keyword),
-            json.dumps(case_study_data.preview) if case_study_data.preview else None,
+            json.dumps(preview_data),
             case_study_data.editors_choice,
             case_study_data.slug,
             content_type,
@@ -166,7 +174,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
         conn = await asyncpg.connect(DATABASE_URL)
         
         existing_case_study = await conn.fetchrow(
-            "SELECT id, isdeleted FROM case_studies WHERE id = $1",
+            "SELECT id, isdeleted, case_study, preview FROM case_studies WHERE id = $1",
             case_study_id
         )
         
@@ -182,10 +190,18 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
         update_values = []
         param_count = 1
         
-        if case_study_data.blog is not None:
+        blog_content = case_study_data.blog or case_study_data.blogContent
+        blog_title = None
+        
+        if blog_content is not None:
             update_fields.append(f"case_study = ${param_count}")
-            update_values.append(json.dumps(case_study_data.blog))
+            update_values.append(json.dumps(blog_content))
             param_count += 1
+            blog_title = blog_content.get('blogTitle')
+        else:
+            current_case_study = existing_case_study['case_study']
+            if current_case_study:
+                blog_title = current_case_study.get('blogTitle')
         
         if case_study_data.status is not None:
             update_fields.append(f"status = ${param_count}")
@@ -197,9 +213,18 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
             update_values.append(json.dumps(case_study_data.keyword))
             param_count += 1
         
-        if case_study_data.preview is not None:
+        preview_data = case_study_data.preview
+        if preview_data is None:
+            preview_data = existing_case_study['preview'] or {}
+        
+        if blog_title:
+            if preview_data is None:
+                preview_data = {}
+            preview_data['blogTitle'] = blog_title
+            
+        if preview_data is not None:
             update_fields.append(f"preview = ${param_count}")
-            update_values.append(json.dumps(case_study_data.preview))
+            update_values.append(json.dumps(preview_data))
             param_count += 1
         
         if case_study_data.slug is not None:
@@ -365,6 +390,79 @@ async def restore_case_study(case_study_id: str, current_user: Dict[str, Any] = 
         logger.error(f"Unexpected error in restore_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@router.get("/case-studies/paginated")
+async def get_paginated_case_studies(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    per_page: int = Query(4, ge=1, le=20, description="Items per page")
+):
+    """
+    Get paginated case studies for portfolio page
+    Returns only published case studies with pagination
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        offset = (page - 1) * per_page
+        
+        count_query = f"""
+            SELECT COUNT(*)
+            FROM case_studies
+            WHERE isdeleted = FALSE
+                AND status = '{StatusConstants.PUBLISHED}'
+                AND type = '{ContentTypeConstants.CASE_STUDY}'
+        """
+        
+        total_count = await conn.fetchval(count_query)
+        
+        query = f"""
+            SELECT slug, preview
+            FROM case_studies
+            WHERE isdeleted = FALSE
+                AND status = '{StatusConstants.PUBLISHED}'
+                AND type = '{ContentTypeConstants.CASE_STUDY}'
+            ORDER BY
+                CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+                date DESC
+            LIMIT $1 OFFSET $2
+        """
+        
+        case_studies = await conn.fetch(query, per_page, offset)
+        await conn.close()
+        
+        case_studies_list = []
+        for record in case_studies:
+            preview = record['preview']
+            if isinstance(preview, str):
+                try:
+                    preview = json.loads(preview)
+                except:
+                    preview = {}
+            
+            case_studies_list.append({
+                'slug': record['slug'],
+                'preview': preview
+            })
+        
+        total_pages = (total_count + per_page - 1) // per_page
+        
+        return {
+            "status": "success",
+            "case_studies": case_studies_list,
+            "page": page,
+            "per_page": per_page,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "has_next": page < total_pages,
+            "has_prev": page > 1
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in get_paginated_case_studies: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in get_paginated_case_studies: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @router.get("/case-studies/editors-choice")
 async def get_editors_choice_case_studies():
     """
@@ -503,6 +601,77 @@ async def toggle_editors_choice(case_study_id: str, current_user: Dict[str, Any]
         logger.error(f"Unexpected error in toggle_editors_choice: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@router.post("/admin_case_study_preview")
+async def admin_case_study_preview(request: Request, current_user: Dict[str, Any] = Depends(require_admin)):
+    """
+    Generate HTML preview for case study before saving
+    Used by admin panel to preview case study content
+    """
+    try:
+        data = await request.json()
+        
+        logger.debug("=" * 80)
+        logger.debug("RECEIVED CASE STUDY PREVIEW REQUEST:")
+        logger.debug(json.dumps(data, indent=2))
+        logger.debug("=" * 80)
+        
+        preview_html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Case Study Preview</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #f5f5f5;
+                }}
+                h1 {{ color: #333; }}
+                h2 {{ color: #555; margin-top: 30px; }}
+                .metadata {{ 
+                    background: #fff; 
+                    padding: 15px; 
+                    border-radius: 5px; 
+                    margin-bottom: 20px;
+                }}
+                .content {{ 
+                    background: #fff; 
+                    padding: 20px; 
+                    border-radius: 5px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="metadata">
+                <h1>{data.get('blogTitle', 'Untitled Case Study')}</h1>
+                <p><strong>Date:</strong> {data.get('blogDate', 'N/A')}</p>
+                <p><strong>Category:</strong> {data.get('blogCategory', 'N/A')}</p>
+                <p><strong>Status:</strong> Preview Mode</p>
+            </div>
+            <div class="content">
+                <div>{data.get('blogSummary', '')}</div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return {
+            "status": "success",
+            "data": preview_html
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating case study preview: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+        logger.error(f"Unexpected error in toggle_editors_choice: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @router.post("/admin_save_case_study")
 async def admin_save_case_study(request: Request, current_user: Dict[str, Any] = Depends(require_admin)):
     """
@@ -570,6 +739,10 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 preview_data = data.pop('previewData', None)
                 pdf_url = data.pop('pdfUrl', None)
                 
+                if preview_data is None:
+                    preview_data = {}
+                preview_data['blogTitle'] = case_study_title
+                
                 updated_case_study = await conn.fetchrow(
                     """
                     UPDATE case_studies
@@ -579,7 +752,7 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                     """,
                     json.dumps(data),
                     case_study_status,
-                    json.dumps(preview_data) if preview_data else None,
+                    json.dumps(preview_data),
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
@@ -623,6 +796,10 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 preview_data = data.pop('previewData', None)
                 pdf_url = data.pop('pdfUrl', None)
                 
+                if preview_data is None:
+                    preview_data = {}
+                preview_data['blogTitle'] = case_study_title
+                
                 new_case_study = await conn.fetchrow(
                     """
                     INSERT INTO case_studies (case_study, status, preview, editors_choice, slug, type, pdf_url, isdeleted)
@@ -631,7 +808,7 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                     """,
                     json.dumps(data),
                     case_study_status,
-                    json.dumps(preview_data) if preview_data else None,
+                    json.dumps(preview_data),
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
