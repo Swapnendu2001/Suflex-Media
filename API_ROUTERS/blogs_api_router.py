@@ -15,14 +15,14 @@ router = APIRouter(prefix="/api", tags=["Blogs Management"])
 DATABASE_URL = config.DATABASE_URL
 
 class CreateBlogRequest(BaseModel):
-    blog: Dict[str, Any]
+    blogContent: Dict[str, Any]
     status: str = StatusConstants.DRAFT
     keyword: Optional[Dict[str, Any]] = None
     editors_choice: Optional[str] = 'N'
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
-    @field_validator('blog')
+    @field_validator('blogContent')
     @classmethod
     def validate_blog_not_empty(cls, v):
         if not v or not isinstance(v, dict):
@@ -61,14 +61,14 @@ class CreateBlogRequest(BaseModel):
         return v
 
 class UpdateBlogRequest(BaseModel):
-    blog: Optional[Dict[str, Any]] = None
+    blogContent: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
     editors_choice: Optional[str] = None
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
 
-    @field_validator('blog')
+    @field_validator('blogContent')
     @classmethod
     def validate_blog_not_empty(cls, v):
         if v is not None and (not v or not isinstance(v, dict)):
@@ -111,11 +111,11 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
     return [
         {
             "id": str(blog['id']),
-            "blog": blog['blog'],
+            "blogContent": blog['blogContent'],
             "status": blog['status'],
             "date": blog['date'].isoformat() if blog['date'] else None,
             "keyword": blog['keyword'],
-            "category": blog['blog'].get('blogCategory', 'General') if isinstance(blog['blog'], dict) else json.loads(blog['blog']).get('blogCategory', 'General'),
+            "category": blog['blogContent'].get('blogCategory', 'General') if isinstance(blog['blogContent'], dict) else json.loads(blog['blogContent']).get('blogCategory', 'General'),
             "slug": blog['slug'],
             "type": blog['type'],
             "redirect_url": blog['redirect_url'],
@@ -142,7 +142,7 @@ async def get_blogs(
 
         if purpose == 'landing_page':
             query = """
-                SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
                 FROM blogs
                 WHERE isdeleted = FALSE AND status = 'published' AND type = '{ContentTypeConstants.BLOG}'
                 ORDER BY date DESC
@@ -171,13 +171,13 @@ async def get_blogs(
         else:
             if include_deleted:
                 query = """
-                    SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
                     FROM blogs
                     ORDER BY date DESC
                 """
             else:
                 query = """
-                    SELECT id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
                     FROM blogs
                     WHERE isdeleted = FALSE
                     ORDER BY date DESC
@@ -207,21 +207,21 @@ async def create_blog(blog_data: CreateBlogRequest, current_user: Dict[str, Any]
     """
     logger.info(f"Creating new blog with status: {blog_data.status}")
     
-    if not blog_data.blog:
+    if not blog_data.blogContent:
         raise HTTPException(status_code=400, detail="Blog content is required")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
         # Extract the type from blog data if it exists
-        blog_content = blog_data.blog.copy() if blog_data.blog else {}
+        blog_content = blog_data.blogContent.copy() if blog_data.blogContent else {}
         content_type = blog_content.get('contentType', ContentTypeConstants.BLOG)
         
         new_blog = await conn.fetchrow(
             """
-            INSERT INTO blogs (blog, status, keyword, editors_choice, slug, type, redirect_url, isdeleted)
+            INSERT INTO blogs (blogContent, status, keyword, editors_choice, slug, type, redirect_url, isdeleted)
             VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
-            RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+            RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
             json.dumps(blog_content),
             blog_data.status,
@@ -240,11 +240,11 @@ async def create_blog(blog_data: CreateBlogRequest, current_user: Dict[str, Any]
             "message": "Blog created successfully",
             "blog": {
                 "id": str(new_blog['id']),
-                "blog": new_blog['blog'],
+                "blogContent": new_blog['blogContent'],
                 "status": new_blog['status'],
                 "date": new_blog['date'].isoformat() if new_blog['date'] else None,
                 "keyword": new_blog['keyword'],
-                "category": new_blog['blog'].get('blogCategory', 'General') if isinstance(new_blog['blog'], dict) else json.loads(new_blog['blog']).get('blogCategory', 'General'),
+                "category": new_blog['blogContent'].get('blogCategory', 'General') if isinstance(new_blog['blogContent'], dict) else json.loads(new_blog['blogContent']).get('blogCategory', 'General'),
                 "slug": new_blog['slug'],
                 "type": new_blog['type'],
                 "redirect_url": new_blog['redirect_url'],
@@ -290,9 +290,9 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
         update_values = []
         param_count = 1
         
-        if blog_data.blog is not None:
-            update_fields.append(f"blog = ${param_count}")
-            update_values.append(json.dumps(blog_data.blog))
+        if blog_data.blogContent is not None:
+            update_fields.append(f"blogContent = ${param_count}")
+            update_values.append(json.dumps(blog_data.blogContent))
             param_count += 1
         
         if blog_data.status is not None:
@@ -331,7 +331,7 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
             UPDATE blogs
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, blog, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
+            RETURNING id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at
         """
         
         updated_blog = await conn.fetchrow(query, *update_values)
@@ -343,11 +343,11 @@ async def update_blog(blog_id: str, blog_data: UpdateBlogRequest, current_user: 
             "message": "Blog updated successfully",
             "blog": {
                 "id": str(updated_blog['id']),
-                "blog": updated_blog['blog'],
+                "blogContent": updated_blog['blogContent'],
                 "status": updated_blog['status'],
                 "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
                 "keyword": updated_blog['keyword'],
-                "category": updated_blog['blog'].get('blogCategory', 'General') if isinstance(updated_blog['blog'], dict) else json.loads(updated_blog['blog']).get('blogCategory', 'General'),
+                "category": updated_blog['blogContent'].get('blogCategory', 'General') if isinstance(updated_blog['blogContent'], dict) else json.loads(updated_blog['blogContent']).get('blogCategory', 'General'),
                 "slug": updated_blog['slug'],
                 "type": updated_blog['type'],
                 "redirect_url": updated_blog['redirect_url'],
@@ -540,9 +540,9 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                 updated_blog = await conn.fetchrow(
                     """
                     UPDATE blogs
-                    SET blog = $1, status = $2, editors_choice = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
+                    SET blogContent = $1, status = $2, editors_choice = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $6
-                    RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
@@ -572,9 +572,9 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                 
                 new_blog = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blog, status, editors_choice, slug, type, isdeleted)
+                    INSERT INTO blogs (blogContent, status, editors_choice, slug, type, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, FALSE)
-                    RETURNING id, blog, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,

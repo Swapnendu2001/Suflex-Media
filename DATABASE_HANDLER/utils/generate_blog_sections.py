@@ -20,7 +20,7 @@ async def get_blog_data():
 
         # Fetch all published blogs of type 'BLOG'
         all_blogs_query = """
-            SELECT id, blog, date, created_at, editors_choice, slug, type
+            SELECT id, blogContent, date, created_at, editors_choice, slug, type
             FROM blogs
             WHERE isdeleted = FALSE AND type = 'BLOG'
             ORDER BY created_at DESC
@@ -31,7 +31,7 @@ async def get_blog_data():
 
         processed_blogs = []
         for blog in all_blogs:
-            blog_content = blog['blog']
+            blog_content = blog['blogContent']
             if isinstance(blog_content, str):
                 blog_content = json.loads(blog_content)
 

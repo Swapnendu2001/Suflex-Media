@@ -840,7 +840,7 @@ async def get_cards(other_blogs: list):
 
     cards_html = []
     for blog in other_blogs:
-        blog_content = json.loads(blog['blog']) if isinstance(blog['blog'], str) else blog['blog']
+        blog_content = json.loads(blog['blogContent']) if isinstance(blog['blogContent'], str) else blog['blogContent']
         
         image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
         image_alt = blog_content.get('mainImageAlt', 'Blog Image')
@@ -2312,7 +2312,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Querying for all blogs")
         all_blogs = await conn.fetch(
             """
-            SELECT id, blog, status, date, slug, isDeleted, created_at
+            SELECT id, blogContent, status, date, slug, isDeleted, created_at
             FROM blogs
             WHERE isDeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG')
             ORDER BY created_at DESC
@@ -2336,7 +2336,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         
         print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
         
-        blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
+        blog_data = blog_record['blogContent'] if isinstance(blog_record['blogContent'], dict) else json.loads(blog_record['blogContent'])
         
         # Process and enrich the current blog's data for rendering
         blog_data['slug'] = blog_record['slug']
