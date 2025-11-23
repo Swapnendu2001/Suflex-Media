@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api", tags=["Case Studies Management"])
 DATABASE_URL = config.DATABASE_URL
 
 class CreateCaseStudyRequest(BaseModel):
-    blog: Dict[str, Any]
+    blogContent: Dict[str, Any]
     status: str = StatusConstants.DRAFT
     keyword: Optional[Dict[str, Any]] = None
     preview: Optional[Dict[str, Any]] = None
@@ -23,7 +23,7 @@ class CreateCaseStudyRequest(BaseModel):
     redirect_url: Optional[str] = None
 
 class UpdateCaseStudyRequest(BaseModel):
-    blog: Optional[Dict[str, Any]] = None
+    blogContent: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
     preview: Optional[Dict[str, Any]] = None
@@ -43,14 +43,14 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         
         if include_deleted:
             query = f"""
-                SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, blogContent, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
             """
         else:
             query = f"""
-                SELECT id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
+                SELECT id, blogContent, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE isdeleted = FALSE AND type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
@@ -62,7 +62,7 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         case_studies_list = [
             {
                 "id": str(case_study['id']),
-                "blog": case_study['blog'],
+                "blogContent": case_study['blogContent'],
                 "status": case_study['status'],
                 "date": case_study['date'].isoformat() if case_study['date'] else None,
                 "keyword": case_study['keyword'],
@@ -96,20 +96,20 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest, current_use
     """
     logger.info(f"Creating new case study with status: {case_study_data.status}")
     
-    if not case_study_data.blog:
+    if not case_study_data.blogContent:
         raise HTTPException(status_code=400, detail="Case study content is required")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
-        case_study_content = case_study_data.blog.copy() if case_study_data.blog else {}
+        case_study_content = case_study_data.blogContent.copy() if case_study_data.blogContent else {}
         content_type = case_study_content.get('contentType', ContentTypeConstants.CASE_STUDY)
         
         new_case_study = await conn.fetchrow(
             """
-            INSERT INTO case_studies (blog, status, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted)
+            INSERT INTO case_studies (blogContent, status, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
-            RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+            RETURNING id, blogContent, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
             """,
             json.dumps(case_study_content),
             case_study_data.status,
@@ -129,7 +129,7 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest, current_use
             "message": "Case study created successfully",
             "case_study": {
                 "id": str(new_case_study['id']),
-                "blog": new_case_study['blog'],
+                "blogContent": new_case_study['blogContent'],
                 "status": new_case_study['status'],
                 "date": new_case_study['date'].isoformat() if new_case_study['date'] else None,
                 "keyword": new_case_study['keyword'],
@@ -179,9 +179,9 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
         update_values = []
         param_count = 1
         
-        if case_study_data.blog is not None:
-            update_fields.append(f"blog = ${param_count}")
-            update_values.append(json.dumps(case_study_data.blog))
+        if case_study_data.blogContent is not None:
+            update_fields.append(f"blogContent = ${param_count}")
+            update_values.append(json.dumps(case_study_data.blogContent))
             param_count += 1
         
         if case_study_data.status is not None:
@@ -225,7 +225,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
             UPDATE case_studies
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, blog, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
+            RETURNING id, blogContent, status, date, keyword, preview, slug, type, redirect_url, isdeleted, created_at, updated_at
         """
         
         updated_case_study = await conn.fetchrow(query, *update_values)
@@ -237,7 +237,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
             "message": "Case study updated successfully",
             "case_study": {
                 "id": str(updated_case_study['id']),
-                "blog": updated_case_study['blog'],
+                "blogContent": updated_case_study['blogContent'],
                 "status": updated_case_study['status'],
                 "date": updated_case_study['date'].isoformat() if updated_case_study['date'] else None,
                 "keyword": updated_case_study['keyword'],
@@ -430,9 +430,9 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 updated_case_study = await conn.fetchrow(
                     """
                     UPDATE case_studies
-                    SET blog = $1, status = $2, preview = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
+                    SET blogContent = $1, status = $2, preview = $3, editors_choice = $4, slug = $5, type = $6, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $7
-                    RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    RETURNING id, blogContent, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     case_study_status,
@@ -480,9 +480,9 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 
                 new_case_study = await conn.fetchrow(
                     """
-                    INSERT INTO case_studies (blog, status, preview, editors_choice, slug, type, isdeleted)
+                    INSERT INTO case_studies (blogContent, status, preview, editors_choice, slug, type, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, $6, FALSE)
-                    RETURNING id, blog, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    RETURNING id, blogContent, status, date, keyword, preview, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     case_study_status,

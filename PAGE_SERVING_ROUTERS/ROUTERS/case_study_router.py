@@ -9,8 +9,8 @@ from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from trial import get_raw_html
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+# from trial import get_raw_html
 
 load_dotenv()
 
@@ -533,7 +533,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     """
     Main orchestrator function that assembles all HTML sections into complete page
     """
-    blog_json_str = case_study_data.get('blog', '{}')
+    blog_json_str = case_study_data.get('blogContent', '{}')
     blog_data = parse_blog_json(blog_json_str)
     case_study_date = case_study_data.get('date', '')
     pdf_url = case_study_data.get('pdf_url', 'https://iwyjssxhrcucnrkzkvmt.supabase.co/storage/v1/object/public/magazine-pdfs/CXO%20TechBOT%20October%202024-1-25.pdf')
@@ -565,7 +565,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
         
         if by_slug:
             query = """
-                SELECT id, slug, blog, status, type, date, keyword, preview,
+                SELECT id, slug, blogContent, status, type, date, keyword, preview,
                        editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE slug = $1 AND isdeleted = FALSE
@@ -573,7 +573,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
             """
         else:
             query = """
-                SELECT id, slug, blog, status, type, date, keyword, preview,
+                SELECT id, slug, blogContent, status, type, date, keyword, preview,
                        editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE id = $1 AND isdeleted = FALSE
@@ -587,7 +587,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
             return {
                 "id": str(case_study['id']),
                 "slug": case_study['slug'],
-                "blog": case_study['blog'],
+                "blogContent": case_study['blogContent'],
                 "status": case_study['status'],
                 "type": case_study['type'],
                 "date": case_study['date'].isoformat() if case_study['date'] else None,
