@@ -1292,7 +1292,7 @@ def generate_header_section() -> str:
                     <a href="/seo">Search Engine Optimisation</a>
                 </div>
             </div>
-            <a href="/portfolio">Portfolio</a>
+            <a href="/portfolio">Case Study</a>
             <a href="/blogs" class="active">Blog</a>
             <a href="/contact" class="contact-us">
                 <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
@@ -1339,7 +1339,6 @@ def generate_summary_section(previewData: Dict[str, Any]) -> str:
     Generate the summary/lead section
     """
     summary = previewData.get('summary', '')
-    print(f"Summary before sanitization: {summary}")
     clean_summary = sanitize_html_preserve_formatting(summary)
     
     if not clean_summary:
@@ -1601,7 +1600,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     """
     Main orchestrator function that assembles all HTML sections into complete page
     """
-    blog_json_str = case_study_data.get('blogContent', '{}')
+    blog_json_str = case_study_data.get('blog', '{}')
     blog_data = parse_blog_json(blog_json_str)
     case_study_date = case_study_data.get('date', '')
     pdf_url = case_study_data.get('pdf_url')
