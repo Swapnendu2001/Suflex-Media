@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS case_studies (
     preview JSONB,
     editors_choice VARCHAR(1) DEFAULT 'N',
     redirect_url TEXT,
+    pdf_url TEXT,
     isDeleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
