@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api", tags=["Case Studies Management"])
 DATABASE_URL = config.DATABASE_URL
 
 class CreateCaseStudyRequest(BaseModel):
-    blog: Dict[str, Any]
+    blogContent: Dict[str, Any]
     status: str = StatusConstants.DRAFT
     keyword: Optional[Dict[str, Any]] = None
     preview: Optional[Dict[str, Any]] = None
@@ -23,7 +23,7 @@ class CreateCaseStudyRequest(BaseModel):
     redirect_url: Optional[str] = None
 
 class UpdateCaseStudyRequest(BaseModel):
-    blog: Optional[Dict[str, Any]] = None
+    blogContent: Optional[Dict[str, Any]] = None
     status: Optional[str] = None
     keyword: Optional[Dict[str, Any]] = None
     preview: Optional[Dict[str, Any]] = None
@@ -98,13 +98,13 @@ async def create_case_study(case_study_data: CreateCaseStudyRequest, current_use
     """
     logger.info(f"Creating new case study with status: {case_study_data.status}")
     
-    if not case_study_data.blog:
+    if not case_study_data.blogContent:
         raise HTTPException(status_code=400, detail="Case study content is required")
     
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
-        case_study_content = case_study_data.blog.copy() if case_study_data.blog else {}
+        case_study_content = case_study_data.blogContent.copy() if case_study_data.blogContent else {}
         content_type = case_study_content.get('contentType', ContentTypeConstants.CASE_STUDY)
         
         new_case_study = await conn.fetchrow(

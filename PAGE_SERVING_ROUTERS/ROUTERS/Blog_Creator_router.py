@@ -225,7 +225,7 @@ async def getHeader():
         <a href="/">Home</a>
         <a href="/about">About Us</a>
         <a href="/services">Services</a>
-        <a href="/portfolio">Portfolio</a>
+        <a href="/portfolio">Case Study</a>
         <a href="/blogs">Blog</a>
         <!-- <a href="/careers">Careers</a> -->
         <a href="/contact" class="contact-us">
@@ -304,7 +304,7 @@ async def getFooter():
       .footer .footer-content {
         display: flex;
         justify-content: space-around;
-        width: 100vw;
+        width: 80vw;
         align-items: flex-start;
         padding: 0 5vw;
         margin-right: 3vw;
@@ -473,6 +473,9 @@ async def getFooter():
           <a href="/about">About Us</a>
           <a href="/services">Services</a>
           <a href="/blogs">Blog</a>
+          <a href="/cancellation-and-refund-policy">Cancellation and Refund Policy</a>
+          <a href="/terms-of-service">Terms of Service</a>
+          <a href="/privacy-policy">Privacy Policy</a>
           <!-- <a href="/careers">Careers</a> -->
         </div>
         <div class="footer-section">
@@ -836,8 +839,8 @@ async def get_cards(other_blogs: list):
     print(f"Generating cards for {len(other_blogs)} other blogs.")
 
     cards_html = []
-    for blog in other_blogs:
-        blog_content = json.loads(blog['blog']) if isinstance(blog['blog'], str) else blog['blog']
+    for blog in other_blogs[:10]:
+        blog_content = json.loads(blog['blogcontent']) if isinstance(blog['blogcontent'], str) else blog['blogcontent']
         
         image_url = blog_content.get('mainImageUrl', 'https://picsum.photos/seed/default/800/400')
         image_alt = blog_content.get('mainImageAlt', 'Blog Image')
@@ -946,7 +949,7 @@ async def get_more_blogs_section(data: dict, other_blogs: list):
         }
         @media (max-width: 768px) {
             .related-blog-card {
-                flex: 0 0 80%; /* 1 card visible */
+                flex: 0 0 100%; /* 1 card visible */
             }
         }
     </style>
@@ -2309,9 +2312,9 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Querying for all blogs")
         all_blogs = await conn.fetch(
             """
-            SELECT id, blog, status, date, slug, isDeleted, created_at
+            SELECT id, blogContent, status, date, slug, isDeleted, created_at
             FROM blogs
-            WHERE isDeleted = FALSE AND (type = 'BLOG' OR (blog->>'contentType') = 'BLOG')
+            WHERE isDeleted = FALSE
             ORDER BY created_at DESC
             """
         )
@@ -2333,7 +2336,18 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         
         print(f"[DEBUG] Blog found - Status: {blog_record['status']}")
         
-        blog_data = blog_record['blog'] if isinstance(blog_record['blog'], dict) else json.loads(blog_record['blog'])
+        blog_content_raw = blog_record.get('blogcontent')
+        blog_data = {}
+        if blog_content_raw:
+            if isinstance(blog_content_raw, str):
+                try:
+                    blog_data = json.loads(blog_content_raw)
+                except json.JSONDecodeError:
+                    print(f"[ERROR] Failed to decode blogContent for blog {slug}: {blog_content_raw}")
+            elif isinstance(blog_content_raw, dict):
+                blog_data = blog_content_raw
+            else:
+                print(f"[ERROR] blogContent has unexpected type {type(blog_content_raw)} for blog {slug}: {blog_content_raw}")
         
         # Process and enrich the current blog's data for rendering
         blog_data['slug'] = blog_record['slug']

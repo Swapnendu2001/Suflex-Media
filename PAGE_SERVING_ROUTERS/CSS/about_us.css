@@ -798,6 +798,47 @@ body {
 .feature-item-new {
     position: absolute;
     transition: transform 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+}
+
+#creative-solutions-new {
+    animation-delay: 0s;
+}
+
+#transparency-new {
+    animation-delay: 0.2s;
+}
+
+#client-satisfaction-new {
+    animation-delay: 0.4s;
+}
+
+#data-driven-new {
+    animation-delay: 0.6s;
+}
+
+#quick-response-new {
+    animation-delay: 0.8s;
+}
+
+#witty-content-new {
+    animation-delay: 1s;
+}
+
+#attention-to-detail-new {
+    animation-delay: 1.2s;
+}
+
+#aesthetic-design-new {
+    animation-delay: 1.4s;
+}
+
+#fast-delivery-new {
+    animation-delay: 1.6s;
+}
+
+#timeless-quality-new {
+    animation-delay: 1.8s;
 }
 
 .feature-item-new:hover {
