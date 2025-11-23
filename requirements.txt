@@ -6,4 +6,5 @@ python-multipart == 0.0.9
 asyncpg
 email-validator
 minio
+httpx
 PyJWT

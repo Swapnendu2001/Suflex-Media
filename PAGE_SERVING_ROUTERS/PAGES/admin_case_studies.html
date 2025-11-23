@@ -141,15 +141,15 @@
                     </div>
                     <div class="header-center">
                         <div class="expandable-tabs flex items-center gap-2">
-                            <button class="left-tab-button active" data-left-tab="upload-image">
+                            <button class="left-tab-button active" data-left-tab="upload-pdf">
                                 <div class="flex-shrink-0">
-                                    <i data-lucide="image" class="w-4 h-4"></i>
+                                    <i data-lucide="upload" class="w-4 h-4"></i>
                                 </div>
-                                <span>Upload Image</span>
+                                <span>Upload</span>
                             </button>
                             <button class="left-tab-button" data-left-tab="storage">
                                 <div class="flex-shrink-0">
-                                    <i data-lucide="image" class="w-4 h-4"></i>
+                                    <i data-lucide="folder" class="w-4 h-4"></i>
                                 </div>
                                 <span>Gallery</span>
                             </button>
@@ -162,37 +162,49 @@
                     </div>
                 </div>
 
-                <div id="upload-imageContent" class="left-content-section active">
+                <div id="upload-pdfContent" class="left-content-section active">
                     <h3 class="text-lg font-semibold mb-4 text-white" style="font-family: 'Playfair Display', serif;">
-                        Upload Images</h3>
+                        Upload Files</h3>
                     <div class="bg-black/20 border-white/10 rounded-[20px] p-6">
-                        <div id="imageDropzone" class="dropzone flex flex-col items-center justify-center space-y-3"
+                        <div id="pdfDropzone" class="dropzone flex flex-col items-center justify-center space-y-3"
                             style="border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease; background-color: rgba(255, 255, 255, 0.02);">
-                            <i id="imageDropzoneIcon" data-lucide="upload-cloud" class="w-12 h-12 text-white/40"></i>
-                            <p class="font-semibold">Drag & drop images here</p>
-                            <p id="imageDropzoneText" class="text-sm text-white/60">Upload JPG, PNG, WEBP, etc. Max
-                                10MB.</p>
+                            <i id="pdfDropzoneIcon" data-lucide="upload-cloud" class="w-12 h-12 text-white/40"></i>
+                            <p class="font-semibold">Drag & drop files here</p>
+                            <p id="pdfDropzoneText" class="text-sm text-white/60">Upload images or PDF files. No size limit.</p>
                             <p class="text-xs text-white/50">or</p>
-                            <button type="button" onclick="document.getElementById('imageFileInput').click()"
+                            <button type="button" onclick="document.getElementById('pdfFileInput').click()"
                                 class="form-button bg-white/10 hover:bg-white/20 text-white/90 !px-4 !py-2">Browse
                                 Files</button>
                         </div>
-                        <input type="file" id="imageFileInput" multiple accept="image/*" class="hidden">
+                        <input type="file" id="pdfFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.svg,image/*,application/pdf" class="hidden">
 
-                        <div id="imageFileQueue" class="mt-6 space-y-3"></div>
+                        <div id="pdfFileQueue" class="mt-6 space-y-3"></div>
 
                         <div class="mt-8 flex justify-center">
-                            <button id="imageUploadBtn" class="form-button bg-white text-black hover:bg-gray-100"
+                            <button id="pdfUploadBtn" class="form-button bg-white text-black hover:bg-gray-100"
                                 disabled>
                                 <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
-                                <span id="imageUploadBtnText">Upload 0 Files</span>
+                                <span id="pdfUploadBtnText">Upload 0 Files</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div id="storageContent" class="left-content-section">
-
+                    <div class="mb-4 flex items-center gap-2">
+                        <button id="filterAllBtn" class="gallery-filter-btn active px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm transition-colors border border-white/10">
+                            <i data-lucide="grid-3x3" class="w-4 h-4 inline mr-1"></i>
+                            All
+                        </button>
+                        <button id="filterImagesBtn" class="gallery-filter-btn px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm transition-colors border border-white/5">
+                            <i data-lucide="image" class="w-4 h-4 inline mr-1"></i>
+                            Images
+                        </button>
+                        <button id="filterPDFsBtn" class="gallery-filter-btn px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm transition-colors border border-white/5">
+                            <i data-lucide="file-text" class="w-4 h-4 inline mr-1"></i>
+                            PDFs
+                        </button>
+                    </div>
 
                     <div id="gallerySubContent" class="storage-sub-content active">
                         <div id="galleryGrid" class="grid grid-cols-4 gap-4">
@@ -200,8 +212,8 @@
 
                         <div id="noGalleryItems" class="text-center py-8 hidden">
                             <i data-lucide="folder-x" class="w-12 h-12 mx-auto text-white/20 mb-4"></i>
-                            <h4 class="text-lg font-medium text-white/80">No Images Found</h4>
-                            <p class="text-white/50 mt-2">Try uploading some images or changing your search.</p>
+                            <h4 class="text-lg font-medium text-white/80">No Files Found</h4>
+                            <p class="text-white/50 mt-2">Try uploading some files or changing your filter.</p>
                         </div>
                     </div>
 
@@ -277,6 +289,22 @@
                                 </h3>
 
                                 <div class="form-item">
+                                    <label class="form-label" for="previewImageUrl">
+                                        <i data-lucide="image" class="w-4 h-4 inline mr-2"></i>Preview Image URL
+                                    </label>
+                                    <input type="url" id="previewImageUrl" name="previewImageUrl" class="form-input"
+                                        placeholder="https://example.com/preview-image.jpg" />
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="previewImageAlt">
+                                        <i data-lucide="type" class="w-4 h-4 inline mr-2"></i>Preview Image Alt Text
+                                    </label>
+                                    <input type="text" id="previewImageAlt" name="previewImageAlt" class="form-input"
+                                        placeholder="Enter alt text for preview image..." />
+                                </div>
+
+                                <div class="form-item">
                                     <label class="form-label" for="previewText">
                                         <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>Preview Text <span
                                             class="text-red-400">*</span>
@@ -316,23 +344,13 @@
                                     <i data-lucide="layout" class="w-5 h-5 mr-2"></i>Content
                                 </h3>
 
-                                <div class="form-row">
-                                    <div class="form-item">
-                                        <label class="form-label" for="mainImageUrl">
-                                            <i data-lucide="image" class="w-4 h-4 inline mr-2"></i>Main Image URL <span
-                                                class="text-red-400">*</span>
-                                        </label>
-                                        <input type="url" id="mainImageUrl" name="mainImageUrl" class="form-input"
-                                            placeholder="https://example.com/image.jpg" required />
-                                    </div>
-                                    <div class="form-item">
-                                        <label class="form-label" for="mainImageAlt">
-                                            <i data-lucide="type" class="w-4 h-4 inline mr-2"></i>Main Image Alt Text
-                                            <span class="text-red-400">*</span>
-                                        </label>
-                                        <input type="text" id="mainImageAlt" name="mainImageAlt" class="form-input"
-                                            placeholder="Describe the image..." required />
-                                    </div>
+                                <div class="form-item">
+                                    <label class="form-label" for="pdfUrl">
+                                        <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>PDF URL <span
+                                            class="text-red-400">*</span>
+                                    </label>
+                                    <input type="url" id="pdfUrl" name="pdfUrl" class="form-input"
+                                        placeholder="https://example.com/document.pdf" required />
                                 </div>
 
                                 <div class="form-row">
@@ -583,6 +601,13 @@
                                 </div>
 
                                 <div id="editModeButtons" style="display: none; gap: 1rem;">
+                                    <button type="button" id="cancelEditBtn"
+                                        class="form-button bg-gray-600 hover:bg-gray-700 text-white">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                            <p>Cancel</p>
+                                        </div>
+                                    </button>
                                     <button type="button" id="loadPreviewEditBtn"
                                         class="form-button bg-white hover:bg-gray-100 text-black">
                                         <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
@@ -619,6 +644,16 @@
                                     <label class="form-label" for="filterTitle"><i data-lucide="type"
                                             class="w-4 h-4 inline mr-2"></i>Filter by Title</label>
                                     <input type="text" id="filterTitle" class="form-input" placeholder="Enter title...">
+                                </div>
+                                <div class="form-item">
+                                    <label class="form-label mb-2">
+                                        <i data-lucide="filter" class="w-4 h-4 inline mr-2"></i>Filters
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg cursor-pointer transition-all bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20">
+                                        <input type="checkbox" id="filterEditorsChoice" class="w-4 h-4 text-yellow-600 bg-gray-800 border-gray-600 rounded focus:ring-yellow-500 focus:ring-2">
+                                        <i data-lucide="star" class="w-4 h-4 text-yellow-500"></i>
+                                        <span class="text-sm font-medium text-white/90">Show Only Editor's Choice</span>
+                                    </label>
                                 </div>
                             </div>
 
