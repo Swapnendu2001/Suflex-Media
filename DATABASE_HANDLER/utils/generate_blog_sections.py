@@ -20,9 +20,9 @@ async def get_blog_data():
 
         # Fetch all published blogs of type 'BLOG'
         all_blogs_query = """
-            SELECT id, blog, date, created_at, editors_choice, slug, type
+            SELECT id, blogContent, date, created_at, editors_choice, slug, type
             FROM blogs
-            WHERE isdeleted = FALSE AND type = 'BLOG'
+            WHERE isdeleted = FALSE
             ORDER BY created_at DESC
         """
         all_blogs = await conn.fetch(all_blogs_query)
@@ -31,14 +31,14 @@ async def get_blog_data():
 
         processed_blogs = []
         for blog in all_blogs:
-            blog_content = blog['blog']
+            blog_content = blog['blogcontent']
             if isinstance(blog_content, str):
                 blog_content = json.loads(blog_content)
 
             title = blog_content.get('blogTitle', 'Untitled Blog')
             summary = blog_content.get('blogSummary', '')
             if not summary:
-                content = blog_content.get('blogContent', {})
+                content = blog_content.get('blogcontent', {})
                 if isinstance(content, dict) and 'content' in content:
                     content_items = content['content']
                     for item in content_items:
@@ -57,10 +57,10 @@ async def get_blog_data():
                 'created_at': blog['created_at'].strftime('%B %d, %Y') if blog['created_at'] else '',
                 'slug': blog['slug'],
                 'category': blog_content.get('blogCategory', 'General'),
-                'editors_choice': blog['editors_choice'] == 'Y',
+                'editors_choice': blog['editors_choice'] == 'Y' or blog['editors_choice'] == "ON",
                 'cover_image': extract_blog_image(blog_content)
             })
-
+        print(f"Processed Blogs: {processed_blogs}") # Debug print
         # Separate blogs into the three sections
         editors_choice_data = [b for b in processed_blogs if b['editors_choice']]
         
@@ -88,8 +88,8 @@ def extract_blog_image(blog_content):
     if 'blog_cover_image' in blog_content and blog_content['blog_cover_image']:
         return blog_content['blog_cover_image'].get('url')
         
-    if 'blogContent' in blog_content and 'blocks' in blog_content['blogContent']:
-        for block in blog_content['blogContent']['blocks']:
+    if 'blogcontent' in blog_content and 'blocks' in blog_content['blogcontent']:
+        for block in blog_content['blogcontent']['blocks']:
             if block['type'] == 'image':
                 return block['data']['file']['url']
     return None

@@ -903,8 +903,8 @@ async function fetchBlogs() {
     paginationControls.classList.add('hidden');
 
     try {
-        console.log('📡 Fetching blogs from /api/blogs...');
-        const response_blogs = await fetch('/api/blogs');
+        console.log('📡 Fetching blogs from /api/blogs?include_deleted=false...');
+        const response_blogs = await authenticatedFetch('/api/blogs?include_deleted=false');
         const result_blogs = await response_blogs.json();
 
         blogsLoading.classList.add('hidden');
@@ -945,13 +945,13 @@ function applyFiltersAndRender(page = 1) {
 
         let blogData = {};
         try {
-            if (typeof blog.blog === 'string') {
-                blogData = JSON.parse(blog.blog);
-            } else if (typeof blog.blog === 'object' && blog.blog !== null) {
-                blogData = blog.blog;
+            if (typeof blog.blogcontent === 'string') {
+                blogData = JSON.parse(blog.blogcontent);
+            } else if (typeof blog.blogcontent === 'object' && blog.blogcontent !== null) {
+                blogData = blog.blogcontent;
             }
         } catch (e) {
-            console.error('Failed to parse blog.blog in filter:', e);
+            console.error('Failed to parse blog.blogcontent in filter:', e);
             blogData = {};
         }
 
@@ -1018,13 +1018,13 @@ function displayBlogs(blogs) {
         let blogData = {};
         
         try {
-            if (typeof blog.blog === 'string') {
-                blogData = JSON.parse(blog.blog);
-            } else if (typeof blog.blog === 'object' && blog.blog !== null) {
-                blogData = blog.blog;
+            if (typeof blog.blogcontent === 'string') {
+                blogData = JSON.parse(blog.blogcontent);
+            } else if (typeof blog.blogcontent === 'object' && blog.blogcontent !== null) {
+                blogData = blog.blogcontent;
             }
         } catch (e) {
-            console.error(`Failed to parse blog.blog for blog ${index + 1}:`, e);
+            console.error(`Failed to parse blog.blogcontent for blog ${index + 1}:`, e);
             blogData = {};
         }
 
@@ -1034,7 +1034,7 @@ function displayBlogs(blogs) {
             type: blog.type,
             category: blog.category,
             date: blog.date,
-            blogDataType: typeof blog.blog,
+            blogDataType: typeof blog.blogContent,
             parsedBlogData: blogData
         });
 
@@ -1178,13 +1178,13 @@ function populateEditForm(blog) {
     
     let blogData = {};
     try {
-        if (typeof blog.blog === 'string') {
-            blogData = JSON.parse(blog.blog);
-        } else if (typeof blog.blog === 'object' && blog.blog !== null) {
-            blogData = blog.blog;
+        if (typeof blog.blogcontent === 'string') {
+            blogData = JSON.parse(blog.blogcontent);
+        } else if (typeof blog.blogcontent === 'object' && blog.blogcontent !== null) {
+            blogData = blog.blogcontent;
         }
     } catch (e) {
-        console.error('Failed to parse blog.blog in populateEditForm:', e);
+        console.error('Failed to parse blog.blogContent in populateEditForm:', e);
         blogData = {};
     }
     

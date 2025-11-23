@@ -1601,7 +1601,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     """
     Main orchestrator function that assembles all HTML sections into complete page
     """
-    blog_json_str = case_study_data.get('blog', '{}')
+    blog_json_str = case_study_data.get('blogContent', '{}')
     blog_data = parse_blog_json(blog_json_str)
     case_study_date = case_study_data.get('date', '')
     pdf_url = case_study_data.get('pdf_url')
