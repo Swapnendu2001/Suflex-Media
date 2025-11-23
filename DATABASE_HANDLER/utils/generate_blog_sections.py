@@ -57,7 +57,7 @@ async def get_blog_data():
                 'created_at': blog['created_at'].strftime('%B %d, %Y') if blog['created_at'] else '',
                 'slug': blog['slug'],
                 'category': blog_content.get('blogCategory', 'General'),
-                'editors_choice': blog['editors_choice'] == 'Y',
+                'editors_choice': blog['editors_choice'] == 'Y' or blog['editors_choice'] == "ON",
                 'cover_image': extract_blog_image(blog_content)
             })
 
