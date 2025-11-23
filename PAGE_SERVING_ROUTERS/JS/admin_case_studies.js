@@ -838,9 +838,13 @@ function updateSnapshotNumbers() {
 function collectPreviewData() {
     const previewText = document.getElementById('previewText');
     const blogSummary = document.getElementById('blogSummary');
+    const previewImageUrl = document.getElementById('previewImageUrl');
+    const previewImageAlt = document.getElementById('previewImageAlt');
     const snapshotInputs = document.querySelectorAll('.snapshot-input');
     
     const previewData = {
+        imageUrl: previewImageUrl ? previewImageUrl.value.trim() : '',
+        imageAlt: previewImageAlt ? previewImageAlt.value.trim() : '',
         text: previewText ? (previewText.isContentEditable ? previewText.innerHTML.trim() : previewText.value.trim()) : '',
         summary: blogSummary ? (blogSummary.isContentEditable ? blogSummary.innerHTML.trim() : blogSummary.value.trim()) : '',
         projectSnapshots: []
@@ -859,9 +863,17 @@ function collectPreviewData() {
 function populatePreviewData(previewData) {
     const previewText = document.getElementById('previewText');
     const blogSummary = document.getElementById('blogSummary');
+    const previewImageUrl = document.getElementById('previewImageUrl');
+    const previewImageAlt = document.getElementById('previewImageAlt');
     const container = document.getElementById('projectSnapshotsContainer');
     
     if (!previewData) {
+        if (previewImageUrl) {
+            previewImageUrl.value = '';
+        }
+        if (previewImageAlt) {
+            previewImageAlt.value = '';
+        }
         if (previewText) {
             if (previewText.isContentEditable) {
                 previewText.innerHTML = '';
@@ -878,6 +890,14 @@ function populatePreviewData(previewData) {
         }
         container.innerHTML = '';
         return;
+    }
+    
+    if (previewImageUrl && previewData.imageUrl) {
+        previewImageUrl.value = previewData.imageUrl;
+    }
+    
+    if (previewImageAlt && previewData.imageAlt) {
+        previewImageAlt.value = previewData.imageAlt;
     }
     
     if (previewText && previewData.text) {
@@ -1532,13 +1552,16 @@ async function fetchBlogs() {
 function applyFiltersAndRender(page = 1) {
     const filterTitleInput = document.getElementById('filterTitle');
     const filterContentTypeInput = document.getElementById('filterContentType');
+    const filterEditorsChoiceInput = document.getElementById('filterEditorsChoice');
     
     const filterTitleValue = filterTitleInput ? filterTitleInput.value.trim().toLowerCase() : '';
     const filterContentTypeValue = filterContentTypeInput ? filterContentTypeInput.value : 'ALL';
+    const filterEditorsChoiceValue = filterEditorsChoiceInput ? filterEditorsChoiceInput.checked : false;
 
     console.log('🔍 Applying filters:');
     console.log(`  - Title filter: "${filterTitleValue}" (${filterTitleValue ? 'ACTIVE' : 'INACTIVE'})`);
     console.log(`  - Type filter: "${filterContentTypeValue}"`);
+    console.log(`  - Editor's Choice filter: ${filterEditorsChoiceValue ? 'ACTIVE' : 'INACTIVE'}`);
     console.log(`  - Total blogs before filtering: ${allFetchedBlogs.length}`);
 
     const filteredBlogs = allFetchedBlogs.filter(blog => {
@@ -1561,14 +1584,16 @@ function applyFiltersAndRender(page = 1) {
 
         const title = (blogData.blogTitle || blog.title || '').toLowerCase();
         const type = blog.type || 'BLOG';
+        const editorsChoice = blog.editors_choice || 'N';
 
         const titleMatch = !filterTitleValue || title.includes(filterTitleValue);
         const typeMatch = filterContentTypeValue === 'ALL' || type === filterContentTypeValue;
+        const editorsChoiceMatch = !filterEditorsChoiceValue || editorsChoice === 'Y';
 
-        const matches = titleMatch && typeMatch;
+        const matches = titleMatch && typeMatch && editorsChoiceMatch;
 
-        if (filterTitleValue || filterContentTypeValue !== 'ALL') {
-            console.log(`  Blog "${title}": titleMatch=${titleMatch}, typeMatch=${typeMatch}, result=${matches}`);
+        if (filterTitleValue || filterContentTypeValue !== 'ALL' || filterEditorsChoiceValue) {
+            console.log(`  Blog "${title}": titleMatch=${titleMatch}, typeMatch=${typeMatch}, editorsChoiceMatch=${editorsChoiceMatch}, result=${matches}`);
         }
 
         return matches;
@@ -1638,6 +1663,7 @@ function displayBlogs(blogs) {
             type: blog.type,
             category: blog.category,
             date: blog.date,
+            editors_choice: blog.editors_choice,
             blogDataType: typeof blog.blog,
             parsedBlogData: blogData
         });
@@ -1645,18 +1671,29 @@ function displayBlogs(blogs) {
         const title = blogData.blogTitle || blog.title || 'Untitled';
         const date = blogData.blogDate || blog.date || new Date().toISOString();
         const status = blog.status || 'draft';
-        const mainImageUrl = blogData.mainImageUrl || '';
-        const mainImageAlt = blogData.mainImageAlt || title;
+        const pdfUrl = blog.pdf_url || '';
         const type = blog.type || 'BLOG';
         const slug = blog.slug || '';
+        const editorsChoice = blog.editors_choice || 'N';
+        const isEditorsChoice = editorsChoice === 'Y';
 
-        console.log(`  Title: "${title}", Slug: "${slug}", Date: "${date}", Status: "${status}", Type: "${type}"`);
+        console.log(`  Title: "${title}", Slug: "${slug}", Date: "${date}", Status: "${status}", Type: "${type}", Editors Choice: "${editorsChoice}"`);
 
         return `
-            <div class="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
-                <div class="flex justify-between items-start mb-3">
+            <div class="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors relative">
+                <div class="absolute top-3 right-3 flex items-center gap-2">
+                    <button
+                        class="editors-choice-btn p-2 rounded-lg transition-all hover:bg-white/10"
+                        onclick="toggleEditorsChoice('${blog.id.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}')"
+                        title="${isEditorsChoice ? 'Remove from Editor\'s Choice' : 'Mark as Editor\'s Choice'}">
+                        <i data-lucide="star" class="w-5 h-5 ${isEditorsChoice ? 'text-yellow-500 fill-yellow-500' : 'text-white/40'}"></i>
+                    </button>
+                </div>
+                <div class="flex justify-between items-start mb-3 pr-12">
                     <div class="flex-1">
-                        <h3 class="font-semibold mb-2 text-white line-clamp-2">${escapeHtml(title)}</h3>
+                        <div class="flex items-start gap-2 mb-2">
+                            <h3 class="font-semibold text-white line-clamp-2 flex-1">${escapeHtml(title)}</h3>
+                        </div>
                         <p class="text-sm text-white/60 mb-2 flex items-center gap-2 flex-wrap">
                             <span class="flex items-center gap-1">
                                 <i data-lucide="calendar" class="w-3 h-3"></i>
@@ -1666,14 +1703,22 @@ function displayBlogs(blogs) {
                             <span class="px-2 py-1 rounded-full text-xs ${status === 'published' ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}">${status}</span>
                             <span>•</span>
                             <span class="px-2 py-1 rounded-full text-xs ${type === 'CASE STUDY' ? 'bg-purple-600/20 text-purple-400' : 'bg-blue-600/20 text-blue-400'}">${type}</span>
+                            ${pdfUrl ? `
+                                <span>•</span>
+                                <span class="px-2 py-1 rounded-full text-xs bg-red-600/20 text-red-400 flex items-center gap-1">
+                                    <i data-lucide="file-text" class="w-3 h-3"></i>
+                                    PDF
+                                </span>
+                            ` : ''}
+                            ${isEditorsChoice ? `
+                                <span>•</span>
+                                <span class="px-2 py-1 rounded-full text-xs bg-yellow-600/20 text-yellow-400 border border-yellow-500/30 inline-flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3"></i>
+                                    Editor's Choice
+                                </span>
+                            ` : ''}
                         </p>
                     </div>
-                    ${mainImageUrl ? `
-                        <div class="ml-4 flex-shrink-0">
-                            <img src="${escapeHtml(mainImageUrl)}" alt="${escapeHtml(mainImageAlt)}"
-                                 class="w-16 h-16 object-cover rounded-lg border border-white/10">
-                        </div>
-                    ` : ''}
                 </div>
                 <div class="flex gap-2 flex-wrap">
                     <button class="form-button text-xs px-4 py-2 min-w-[70px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="editBlog('${blog.id.replace("'", "[quotetation_here]")}')">
@@ -1701,6 +1746,38 @@ function displayBlogs(blogs) {
 
     lucide.createIcons();
 }
+
+async function toggleEditorsChoice(blogId, blogTitle) {
+    blogId = blogId.replace("[quotetation_here]", "'");
+    blogTitle = blogTitle.replace("[quotetation_here]", "'");
+    
+    try {
+        const response = await authenticatedFetch(`/api/case-studies/${blogId}/toggle-editors-choice`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const errorResult = await response.json();
+            showModal('Error', errorResult.detail || 'Failed to toggle editor\'s choice', 'error');
+            return;
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            showModal('Success', result.message, 'success');
+            await fetchBlogs();
+        } else {
+            showModal('Error', result.message || 'Failed to toggle editor\'s choice', 'error');
+        }
+
+    } catch (error) {
+        console.error('Error toggling editor\'s choice:', error);
+        showModal('Error', error.message || 'Failed to toggle editor\'s choice', 'error');
+    }
+}
+
+window.toggleEditorsChoice = toggleEditorsChoice;
 
 function updatePaginationControls() {
     const prevBtn = document.getElementById('prevPage');
@@ -1797,14 +1874,12 @@ function populateEditForm(blog) {
     
     console.log('📝 Populating form with blog data:', blogData);
 
-    const mainImageUrl = document.getElementById('mainImageUrl');
-    const mainImageAlt = document.getElementById('mainImageAlt');
+    const pdfUrl = document.getElementById('pdfUrl');
     const blogTitle = document.getElementById('blogTitle');
     const blogDate = document.getElementById('blogDate');
     const blogSummary = document.getElementById('blogSummary');
     
-    if (mainImageUrl) mainImageUrl.value = blogData.mainImageUrl || '';
-    if (mainImageAlt) mainImageAlt.value = blogData.mainImageAlt || '';
+    if (pdfUrl) pdfUrl.value = blog.pdf_url || '';
     if (blogTitle) blogTitle.value = blogData.blogTitle || '';
     if (blogDate) blogDate.value = blogData.blogDate || '';
     if (blogSummary) {
@@ -2308,6 +2383,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const filterTitleInput = document.getElementById('filterTitle');
+    const filterEditorsChoiceInput = document.getElementById('filterEditorsChoice');
 
     function setupFilterListeners() {
         const applyFilters = () => applyFiltersAndRender(1);
@@ -2317,13 +2393,32 @@ document.addEventListener('DOMContentLoaded', function () {
             searchTimeout = setTimeout(func, delay);
         };
 
-        console.log('✓ Setting up filter listeners (Title text input)');
+        console.log('✓ Setting up filter listeners (Title text input and Editor\'s Choice checkbox)');
         if (filterTitleInput) {
             filterTitleInput.addEventListener('input', () => debounce(applyFilters, 300));
+        }
+        
+        if (filterEditorsChoiceInput) {
+            filterEditorsChoiceInput.addEventListener('change', applyFilters);
         }
     }
 
     setupFilterListeners();
+
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', function() {
+            switchToAddMode();
+            const navbarTabs = document.querySelectorAll('#navbarTabs .tab-button');
+            const editDeleteTab = Array.from(navbarTabs).find(btn => {
+                const text = btn.textContent.trim();
+                return text.includes('Edit/Delete');
+            });
+            if (editDeleteTab) {
+                editDeleteTab.click();
+            }
+        });
+    }
 
     const prevPage = document.getElementById('prevPage');
     const nextPage = document.getElementById('nextPage');
@@ -2403,10 +2498,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (tabName === 'storage') {
                 setTimeout(() => {
-                    loadGallery();
+                    loadPDFGallery();
                 }, 100);
             }
         });
+    const filterAllBtn = document.getElementById('filterAllBtn');
+    const filterImagesBtn = document.getElementById('filterImagesBtn');
+    const filterPDFsBtn = document.getElementById('filterPDFsBtn');
+
+    function updateGalleryFilterButtons(activeFilter) {
+        const buttons = [filterAllBtn, filterImagesBtn, filterPDFsBtn];
+        const filters = ['all', 'images', 'pdfs'];
+        
+        buttons.forEach((btn, index) => {
+            if (btn) {
+                if (filters[index] === activeFilter) {
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-white/5', 'text-white/70', 'border-white/5');
+                    btn.classList.add('bg-white/10', 'text-white', 'border-white/10');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-white/5', 'text-white/70', 'border-white/5');
+                    btn.classList.remove('bg-white/10', 'text-white', 'border-white/10');
+                }
+            }
+        });
+    }
+
+    if (filterAllBtn) {
+        filterAllBtn.addEventListener('click', () => {
+            currentGalleryFilter = 'all';
+            updateGalleryFilterButtons('all');
+            renderPDFGallery();
+        });
+    }
+
+    if (filterImagesBtn) {
+        filterImagesBtn.addEventListener('click', () => {
+            currentGalleryFilter = 'images';
+            updateGalleryFilterButtons('images');
+            renderPDFGallery();
+        });
+    }
+
+    if (filterPDFsBtn) {
+        filterPDFsBtn.addEventListener('click', () => {
+            currentGalleryFilter = 'pdfs';
+            updateGalleryFilterButtons('pdfs');
+            renderPDFGallery();
+        });
+    }
+
     });
 
     const storageSubTabs = document.querySelectorAll('.storage-sub-tab');
@@ -2436,26 +2578,24 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (subTabName === 'gallery') {
-                setTimeout(() => loadGallery(), 100);
-            } 
+                setTimeout(() => loadPDFGallery(), 100);
+            }
         });
     });
 
-    let imageFilesToUpload = [];
-    let magazineFilesToUpload = [];
-    let imageFiles = [];
-    let magazineFiles = [];
+    let pdfFilesToUpload = [];
+    let pdfFiles = [];
 
-    const magazineDropzone = document.getElementById('magazineDropzone');
-    const magazineFileInput = document.getElementById('magazineFileInput');
-    const magazineFileQueue = document.getElementById('magazineFileQueue');
-    const magazineUploadBtn = document.getElementById('magazineUploadBtn');
-    const magazineUploadBtnText = document.getElementById('magazineUploadBtnText');
+    const pdfDropzone = document.getElementById('pdfDropzone');
+    const pdfFileInput = document.getElementById('pdfFileInput');
+    const pdfFileQueue = document.getElementById('pdfFileQueue');
+    const pdfUploadBtn = document.getElementById('pdfUploadBtn');
+    const pdfUploadBtnText = document.getElementById('pdfUploadBtnText');
 
-    if (magazineDropzone && magazineFileInput) {
+    if (pdfDropzone && pdfFileInput) {
         setupFileUpload(
-            magazineDropzone, magazineFileInput, magazineFileQueue, magazineUploadBtn, magazineUploadBtnText,
-            magazineFilesToUpload, 'pdf', 'magazines'
+            pdfDropzone, pdfFileInput, pdfFileQueue, pdfUploadBtn, pdfUploadBtnText,
+            pdfFilesToUpload, 'pdf', 'pdfs'
         );
     }
 
@@ -2494,7 +2634,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const formData = new FormData();
                     formData.append('file', file);
 
-                    const response = await fetch('/upload_file', {
+                    const response = await fetch('/api/upload-file', {
                         method: 'POST',
                         body: formData
                     });
@@ -2526,9 +2666,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (successCount > 0) {
-                if (fileType === 'image') {
-                    await loadGallery();
-                } 
+                if (fileType === 'pdf') {
+                    await loadPDFGallery();
+                }
             }
 
             filesToUpload.length = 0;
@@ -2557,8 +2697,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     invalidFiles.push(file);
                 }
             } else if (fileType === 'pdf') {
-                if (file.name.toLowerCase().endsWith('.pdf') &&
-                    (file.type === 'application/pdf' || file.type === '')) {
+                const isImage = file.type.startsWith('image/') &&
+                    ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/svg+xml'].includes(file.type.toLowerCase());
+                const isPDF = file.name.toLowerCase().endsWith('.pdf') &&
+                    (file.type === 'application/pdf' || file.type === '');
+                
+                if (isImage || isPDF) {
                     validFiles.push(file);
                 } else {
                     invalidFiles.push(file);
@@ -2568,7 +2712,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (invalidFiles.length > 0) {
             const fileNames = invalidFiles.map(f => f.name).join(', ');
-            const expectedTypes = fileType === 'image' ? 'PNG, JPG, JPEG, GIF, WEBP, BMP, SVG' : 'PDF';
+            const expectedTypes = fileType === 'image' ? 'PNG, JPG, JPEG, GIF, WEBP, BMP, SVG' : 'Images (PNG, JPG, JPEG, GIF, WEBP, BMP, SVG) or PDF';
             showToast(`Invalid file type(s): ${fileNames}. Expected: ${expectedTypes}`, 'error');
         }
 
@@ -2605,117 +2749,131 @@ document.addEventListener('DOMContentLoaded', function () {
         uploadBtnText.textContent = `Upload ${filesToUpload.length} File${filesToUpload.length !== 1 ? 's' : ''}`;
     }
 
-    async function loadGallery() {
+    let currentGalleryFilter = 'all';
+
+    async function loadPDFGallery() {
         try {
-            const response = await fetch('/get_file_details?bucket_name=blog-images');
+            const response = await fetch('/api/list-pdfs');
             const result = await response.json();
 
-            if (result.status === 'success' && result.data) {
-                imageFiles = result.data.map(file => ({
-                    id: file.id,
-                    name: file.name,
-                    url: file.public_url,
-                    size: file.size
-                }));
-                renderGallery();
+            if (result.status === 'success' && result.images) {
+                pdfFiles = result.images.map(file => {
+                    const isPDF = file.object_name.toLowerCase().endsWith('.pdf');
+                    return {
+                        id: file.object_name,
+                        name: file.object_name,
+                        url: file.public_url,
+                        size: file.size,
+                        type: isPDF ? 'pdf' : 'image'
+                    };
+                });
+                renderPDFGallery();
             }
         } catch (error) {
             console.error('Error loading gallery:', error);
         }
     }
 
-    function renderGallery(searchTerm = '') {
+    function renderPDFGallery(searchTerm = '') {
         const galleryGrid = document.getElementById('galleryGrid');
         const noItemsDiv = document.getElementById('noGalleryItems');
 
         if (!galleryGrid) return;
 
-        let filteredImages = imageFiles;
+        let filteredPDFs = pdfFiles;
+        
+        if (currentGalleryFilter === 'images') {
+            filteredPDFs = filteredPDFs.filter(item => item.type === 'image');
+        } else if (currentGalleryFilter === 'pdfs') {
+            filteredPDFs = filteredPDFs.filter(item => item.type === 'pdf');
+        }
+        
         if (searchTerm) {
-            filteredImages = imageFiles.filter(item =>
+            filteredPDFs = filteredPDFs.filter(item =>
                 item.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
         galleryGrid.innerHTML = '';
 
-        if (filteredImages.length === 0) {
+        if (filteredPDFs.length === 0) {
             noItemsDiv.classList.remove('hidden');
         } else {
             noItemsDiv.classList.add('hidden');
-            filteredImages.forEach(item => {
+            filteredPDFs.forEach(item => {
                 const itemEl = document.createElement('div');
-                itemEl.className = 'gallery-item group aspect-square';
-                itemEl.innerHTML = `
-                    <img src="${item.url}" alt="${item.name}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
-                    <div class="overlay"></div>
-                    <div class="relative z-10 text-white p-2 flex flex-col justify-end h-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-xs font-semibold truncate">${item.name}</p>
+                itemEl.className = 'gallery-item group aspect-[3/4] relative overflow-hidden cursor-pointer';
+                itemEl.style.cssText = `
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                `;
+                
+                const iconName = item.type === 'pdf' ? 'file-text' : 'image';
+                const viewTitle = item.type === 'pdf' ? 'View PDF' : 'View Image';
+                
+                const contentHtml = item.type === 'image' ? `
+                    <div class="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-3">
+                        <div class="w-full h-32 mb-3 flex items-center justify-center overflow-hidden" style="border-radius: 12px;">
+                            <img src="${item.url}" alt="${item.name}" class="max-w-full max-h-full object-contain" />
+                        </div>
+                        <p class="text-xs text-white/90 text-center px-2 font-medium break-all mb-2" style="line-height: 1.3; max-height: 2.6em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${item.name}</p>
+                        <div class="px-2 py-1 bg-white/5 border border-white/10" style="border-radius: 8px;">
+                            <p class="text-xs text-white/70 font-medium">${(item.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
                     </div>
-                    <div class="actions">
-                        <button class="action-btn" data-action="copy" data-url="${item.url}" title="Copy URL">
-                            <i data-lucide="link" class="w-3 h-3 text-white"></i>
+                ` : `
+                    <div class="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-5">
+                        <div class="mb-4 p-5 bg-white/5 border border-white/10 flex items-center justify-center" style="border-radius: 20px;">
+                            <i data-lucide="${iconName}" class="w-14 h-14 text-white/80"></i>
+                        </div>
+                        <p class="text-xs text-white/90 text-center px-3 font-medium break-all mb-3" style="line-height: 1.4; max-height: 2.8em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${item.name}</p>
+                        <div class="px-3 py-1.5 bg-white/5 border border-white/10" style="border-radius: 12px;">
+                            <p class="text-xs text-white/70 font-medium">${(item.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                    </div>
+                `;
+                
+                itemEl.innerHTML = contentHtml + `
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="actions absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300" style="transform: translateY(-4px);">
+                        <button class="action-btn p-2.5 bg-black/80 hover:bg-black border border-white/30 transition-all duration-200 hover:scale-110" data-action="copy" data-url="${item.url}" title="Copy URL" style="border-radius: 10px; backdrop-filter: blur(10px);">
+                            <i data-lucide="link" class="w-4 h-4 text-white"></i>
                         </button>
-                        <button class="action-btn" data-action="view" data-url="${item.url}" title="View">
-                            <i data-lucide="external-link" class="w-3 h-3 text-white"></i>
+                        <button class="action-btn p-2.5 bg-black/80 hover:bg-black border border-white/30 transition-all duration-200 hover:scale-110" data-action="view" data-url="${item.url}" title="${viewTitle}" style="border-radius: 10px; backdrop-filter: blur(10px);">
+                            <i data-lucide="external-link" class="w-4 h-4 text-white"></i>
                         </button>
-                        <button class="action-btn delete" data-action="delete" data-id="${item.id}" data-name="${item.name}" title="Delete">
-                            <i data-lucide="trash-2" class="w-3 h-3 text-white"></i>
+                        <button class="action-btn delete p-2.5 bg-red-600/90 hover:bg-red-600 border border-red-400/30 transition-all duration-200 hover:scale-110" data-action="delete" data-id="${item.id}" data-name="${item.name}" title="Delete" style="border-radius: 10px; backdrop-filter: blur(10px);">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
                         </button>
                     </div>
                 `;
+                
+                itemEl.addEventListener('mouseenter', function() {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.3)';
+                });
+                
+                itemEl.addEventListener('mouseleave', function() {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+                
+                itemEl.addEventListener('click', function(e) {
+                    if (!e.target.closest('.action-btn')) {
+                        selectGalleryPDF(itemEl, item.url);
+                    }
+                });
+                
                 galleryGrid.appendChild(itemEl);
             });
         }
         lucide.createIcons();
     }
 
-    function renderMagazines(searchTerm = '') {
-        const magazinesGrid = document.getElementById('magazinesGrid');
-        const noItemsDiv = document.getElementById('noMagazineItems');
-
-        if (!magazinesGrid) return;
-
-        let filteredMagazines = magazineFiles;
-        if (searchTerm) {
-            filteredMagazines = magazineFiles.filter(item =>
-                item.name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        magazinesGrid.innerHTML = '';
-
-        if (filteredMagazines.length === 0) {
-            noItemsDiv.classList.remove('hidden');
-        } else {
-            noItemsDiv.classList.add('hidden');
-            filteredMagazines.forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'gallery-item group aspect-[3/4]';
-                itemEl.innerHTML = `
-                    <div class="absolute inset-0 w-full h-full bg-white/5 border border-white/20 rounded-lg flex flex-col items-center justify-center">
-                        <i data-lucide="file-text" class="w-12 h-12 text-white/60 mb-2"></i>
-                        <p class="text-xs text-white/80 text-center px-2">${item.name}</p>
-                        <p class="text-xs text-white/50 mt-1">${item.size}</p>
-                    </div>
-                    <div class="overlay"></div>
-                    <div class="actions">
-                        <button class="action-btn" data-action="copy" data-url="${item.url}" title="Copy URL">
-                            <i data-lucide="link" class="w-3 h-3 text-white"></i>
-                        </button>
-                        <button class="action-btn" data-action="view" data-url="${item.url}" title="View">
-                            <i data-lucide="external-link" class="w-3 h-3 text-white"></i>
-                        </button>
-                        <button class="action-btn delete" data-action="delete" data-id="${item.id}" data-name="${item.name}" title="Delete">
-                            <i data-lucide="trash-2" class="w-3 h-3 text-white"></i>
-                        </button>
-                    </div>
-                `;
-                magazinesGrid.appendChild(itemEl);
-            });
-        }
-        lucide.createIcons();
-    }
 
     const galleryGrid = document.getElementById('galleryGrid');
     const magazinesGrid = document.getElementById('magazinesGrid');
@@ -2743,7 +2901,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (action === 'view') {
                 window.open(itemUrl, '_blank');
             } else if (action === 'delete') {
-                handleGalleryDelete(itemId, itemName, 'image');
+                handleGalleryDelete(itemId, itemName, 'pdf');
             }
         });
     }
@@ -2849,33 +3007,19 @@ document.addEventListener('DOMContentLoaded', function () {
             showToast('Deleting file...', 'success');
 
             try {
-                const response = await fetch('/delete_file', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        file_name: itemName
-                    })
+                const response = await fetch(`/api/delete-image/${encodeURIComponent(itemName)}`, {
+                    method: 'DELETE'
                 });
 
                 const result = await response.json();
 
                 if (response.ok && result.status === 'success') {
-                    if (type === 'image') {
-                        const itemIndex = imageFiles.findIndex(item => item.id == itemId);
-                        if (itemIndex > -1) {
-                            imageFiles.splice(itemIndex, 1);
-                            renderGallery();
-                        } else {
-                            await loadGallery();
-                        }
+                    const itemIndex = pdfFiles.findIndex(item => item.id == itemId);
+                    if (itemIndex > -1) {
+                        pdfFiles.splice(itemIndex, 1);
+                        renderPDFGallery();
                     } else {
-                        const itemIndex = magazineFiles.findIndex(item => item.id == itemId);
-                        if (itemIndex > -1) {
-                            magazineFiles.splice(itemIndex, 1);
-                            renderMagazines();
-                        } 
+                        await loadPDFGallery();
                     }
                     showToast(`${displayType.charAt(0).toUpperCase() + displayType.slice(1)} "${itemName}" deleted successfully!`, 'success');
                 } else {
@@ -3027,20 +3171,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 let successCount = 0;
                 let failCount = 0;
                 
+                let uploadMessages = [];
+                
                 for (const file of selectedFiles) {
                     const formData = new FormData();
                     formData.append('file', file);
                     
                     try {
-                        const response = await fetch('/api/upload-image', {
+                        const response = await fetch('/api/upload-file', {
                             method: 'POST',
                             body: formData
                         });
                         
+                        const result = await response.json();
+                        
                         if (response.ok) {
                             successCount++;
-                            const fileItem = imageFileQueue.querySelector(`[data-file-name="${file.name}"]`);
+                            const fileItem = pdfFileQueue.querySelector(`[data-file-name="${file.name}"]`);
                             if (fileItem) fileItem.remove();
+                            
+                            if (result.message && result.message.includes('already exists')) {
+                                uploadMessages.push(result.message);
+                            }
                         } else {
                             failCount++;
                         }
@@ -3054,133 +3206,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateUploadButton();
                 
                 if (successCount > 0) {
-                    showModal('Success', `${successCount} image${successCount > 1 ? 's' : ''} uploaded successfully!`, 'success');
-                    loadGalleryImages();
+                    let message = `${successCount} PDF${successCount > 1 ? 's' : ''} uploaded successfully!`;
+                    if (uploadMessages.length > 0) {
+                        message += '\n\n' + uploadMessages.join('\n');
+                    }
+                    showModal('Success', message, 'success');
+                    loadPDFGallery();
                 }
                 
                 if (failCount > 0) {
-                    showModal('Warning', `${failCount} image${failCount > 1 ? 's' : ''} failed to upload.`, 'error');
+                    showModal('Warning', `${failCount} PDF${failCount > 1 ? 's' : ''} failed to upload.`, 'error');
                 }
                 
             } catch (error) {
                 console.error('Upload error:', error);
-                showModal('Error', 'Failed to upload images. Please try again.', 'error');
+                showModal('Error', 'Failed to upload PDFs. Please try again.', 'error');
             } finally {
-                imageUploadBtn.disabled = false;
+                pdfUploadBtn.disabled = false;
                 updateUploadButton();
             }
         });
     }
 
-    loadGalleryImages();
+    loadPDFGallery();
 });
-
-async function loadGalleryImages() {
-    const galleryGrid = document.getElementById('galleryGrid');
-    const noGalleryItems = document.getElementById('noGalleryItems');
-    
-    if (!galleryGrid) return;
-    
-    try {
-        const response = await fetch('/api/list-images');
-        const data = await response.json();
-        
-        if (data.status === 'success' && data.images.length > 0) {
-            galleryGrid.innerHTML = '';
-            noGalleryItems.classList.add('hidden');
-            
-            data.images.forEach(image => {
-                const imageItem = createGalleryItem(image);
-                galleryGrid.appendChild(imageItem);
-            });
-            
-            lucide.createIcons();
-        } else {
-            galleryGrid.innerHTML = '';
-            noGalleryItems.classList.remove('hidden');
-        }
-    } catch (error) {
-        console.error('Failed to load gallery images:', error);
-        showModal('Error', 'Failed to load gallery images.', 'error');
-    }
-}
-
-function createGalleryItem(image) {
-    const item = document.createElement('div');
-    item.className = 'gallery-item relative rounded-lg overflow-hidden aspect-square cursor-pointer';
-    item.dataset.imageUrl = image.public_url;
-    item.dataset.imageName = image.object_name;
-    
-    const img = document.createElement('img');
-    img.src = image.public_url;
-    img.alt = image.object_name;
-    img.className = 'w-full h-full object-cover';
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 hover:opacity-100 transition-opacity';
-    
-    const actions = document.createElement('div');
-    actions.className = 'actions absolute top-2 right-2 flex gap-2';
-    
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'p-2 rounded-full bg-black/50 hover:bg-black transition-colors';
-    copyBtn.innerHTML = '<i data-lucide="copy" class="w-4 h-4 text-white"></i>';
-    copyBtn.title = 'Copy URL';
-    copyBtn.onclick = function(e) {
-        e.stopPropagation();
-        copyImageUrl(image.public_url);
-    };
-    
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'p-2 rounded-full bg-black/50 hover:bg-red-600 transition-colors';
-    deleteBtn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4 text-white"></i>';
-    deleteBtn.title = 'Delete Image';
-    deleteBtn.onclick = function(e) {
-        e.stopPropagation();
-        deleteImage(image.object_name);
-    };
-    
-    actions.appendChild(copyBtn);
-    actions.appendChild(deleteBtn);
-    
-    item.appendChild(img);
-    item.appendChild(overlay);
-    item.appendChild(actions);
-    
-    item.addEventListener('click', function() {
-        selectGalleryImage(item, image.public_url);
-    });
-    
-    return item;
-}
-
-function selectGalleryImage(item, imageUrl) {
-    document.querySelectorAll('.gallery-item').forEach(el => {
-        el.classList.remove('selected');
-    });
-    
-    item.classList.add('selected');
-    
-    const mainImageUrlInput = document.getElementById('mainImageUrl');
-    if (mainImageUrlInput) {
-        mainImageUrlInput.value = imageUrl;
-        mainImageUrlInput.dispatchEvent(new Event('input'));
-    }
-    
-    showModal('Image Selected', `Image URL copied to Main Image field:\n${imageUrl}`, 'success');
-}
-
-function copyImageUrl(url) {
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(url).then(() => {
-            showModal('Copied', 'Image URL copied to clipboard!', 'success');
-        }).catch(() => {
-            fallbackCopyText(url);
-        });
-    } else {
-        fallbackCopyText(url);
-    }
-}
 
 function fallbackCopyText(text) {
     const textArea = document.createElement("textarea");
