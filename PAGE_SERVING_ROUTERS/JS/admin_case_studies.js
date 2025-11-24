@@ -1955,7 +1955,20 @@ function populateEditForm(blog) {
         populateStructuredContent(blogData.structuredContent);
     }
 
-    if (blogData.previewData) {
+    if (blog.preview) {
+        let previewData = blog.preview;
+        if (typeof previewData === 'string') {
+            try {
+                previewData = JSON.parse(previewData);
+            } catch (e) {
+                console.error('Failed to parse blog.preview:', e);
+                previewData = null;
+            }
+        }
+        if (previewData) {
+            populatePreviewData(previewData);
+        }
+    } else if (blogData.previewData) {
         populatePreviewData(blogData.previewData);
     }
 
@@ -2147,7 +2160,8 @@ async function handleUpdateBlog() {
         const payload = {
             status: data.status,
             category: data.blogCategory,
-            keyword: data.labels
+            keyword: data.labels,
+            preview: data.previewData
         };
 
         payload.blog = data;
