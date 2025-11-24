@@ -57,3 +57,4 @@ CREATE INDEX IF NOT EXISTS idx_case_studies_isDeleted ON case_studies(isDeleted)
 CREATE INDEX IF NOT EXISTS idx_case_studies_keyword ON case_studies USING GIN(keyword);
 CREATE INDEX IF NOT EXISTS idx_case_studies_preview ON case_studies USING GIN(preview);
 CREATE INDEX IF NOT EXISTS idx_case_studies_case_study ON case_studies USING GIN(case_study);
+CREATE INDEX IF NOT EXISTS idx_case_studies_editors_choice ON case_studies(editors_choice) WHERE isDeleted = FALSE;
