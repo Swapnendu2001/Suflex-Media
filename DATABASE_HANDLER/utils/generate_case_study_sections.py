@@ -108,3 +108,60 @@ def generate_case_studies_html(case_studies_list, start_index=0):
         html_output += generate_case_study_card(case_study_data, index)
     
     return html_output
+
+def generate_home_case_study_html(case_study):
+    """
+    Generates the HTML for the case study section on the home page.
+    
+    Args:
+        case_study (dict): A dictionary containing the case study data.
+        
+    Returns:
+        tuple: A tuple containing the HTML for the title, the summary, and the read more button.
+    """
+    if not case_study:
+        return "", "", ""
+
+    slug = case_study.get('slug')
+    preview = case_study.get('preview', {})
+    if isinstance(preview, str):
+        try:
+            preview = json.loads(preview)
+        except (json.JSONDecodeError, TypeError):
+            preview = {}
+
+    title = preview.get('blogTitle', 'Discover Our Latest Success Story')
+    
+    summary_points = preview.get('projectSnapshots', [])
+    
+    title_html = f'<h2>{title}</h2>'
+    
+    summary_html = '<ul>'
+    for point in summary_points:
+        summary_html += f'<li>{point}</li>'
+    summary_html += '</ul>'
+
+    read_more_button_html = f'<button class="read-more-btn" onclick="window.location.href=\'/case-study/{slug}\'">Read more</button>' if slug else '<button class="read-more-btn">Read more</button>'
+    
+    return title_html, summary_html, read_more_button_html
+async def get_case_study_for_home(conn):
+    """
+    Fetches the latest published case study from the database.
+    
+    Args:
+        conn: An asyncpg database connection object.
+        
+    Returns:
+        A dictionary representing the case study, or None if no case study is found.
+    """
+    query = """
+        SELECT slug, preview
+        FROM case_studies
+        WHERE isdeleted = FALSE
+            AND status = 'published'
+            AND type = 'CASE STUDY'
+        ORDER BY date DESC
+        LIMIT 1
+    """
+    case_study = await conn.fetchrow(query)
+    return case_study
