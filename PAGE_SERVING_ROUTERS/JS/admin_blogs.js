@@ -1018,13 +1018,13 @@ function displayBlogs(blogs) {
         let blogData = {};
         
         try {
-            if (typeof blog.blogcontent === 'string') {
-                blogData = JSON.parse(blog.blogcontent);
-            } else if (typeof blog.blogcontent === 'object' && blog.blogcontent !== null) {
-                blogData = blog.blogcontent;
+            if (typeof blog.blogContent === 'string') {
+                blogData = JSON.parse(blog.blogContent);
+            } else if (typeof blog.blogContent === 'object' && blog.blogContent !== null) {
+                blogData = blog.blogContent;
             }
         } catch (e) {
-            console.error(`Failed to parse blog.blogcontent for blog ${index + 1}:`, e);
+            console.error(`Failed to parse blog.blogContent for blog ${index + 1}:`, e);
             blogData = {};
         }
 
@@ -1178,10 +1178,10 @@ function populateEditForm(blog) {
     
     let blogData = {};
     try {
-        if (typeof blog.blogcontent === 'string') {
-            blogData = JSON.parse(blog.blogcontent);
-        } else if (typeof blog.blogcontent === 'object' && blog.blogcontent !== null) {
-            blogData = blog.blogcontent;
+        if (typeof blog.blogContent === 'string') {
+            blogData = JSON.parse(blog.blogContent);
+        } else if (typeof blog.blogContent === 'object' && blog.blogContent !== null) {
+            blogData = blog.blogContent;
         }
     } catch (e) {
         console.error('Failed to parse blog.blogContent in populateEditForm:', e);
@@ -1394,12 +1394,11 @@ async function handleUpdateBlog() {
             : `/api/blogs/${currentEditingBlog.id}`;
 
         const payload = {
+            blogContent: data,
             status: data.status,
-            category: data.blogCategory,
-            keyword: data.labels
+            keyword: data.labels,
+            editors_choice: data.editors_choice || 'N'
         };
-
-        payload.blog = data;
 
         const response = await authenticatedFetch(endpoint, {
             method: 'PUT',
@@ -1545,6 +1544,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const updateBlogBtn = document.getElementById('updateBlogBtn');
     if (updateBlogBtn) {
         updateBlogBtn.addEventListener('click', handleUpdateBlog);
+    }
+
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', function () {
+            switchToAddMode();
+            showModal('Info', 'Edit cancelled. All changes have been discarded.', 'info');
+            
+            const navbarTabs = document.querySelectorAll('#navbarTabs .tab-button');
+            const editDeleteTab = Array.from(navbarTabs).find(btn => {
+                const text = btn.textContent.trim();
+                return text.includes('Edit/Delete') || text.includes('Edit');
+            });
+            
+            if (editDeleteTab) {
+                editDeleteTab.click();
+            }
+        });
     }
 
 

@@ -31,7 +31,7 @@ async def getHeader():
         padding: 2.25vw 4.75vw;
         background-color: #fff;
         font-family: 'Lexend', sans-serif;
-        height: 15vh;
+        height: 6vh;
         gap: 0.625vw;
         top: 0;
         left: 0;
@@ -304,7 +304,7 @@ async def getFooter():
       .footer .footer-content {
         display: flex;
         justify-content: space-around;
-        width: 80vw;
+        width: 95vw;
         align-items: flex-start;
         padding: 0 5vw;
         margin-right: 3vw;
@@ -877,7 +877,6 @@ async def get_more_blogs_section(data: dict, other_blogs: list):
     <style>
         .more_blogs {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f9fafb;
         }
         .card {
             transition: transform 0.2s ease-in-out;
@@ -907,6 +906,7 @@ async def get_more_blogs_section(data: dict, other_blogs: list):
             display: flex;
             gap: 1.5rem; /* 24px */
             transition: transform 0.5s ease-in-out;
+            padding: 5px;
         }
         .related-blog-card {
             flex: 0 0 calc((100% - 3rem) / 3); /* 3 cards visible, with gap */
@@ -1078,7 +1078,7 @@ async def get_blog_hero_section(data: dict):
         }}
     </style>
     <article>
-    <nav class="mb-4 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-4 md:mt-32" aria-label="Breadcrumb">
+    <nav class="mb-2 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-2 md:mt-8" aria-label="Breadcrumb">
         <div class="text-sm text-gray-600">
             <span class="font-jakarta font-medium flex items-center flex-wrap">
                 <a href="/blogs" class="flex items-center">blogs</a>
@@ -1352,7 +1352,7 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>News Page Dev</title>
+    <title>[[[title]]]</title>
     <link rel="icon" type="image/png" href="static/icon/website_icon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
@@ -1524,11 +1524,7 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        @media screen and (min-width: 1024px) {
-            body {
-                zoom: 1.145;
-            }
-        }
+        
 
         @keyframes slideDown {
             from {
@@ -2361,6 +2357,7 @@ async def get_blog(slug: str, preview: bool = Query(False), admin_user: Optional
         print(f"[DEBUG] Rendering blog HTML...")
         
         html_content = await create_blog_html(blog_data, other_blogs)
+        html_content = html_content.replace('[[[title]]]', blog_data.get('blogTitle', 'Blog Post'))
         print(f"[DEBUG] HTML generated successfully, length: {len(html_content)}")
         print("=" * 80)
         
