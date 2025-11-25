@@ -31,6 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_blogs_slug ON blogs(slug) WHERE isDeleted = FALSE
 CREATE INDEX IF NOT EXISTS idx_blogs_isDeleted ON blogs(isDeleted);
 CREATE INDEX IF NOT EXISTS idx_blogs_keyword ON blogs USING GIN(keyword);
 CREATE INDEX IF NOT EXISTS idx_blogs_blog ON blogs USING GIN(blogContent);
+CREATE INDEX IF NOT EXISTS idx_blogs_editors_choice ON blogs(editors_choice) WHERE isDeleted = FALSE;
 
 CREATE TABLE IF NOT EXISTS case_studies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
