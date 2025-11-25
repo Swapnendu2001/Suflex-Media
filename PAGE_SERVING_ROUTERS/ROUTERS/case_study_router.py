@@ -1292,7 +1292,7 @@ def generate_header_section() -> str:
                     <a href="/seo">Search Engine Optimisation</a>
                 </div>
             </div>
-            <a href="/portfolio">Case Study</a>
+            <a href="/case-studies">Case Studies</a>
             <a href="/blogs" class="active">Blog</a>
             <a href="/contact" class="contact-us">
                 <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
