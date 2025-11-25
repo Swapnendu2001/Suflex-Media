@@ -27,8 +27,13 @@ minio_client = Minio(
     secure=secure
 )
 
-if not minio_client.bucket_exists(MINIO_BUCKET_NAME):
-    minio_client.make_bucket(MINIO_BUCKET_NAME)
+try:
+    minio_client.list_buckets()
+    found = any(bucket.name == MINIO_BUCKET_NAME for bucket in minio_client.list_buckets())
+    if not found:
+        minio_client.make_bucket(MINIO_BUCKET_NAME)
+except Exception as e:
+    print(f"Warning: Could not check/create bucket: {e}")
 
 class ImageUploadResponse(BaseModel):
     status: str
