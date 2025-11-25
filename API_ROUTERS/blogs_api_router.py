@@ -520,6 +520,92 @@ async def restore_blog(blog_id: str, current_user: Dict[str, Any] = Depends(requ
     except Exception as e:
         logger.error(f"Unexpected error in restore_blog: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+@router.post("/blogs/{blog_id}/toggle-editors-choice")
+async def toggle_editors_choice(blog_id: str, current_user: Dict[str, Any] = Depends(require_admin)):
+    """
+    Toggle editor's choice status for a blog
+    Validates the 5-item maximum limit before setting to 'Y'
+    """
+    logger.info(f"Toggling editor's choice for blog ID: {blog_id}")
+    
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        existing_blog = await conn.fetchrow(
+            "SELECT id, editors_choice, isdeleted FROM blogs WHERE id = $1",
+            blog_id
+        )
+        
+        if not existing_blog:
+            await conn.close()
+            raise HTTPException(status_code=404, detail="Blog not found")
+        
+        if existing_blog['isdeleted']:
+            await conn.close()
+            raise HTTPException(status_code=400, detail="Cannot modify deleted blog")
+        
+        current_status = existing_blog['editors_choice']
+        new_status = 'N' if current_status == 'Y' else 'Y'
+        
+        if new_status == 'Y':
+            count_result = await conn.fetchval(
+                """
+                SELECT COUNT(*) FROM blogs
+                WHERE editors_choice = 'Y' AND isdeleted = FALSE AND type = $1
+                """,
+                ContentTypeConstants.BLOG
+            )
+            
+            if count_result >= 5:
+                await conn.close()
+                raise HTTPException(
+                    status_code=400,
+                    detail="Maximum of 5 blogs can be marked as Editor's Choice. Please remove one before adding another."
+                )
+        
+        updated_blog = await conn.fetchrow(
+            """
+            UPDATE blogs
+            SET editors_choice = $1, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $2
+            RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+            """,
+            new_status,
+            blog_id
+        )
+        
+        await conn.close()
+        
+        logger.info(f"Editor's choice toggled successfully for blog: {blog_id} to {new_status}")
+        return {
+            "status": "success",
+            "message": f"Editor's choice {'added' if new_status == 'Y' else 'removed'} successfully",
+            "editors_choice": new_status,
+            "blog": {
+                "id": str(updated_blog['id']),
+                "blogContent": updated_blog['blogcontent'],
+                "status": updated_blog['status'],
+                "date": updated_blog['date'].isoformat() if updated_blog['date'] else None,
+                "keyword": updated_blog['keyword'],
+                "editors_choice": updated_blog['editors_choice'],
+                "slug": updated_blog['slug'],
+                "type": updated_blog['type'],
+                "redirect_url": updated_blog['redirect_url'],
+                "isdeleted": updated_blog['isdeleted'],
+                "created_at": updated_blog['created_at'].isoformat() if updated_blog['created_at'] else None,
+                "updated_at": updated_blog['updated_at'].isoformat() if updated_blog['updated_at'] else None
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in toggle_editors_choice: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in toggle_editors_choice: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @router.post("/admin_save_blog")
 async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depends(require_admin)):
