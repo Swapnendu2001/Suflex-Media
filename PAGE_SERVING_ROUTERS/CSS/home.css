@@ -379,7 +379,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 100vw;
-    height: 170vh;
+    height: 160vh;
     background-color: transparent;
     font-family: 'Lexend', sans-serif;
     overflow-x: hidden;
@@ -1062,15 +1062,25 @@ body {
     background-color: #017AFF;
     background-size: cover;
     padding: 5vh 5vw;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 1.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     margin: 0 auto;
     position: relative;
     min-height: 130vh;
     box-sizing: border-box;
+}
+
+.cards-bucket {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1.5vw;
+    width: 80%;
+    max-width: 85vw;
+    position: relative;
+    z-index: 1;
 }
 
 .work-with-us-content::before {
@@ -1087,10 +1097,6 @@ body {
     z-index: 0;
 }
 
-.work-with-us-content>* {
-    position: relative;
-    z-index: 1;
-}
 
 .card {
     background-color: white;
@@ -1113,9 +1119,8 @@ body {
 }
 
 .card-3 {
-    grid-row: 1 / 5;
+    grid-row: 1 / 3;
     grid-column: 2;
-    justify-content: center;
 }
 
 .card-4 {
@@ -1126,6 +1131,11 @@ body {
 .card-5 {
     grid-row: 3 / 5;
     grid-column: 3;
+}
+
+.card-6 {
+    grid-row: 3 / 5;
+    grid-column: 2;
 }
 
 .work-with-us-content .card img {
@@ -1151,13 +1161,6 @@ body {
     line-height: 1.5;
 }
 
-.card-3 h4 {
-    font-size: 1.5vw;
-}
-
-.card-3 p {
-    font-size: 1vw;
-}
 
 .scaling-intro h2 {
     font-size: 4.5vw;
@@ -1189,11 +1192,15 @@ body {
     }
 
     .work-with-us-content {
+        padding: 5vh 5vw;
+    }
+
+    .cards-bucket {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         gap: 4vh;
+        width: 100%;
         max-width: 100%;
-        padding: 5vh 5vw;
     }
 
     .work-with-us-content::before {
@@ -1441,7 +1448,7 @@ body {
 
 .care-section {
     background-color: #fff;
-    padding: 10vh 0;
+    padding-top: 10vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1473,12 +1480,38 @@ body {
     margin-top: 1vh;
 }
 
+.care-content-wrapper {
+    background-color: #000;
+    background-image: url('/images/doodles-hero-section-services.png');
+    background-size: 80vw;
+    background-repeat: repeat;
+    width: 100%;
+    padding: 5vh 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.care-content-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 0;
+}
+
 .care-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2.5vw;
     width: 70vw;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .care-card {
@@ -1544,6 +1577,8 @@ body {
     border: none;
     border-radius: 0.5vw;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 768px) {

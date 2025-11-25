@@ -225,7 +225,7 @@ async def getHeader():
         <a href="/">Home</a>
         <a href="/about">About Us</a>
         <a href="/services">Services</a>
-        <a href="/portfolio">Case Study</a>
+        <a href="/case-studies">Case Studies</a>
         <a href="/blogs">Blog</a>
         <!-- <a href="/careers">Careers</a> -->
         <a href="/contact" class="contact-us">
