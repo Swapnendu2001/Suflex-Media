@@ -917,6 +917,7 @@ async function fetchBlogs() {
         allFetchedBlogs = [...blogs];
         console.log(`✓ Stored ${allFetchedBlogs.length} items in allFetchedBlogs array`);
         
+        updateEditorsChoiceCount();
         applyFiltersAndRender(1);
     } catch (error) {
         console.error('✗ Error fetching blogs:', error);
@@ -935,6 +936,7 @@ function applyFiltersAndRender(page = 1) {
     console.log('🔍 Applying filters:');
     console.log(`  - Title filter: "${filterTitleValue}" (${filterTitleValue ? 'ACTIVE' : 'INACTIVE'})`);
     console.log(`  - Type filter: "${filterContentTypeValue}"`);
+    console.log(`  - Editor's Choice filter: ${editorsChoiceFilter ? 'ACTIVE' : 'INACTIVE'}`);
     console.log(`  - Total blogs before filtering: ${allFetchedBlogs.length}`);
 
     const filteredBlogs = allFetchedBlogs.filter(blog => {
@@ -960,11 +962,12 @@ function applyFiltersAndRender(page = 1) {
 
         const titleMatch = !filterTitleValue || title.includes(filterTitleValue);
         const typeMatch = filterContentTypeValue === 'ALL' || type === filterContentTypeValue;
+        const editorsChoiceMatch = !editorsChoiceFilter || blog.editors_choice === 'Y';
 
-        const matches = titleMatch && typeMatch;
+        const matches = titleMatch && typeMatch && editorsChoiceMatch;
 
-        if (filterTitleValue || filterContentTypeValue !== 'ALL') {
-            console.log(`  Blog "${title}": titleMatch=${titleMatch}, typeMatch=${typeMatch}, result=${matches}`);
+        if (filterTitleValue || filterContentTypeValue !== 'ALL' || editorsChoiceFilter) {
+            console.log(`  Blog "${title}": titleMatch=${titleMatch}, typeMatch=${typeMatch}, editorsChoiceMatch=${editorsChoiceMatch}, result=${matches}`);
         }
 
         return matches;
@@ -1045,6 +1048,8 @@ function displayBlogs(blogs) {
         const mainImageAlt = blogData.mainImageAlt || title;
         const type = blog.type || 'BLOG';
         const slug = blog.slug || '';
+        const editorsChoice = blog.editors_choice || 'N';
+        const isEditorsChoice = editorsChoice === 'Y';
 
         console.log(`  Title: "${title}", Slug: "${slug}", Date: "${date}", Status: "${status}", Type: "${type}"`);
 
@@ -1072,6 +1077,12 @@ function displayBlogs(blogs) {
                     ` : ''}
                 </div>
                 <div class="flex gap-2 flex-wrap">
+                    <button
+                        class="editors-choice-btn p-2 rounded-lg transition-all hover:bg-white/10"
+                        onclick="toggleEditorsChoice('${blog.id.replace("'", "[quotetation_here]")}', '${title.replace("'", "[quotetation_here]")}')"
+                        title="${isEditorsChoice ? 'Remove from Editor\'s Choice' : 'Mark as Editor\'s Choice'}">
+                        <i data-lucide="star" class="w-4 h-4 ${isEditorsChoice ? 'text-yellow-400 fill-yellow-400' : 'text-white/40'}"></i>
+                    </button>
                     <button class="form-button text-xs px-4 py-2 min-w-[70px] bg-white/10 hover:bg-white/20 border border-white/20 text-white" onclick="editBlog('${blog.id.replace("'", "[quotetation_here]")}')">
                         <div class="flex items-center gap-2">
                             <i data-lucide="edit" class="w-3 h-3"></i>
@@ -1455,10 +1466,51 @@ function deleteBlog(blogId, blogTitle) {
         showModal('Error', 'Blog ID not found', 'error');
         return;
     }
-
+    
     showDeleteConfirmModal(blogId, blogTitle);
 }
 
+let editorsChoiceFilter = false;
+
+async function toggleEditorsChoice(blogId, blogTitle) {
+    blogId = blogId.replace("[quotetation_here]", "'");
+    blogTitle = blogTitle.replace("[quotetation_here]", "'");
+    
+    try {
+        const response = await authenticatedFetch(`/api/blogs/${blogId}/toggle-editors-choice`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const errorResult = await response.json();
+            showModal('Error', errorResult.detail || 'Failed to toggle editor\'s choice', 'error');
+            return;
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            showModal('Success', result.message, 'success');
+            await fetchBlogs();
+        } else {
+            showModal('Error', result.message || 'Failed to toggle editor\'s choice', 'error');
+        }
+
+    } catch (error) {
+        console.error('Error toggling editor\'s choice:', error);
+        showModal('Error', error.message || 'Failed to toggle editor\'s choice', 'error');
+    }
+}
+
+function updateEditorsChoiceCount() {
+    const editorsChoiceBlogs = allFetchedBlogs.filter(blog => blog.editors_choice === 'Y');
+    const countElement = document.getElementById('editorsChoiceCount');
+    if (countElement) {
+        countElement.textContent = `(${editorsChoiceBlogs.length}/5)`;
+    }
+}
+
+window.toggleEditorsChoice = toggleEditorsChoice;
 window.editBlog = editBlog;
 window.showBlogUrl = showBlogUrl;
 window.deleteBlog = deleteBlog;
@@ -1574,6 +1626,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addImageBtn').addEventListener('click', () => addDynamicSection('image'));
 
     const filterTitleInput = document.getElementById('filterTitle');
+    const filterEditorsChoiceBtn = document.getElementById('filterEditorsChoiceBtn');
 
     function setupFilterListeners() {
         const applyFilters = () => applyFiltersAndRender(1);
@@ -1586,6 +1639,26 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('✓ Setting up filter listeners (Title text input)');
         if (filterTitleInput) {
             filterTitleInput.addEventListener('input', () => debounce(applyFilters, 300));
+        }
+
+        if (filterEditorsChoiceBtn) {
+            filterEditorsChoiceBtn.addEventListener('click', () => {
+                editorsChoiceFilter = !editorsChoiceFilter;
+                
+                if (editorsChoiceFilter) {
+                    filterEditorsChoiceBtn.classList.add('bg-yellow-500/20', 'border-yellow-500/40');
+                    filterEditorsChoiceBtn.classList.remove('bg-white/10', 'border-white/20');
+                    filterEditorsChoiceBtn.querySelector('span').textContent = 'Show All Blogs';
+                    filterEditorsChoiceBtn.querySelector('i').classList.add('text-yellow-400', 'fill-yellow-400');
+                } else {
+                    filterEditorsChoiceBtn.classList.remove('bg-yellow-500/20', 'border-yellow-500/40');
+                    filterEditorsChoiceBtn.classList.add('bg-white/10', 'border-white/20');
+                    filterEditorsChoiceBtn.querySelector('span').textContent = "Show Editor's Choice";
+                    filterEditorsChoiceBtn.querySelector('i').classList.remove('fill-yellow-400');
+                }
+                
+                applyFilters();
+            });
         }
     }
 

@@ -52,7 +52,7 @@ for route_path, html_file in STATIC_PAGES.items():
         name=f"serve_{route_path.replace('/', '_').strip('_')}_page"
     )
 
-@router.get("/portfolio", response_class=HTMLResponse)
+@router.get("/case-studies", response_class=HTMLResponse)
 async def get_portfolio_page():
     """
     Serve portfolio page with dynamically fetched case studies
