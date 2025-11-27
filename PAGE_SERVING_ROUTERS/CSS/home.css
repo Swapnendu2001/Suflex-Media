@@ -1866,17 +1866,21 @@ body {
     }
 
     .insights-cards {
-        flex-direction: column;
-        gap: 4vh;
-        margin-left: 2.5vw;
+        flex-direction: row;
+        gap: 4vw;
+        margin-left: 0;
+    }
+
+    .insights-cards-container {
+        width: 100%;
     }
 
     .insight-card {
-        width: 85vw;
+        width: 80vw;
+        min-width: 80vw;
+        height: auto;
         padding: 6vw;
         border-radius: 5vw;
-        min-height: 85vw; /* Adjusted for mobile width */
-        padding-bottom: 6vw; /* Adjusted for mobile padding */
     }
 
     .card-top {
@@ -2713,6 +2717,82 @@ body {
         padding-left: 8vw;
         line-height: 1.6;
     }
+        .footer {
+        padding: 15vh 8vw 8vw 8vw;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 6vh 6vw;
+        padding: 0;
+        width: 100%;
+    }
+
+    .footer-section.cta {
+        grid-column: 1 / -1;
+        border-right: none;
+        padding-right: 0;
+        text-align: center;
+    }
+
+    .footer-section {
+        text-align: left;
+        width: 100%;
+    }
+
+    .footer-section h3 {
+        font-size: 5vw;
+        margin-bottom: 2vh;
+    }
+
+    .footer-section a,
+    .footer-section p {
+        font-size: 4vw;
+    }
+
+    .footer-section.cta h2 {
+        font-size: 8vw;
+    }
+
+    .footer-section.cta .button {
+        font-size: 4vw;
+        padding: 2vh 6vw;
+        border-radius: 2vw;
+        max-width: 60vw;
+        margin: 0 auto;
+    }
+
+    .social-links {
+        justify-content: flex-start;
+        gap: 4vw;
+    }
+
+    .social-links img {
+        width: 8vw;
+        height: 8vw;
+    }
+
+    .footer-logo img {
+        height: 10vh;
+    }
+
+    .copyright {
+        font-size: 3.5vw;
+        text-align: center;
+    }
+    .mobile-hero-icons {
+        display: block;
+    }
+
+    .mobile-scaling-icons {
+        display: none;
+    }
+
+    .mobile-care-icons {
+        display: none;
+    }
 }
 
 .footer {
@@ -2809,88 +2889,8 @@ body {
     font-size: 1vw;
 }
 
-@media (max-width: 768px) {
-    .footer {
-        padding: 15vh 8vw 8vw 8vw;
-    }
 
-    .footer-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
-        gap: 6vh 6vw;
-        padding: 0;
-        width: 100%;
-    }
 
-    .footer-section.cta {
-        grid-column: 1 / -1;
-        border-right: none;
-        padding-right: 0;
-        text-align: center;
-    }
-
-    .footer-section {
-        text-align: left;
-        width: 100%;
-    }
-
-    .footer-section h3 {
-        font-size: 5vw;
-        margin-bottom: 2vh;
-    }
-
-    .footer-section a,
-    .footer-section p {
-        font-size: 4vw;
-    }
-
-    .footer-section.cta h2 {
-        font-size: 8vw;
-    }
-
-    .footer-section.cta .button {
-        font-size: 4vw;
-        padding: 2vh 6vw;
-        border-radius: 2vw;
-        max-width: 60vw;
-        margin: 0 auto;
-    }
-
-    .social-links {
-        justify-content: flex-start;
-        gap: 4vw;
-    }
-
-    .social-links img {
-        width: 8vw;
-        height: 8vw;
-    }
-
-    .footer-logo img {
-        height: 10vh;
-    }
-
-    .copyright {
-        font-size: 3.5vw;
-        text-align: center;
-    }
-}
-
-/* Hide mobile icons on desktop */
-@media (min-width: 769px) {
-    .mobile-hero-icons {
-        display: block;
-    }
-
-    .mobile-scaling-icons {
-        display: none;
-    }
-
-    .mobile-care-icons {
-        display: none;
-    }
-}
 .insights-header {
     position: relative;
 }
@@ -2923,6 +2923,7 @@ body {
     scrollbar-width: none;
     width: 89vw;
     top: 8vh;
+    height: 75vh;
 }
 
 .insights-cards-container::-webkit-scrollbar {
@@ -2933,10 +2934,10 @@ body {
  {
     display: flex;
     flex-wrap: nowrap;
-    gap: 2vw;
+    gap: 4vw;
     padding-bottom: 2vw;
     width: 107vw;
-    left: 35vw;
+    left: 36vw;
 }
 
 .insight-card {

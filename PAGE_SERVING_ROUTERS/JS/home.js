@@ -66,22 +66,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const insightsCards = insightsContainer.querySelector('.insights-cards');
         const card = insightsCards.querySelector('.insight-card');
         if (card) {
-            const cardWidth = card.offsetWidth;
-            const gap = parseFloat(window.getComputedStyle(insightsCards).gap) || 0;
-            const scrollAmount = cardWidth + gap;
+            const getScrollAmount = () => {
+                const cardWidth = card.offsetWidth;
+                const gap = parseFloat(window.getComputedStyle(insightsCards).gap) || 0;
+                return cardWidth + gap;
+            }
 
             prevBtn.addEventListener('click', () => {
                 insightsContainer.scrollBy({
-                    left: -scrollAmount,
+                    left: -getScrollAmount(),
                     behavior: 'smooth'
                 });
             });
 
             nextBtn.addEventListener('click', () => {
                 insightsContainer.scrollBy({
-                    left: scrollAmount,
+                    left: getScrollAmount(),
                     behavior: 'smooth'
                 });
+            });
+
+            window.addEventListener('resize', () => {
+                // No need to do anything here as getScrollAmount will be called on click
             });
         }
     }
