@@ -130,6 +130,8 @@ def generate_home_case_study_html(case_study):
         except (json.JSONDecodeError, TypeError):
             preview = {}
 
+    image_url = preview.get('imageUrl', '/images/Man-with-bulb.png')
+
     title = preview.get('blogTitle', 'Discover Our Latest Success Story')
     
     summary_points = preview.get('projectSnapshots', [])
@@ -143,7 +145,7 @@ def generate_home_case_study_html(case_study):
 
     read_more_button_html = f'<button class="read-more-btn" onclick="window.location.href=\'/case-study/{slug}\'">Read more</button>' if slug else '<button class="read-more-btn">Read more</button>'
     
-    return title_html, summary_html, read_more_button_html
+    return title_html, summary_html, read_more_button_html, image_url
 async def get_case_study_for_home(conn):
     """
     Fetches the latest published case study from the database.

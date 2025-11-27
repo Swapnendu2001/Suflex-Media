@@ -181,6 +181,8 @@ async def get_home_insights_html(editors_choice_data):
     home_insights_html = ""
     for i, blog in enumerate(editors_choice_data):
         home_insights_html += generate_home_insight_card_html(blog, i)
+        if i == 2:
+            break  # Only take top 3
     return home_insights_html
 
 
@@ -192,10 +194,7 @@ def generate_home_insight_card_html(blog, index):
         <div class="insight-card" onclick="window.location.href='/blog/{blog['slug']}'">
             <img src="{blog['cover_image']}" alt="{blog['title']}" class="insight-card-image">
             <div class="insight-card-content">
-                <div class="insight-card-author-date">
-                    <span class="author-name">{blog.get('author', 'Suflex Media')}</span>
-                    <span class="publication-date">{blog['created_at']}</span>
-                </div>
+                <span class="publication-date">{blog['created_at']}</span>
                 <h3 class="insight-card-title">{blog['title']}</h3>
                 <p class="insight-card-summary">{blog['summary']}</p>
                 <a href="/blog/{blog['slug']}" class="read-more-link">Read More →</a>

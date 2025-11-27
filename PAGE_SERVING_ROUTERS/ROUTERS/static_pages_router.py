@@ -131,7 +131,7 @@ async def get_homepage():
         home_insights_html = await get_home_insights_html(latest_gossip_data)
 
         latest_case_study = await get_case_study_for_home(conn)
-        case_study_title_html, case_study_summary_html, read_more_button_html = generate_home_case_study_html(latest_case_study)
+        case_study_title_html, case_study_summary_html, read_more_button_html, image_url = generate_home_case_study_html(latest_case_study)
 
         with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
             html_content = file.read()
@@ -154,6 +154,10 @@ async def get_homepage():
         html_content = html_content.replace(
             '<!-- READ MORE BUTTON WILL BE INSERTED HERE DYNAMICALLY -->',
             read_more_button_html
+        )
+        html_content = html_content.replace(
+            '[[[imageURL]]]',
+            image_url
         )
 
         return HTMLResponse(content=html_content)
