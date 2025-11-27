@@ -127,8 +127,8 @@ async def get_homepage():
     conn = None
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        _, _, _, top_editors_choice_data = await get_blogs_html()
-        home_insights_html = await get_home_insights_html(top_editors_choice_data)
+        _,  _, _, latest_gossip_data = await get_blogs_html()
+        home_insights_html = await get_home_insights_html(latest_gossip_data)
 
         latest_case_study = await get_case_study_for_home(conn)
         case_study_title_html, case_study_summary_html, read_more_button_html = generate_home_case_study_html(latest_case_study)

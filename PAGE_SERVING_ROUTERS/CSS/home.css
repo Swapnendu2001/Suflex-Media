@@ -1699,6 +1699,7 @@ body {
     background-color: #017aff;
     padding: 15vh 5vw 10vh 5vw;
     position: relative;
+    padding-top: 5vh;
 }
 
 .insights-main::after {
@@ -2893,4 +2894,104 @@ body {
     .mobile-care-icons {
         display: none;
     }
+}
+.insights-header {
+    position: relative;
+}
+
+.insights-navigation {
+    position: absolute;
+    top: 7vh;
+    right: 5vw;
+    display: flex;
+    gap: 10px;
+}
+
+.arrow-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.insights-cards-container {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: 89vw;
+    top: 8vh;
+}
+
+.insights-cards-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+
+.insights-cards 
+ {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2vw;
+    padding-bottom: 2vw;
+    width: 107vw;
+    left: 35vw;
+}
+
+.insight-card {
+    flex: 0 0 calc((100% - 4vw) / 3);
+    max-width: calc((100% - 4vw) / 4);
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+}
+
+.insight-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.insight-card-content {
+    padding: 15px;
+}
+
+.insight-card-author-date {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.insight-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.insight-card-summary {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.read-more-link {
+    font-size: 0.9rem;
+    color: #017aff;
+    text-decoration: none;
+    font-weight: 600;
 }
