@@ -170,7 +170,7 @@ async def get_blogs_html():
         # Start color index from 3 to avoid repeating colors from latest gossips
         read_more_html += generate_blog_card_html(blog, i + 3)
 
-    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data[:3]
+    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data
 
 
 async def get_home_insights_html(editors_choice_data):
@@ -186,26 +186,22 @@ async def get_home_insights_html(editors_choice_data):
 
 def generate_home_insight_card_html(blog, index):
     """
-    Generate HTML for a single insight card on the home page based on the existing structure
+    Generate HTML for a single insight card on the home page based on the new structure
     """
-    # Map index to color markers: 0=green, 1=pink, 2=orange
-    colors = ['green', 'pink', 'orange']
-    color_class = colors[index % len(colors)] if index < len(colors) else 'green'
-    
     return f'''
-                    <div class="insight-card">
-                        <div class="card-top">
-                            <span class="color-marker {color_class}"></span>
-                            <span class="read-time">5 mins read</span>
-                        </div>
-                        <h3>{blog['title']}</h3>
-                        <p>{blog['summary']}</p>
-                        <div class="card-content-bottom">
-                            <a href="/blog/{blog['slug']}">
-                                <img src="/icons/black_arrow.svg" alt="Read more" class="card-arrow-icon">
-                            </a>
-                        </div>
-                    </div>'''
+        <div class="insight-card" onclick="window.location.href='/blog/{blog['slug']}'">
+            <img src="{blog['cover_image']}" alt="{blog['title']}" class="insight-card-image">
+            <div class="insight-card-content">
+                <div class="insight-card-author-date">
+                    <span class="author-name">{blog.get('author', 'Suflex Media')}</span>
+                    <span class="publication-date">{blog['created_at']}</span>
+                </div>
+                <h3 class="insight-card-title">{blog['title']}</h3>
+                <p class="insight-card-summary">{blog['summary']}</p>
+                <a href="/blog/{blog['slug']}" class="read-more-link">Read More →</a>
+            </div>
+        </div>
+    '''
 
 if __name__ == "__main__":
     import asyncio

@@ -6,7 +6,7 @@ import os
 import json
 
 from DATABASE_HANDLER.utils.generate_blog_sections import get_blogs_html, get_home_insights_html
-from DATABASE_HANDLER.utils.generate_case_study_sections import generate_case_studies_html
+from DATABASE_HANDLER.utils.generate_case_study_sections import generate_case_studies_html, get_case_study_for_home, generate_home_case_study_html
 from config import config
 
 router = APIRouter()
@@ -124,16 +124,43 @@ async def get_portfolio_page():
 
 @router.get("/", response_class=HTMLResponse)
 async def get_homepage():
-    _, _, _, top_editors_choice_data = await get_blogs_html()
-    home_insights_html = await get_home_insights_html(top_editors_choice_data)
+    conn = None
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        _,  _, _, latest_gossip_data = await get_blogs_html()
+        home_insights_html = await get_home_insights_html(latest_gossip_data)
 
-    with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    
-    print(home_insights_html)
-    html_content = html_content.replace(
-        '<!-- TOP EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->',
-        home_insights_html
-    )
+        latest_case_study = await get_case_study_for_home(conn)
+        case_study_title_html, case_study_summary_html, read_more_button_html = generate_home_case_study_html(latest_case_study)
 
-    return HTMLResponse(content=html_content)
+        with open("PAGE_SERVING_ROUTERS/PAGES/home.html", "r", encoding="utf-8") as file:
+            html_content = file.read()
+        
+        html_content = html_content.replace(
+            '<!-- TOP EDITOR\'S CHOICE BLOGS WILL BE INSERTED HERE DYNAMICALLY -->',
+            home_insights_html
+        )
+        
+        html_content = html_content.replace(
+            '<!-- CASE STUDY TITLE WILL BE INSERTED HERE DYNAMICALLY -->',
+            case_study_title_html
+        )
+        
+        html_content = html_content.replace(
+            '<!-- CASE STUDY SUMMARY WILL BE INSERTED HERE DYNAMICALLY -->',
+            case_study_summary_html
+        )
+
+        html_content = html_content.replace(
+            '<!-- READ MORE BUTTON WILL BE INSERTED HERE DYNAMICALLY -->',
+            read_more_button_html
+        )
+
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        print(f"Error loading homepage: {e}")
+        # Fallback to serving the static file if there's an error
+        return FileResponse("PAGE_SERVING_ROUTERS/PAGES/home.html")
+    finally:
+        if conn:
+            await conn.close()

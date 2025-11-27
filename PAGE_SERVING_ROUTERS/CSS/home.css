@@ -1062,9 +1062,8 @@ body {
     background-color: #017AFF;
     background-size: cover;
     padding: 5vh 5vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    place-items: center;
     width: 100%;
     margin: 0 auto;
     position: relative;
@@ -1105,6 +1104,7 @@ body {
     box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -1119,7 +1119,7 @@ body {
 }
 
 .card-3 {
-    grid-row: 1 / 3;
+    grid-row: 1 / 5;
     grid-column: 2;
 }
 
@@ -1133,10 +1133,6 @@ body {
     grid-column: 3;
 }
 
-.card-6 {
-    grid-row: 3 / 5;
-    grid-column: 2;
-}
 
 .work-with-us-content .card img {
     width: 100%;
@@ -1699,6 +1695,7 @@ body {
     background-color: #017aff;
     padding: 15vh 5vw 10vh 5vw;
     position: relative;
+    padding-top: 5vh;
 }
 
 .insights-main::after {
@@ -1869,17 +1866,21 @@ body {
     }
 
     .insights-cards {
-        flex-direction: column;
-        gap: 4vh;
-        margin-left: 2.5vw;
+        flex-direction: row;
+        gap: 4vw;
+        margin-left: 0;
+    }
+
+    .insights-cards-container {
+        width: 100%;
     }
 
     .insight-card {
-        width: 85vw;
+        width: 80vw;
+        min-width: 80vw;
+        height: auto;
         padding: 6vw;
         border-radius: 5vw;
-        min-height: 85vw; /* Adjusted for mobile width */
-        padding-bottom: 6vw; /* Adjusted for mobile padding */
     }
 
     .card-top {
@@ -2716,6 +2717,82 @@ body {
         padding-left: 8vw;
         line-height: 1.6;
     }
+        .footer {
+        padding: 15vh 8vw 8vw 8vw;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 6vh 6vw;
+        padding: 0;
+        width: 100%;
+    }
+
+    .footer-section.cta {
+        grid-column: 1 / -1;
+        border-right: none;
+        padding-right: 0;
+        text-align: center;
+    }
+
+    .footer-section {
+        text-align: left;
+        width: 100%;
+    }
+
+    .footer-section h3 {
+        font-size: 5vw;
+        margin-bottom: 2vh;
+    }
+
+    .footer-section a,
+    .footer-section p {
+        font-size: 4vw;
+    }
+
+    .footer-section.cta h2 {
+        font-size: 8vw;
+    }
+
+    .footer-section.cta .button {
+        font-size: 4vw;
+        padding: 2vh 6vw;
+        border-radius: 2vw;
+        max-width: 60vw;
+        margin: 0 auto;
+    }
+
+    .social-links {
+        justify-content: flex-start;
+        gap: 4vw;
+    }
+
+    .social-links img {
+        width: 8vw;
+        height: 8vw;
+    }
+
+    .footer-logo img {
+        height: 10vh;
+    }
+
+    .copyright {
+        font-size: 3.5vw;
+        text-align: center;
+    }
+    .mobile-hero-icons {
+        display: block;
+    }
+
+    .mobile-scaling-icons {
+        display: none;
+    }
+
+    .mobile-care-icons {
+        display: none;
+    }
 }
 
 .footer {
@@ -2812,85 +2889,107 @@ body {
     font-size: 1vw;
 }
 
-@media (max-width: 768px) {
-    .footer {
-        padding: 15vh 8vw 8vw 8vw;
-    }
 
-    .footer-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
-        gap: 6vh 6vw;
-        padding: 0;
-        width: 100%;
-    }
 
-    .footer-section.cta {
-        grid-column: 1 / -1;
-        border-right: none;
-        padding-right: 0;
-        text-align: center;
-    }
-
-    .footer-section {
-        text-align: left;
-        width: 100%;
-    }
-
-    .footer-section h3 {
-        font-size: 5vw;
-        margin-bottom: 2vh;
-    }
-
-    .footer-section a,
-    .footer-section p {
-        font-size: 4vw;
-    }
-
-    .footer-section.cta h2 {
-        font-size: 8vw;
-    }
-
-    .footer-section.cta .button {
-        font-size: 4vw;
-        padding: 2vh 6vw;
-        border-radius: 2vw;
-        max-width: 60vw;
-        margin: 0 auto;
-    }
-
-    .social-links {
-        justify-content: flex-start;
-        gap: 4vw;
-    }
-
-    .social-links img {
-        width: 8vw;
-        height: 8vw;
-    }
-
-    .footer-logo img {
-        height: 10vh;
-    }
-
-    .copyright {
-        font-size: 3.5vw;
-        text-align: center;
-    }
+.insights-header {
+    position: relative;
 }
 
-/* Hide mobile icons on desktop */
-@media (min-width: 769px) {
-    .mobile-hero-icons {
-        display: block;
-    }
+.insights-navigation {
+    position: absolute;
+    top: 7vh;
+    right: 5vw;
+    display: flex;
+    gap: 10px;
+}
 
-    .mobile-scaling-icons {
-        display: none;
-    }
+.arrow-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .mobile-care-icons {
-        display: none;
-    }
+.insights-cards-container {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: 89vw;
+    top: 8vh;
+    height: 75vh;
+}
+
+.insights-cards-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+
+.insights-cards 
+ {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4vw;
+    padding-bottom: 2vw;
+    width: 107vw;
+    left: 36vw;
+}
+
+.insight-card {
+    flex: 0 0 calc((100% - 4vw) / 3);
+    max-width: calc((100% - 4vw) / 4);
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    top: 2vh;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+}
+
+.insight-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.insight-card-content {
+    padding: 15px;
+}
+
+.insight-card-author-date {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.insight-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.insight-card-summary {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.read-more-link {
+    font-size: 0.9rem;
+    color: #017aff;
+    text-decoration: none;
+    font-weight: 600;
 }
