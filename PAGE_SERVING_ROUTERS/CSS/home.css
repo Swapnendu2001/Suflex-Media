@@ -1062,9 +1062,8 @@ body {
     background-color: #017AFF;
     background-size: cover;
     padding: 5vh 5vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    place-items: center;
     width: 100%;
     margin: 0 auto;
     position: relative;
@@ -1119,7 +1118,7 @@ body {
 }
 
 .card-3 {
-    grid-row: 1 / 3;
+    grid-row: 2 / 4;
     grid-column: 2;
 }
 
@@ -1133,10 +1132,6 @@ body {
     grid-column: 3;
 }
 
-.card-6 {
-    grid-row: 3 / 5;
-    grid-column: 2;
-}
 
 .work-with-us-content .card img {
     width: 100%;
@@ -2952,6 +2947,7 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.3s ease;
+    top: 2vh;
 }
 
 .insight-card:hover {
