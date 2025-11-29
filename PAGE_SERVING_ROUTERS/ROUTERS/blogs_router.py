@@ -39,9 +39,11 @@ async def get_blogs(request: Request):
             flags=re.DOTALL
         )
 
-    html_content = html_content.replace(
-        '<div class="blogs-grid" id="editors-choice-grid"></div>',
-        f'<div class="blogs-grid" id="editors-choice-grid">{editors_choice_html}</div>'
+    html_content = re.sub(
+        r'(<div class="editors-choice-right" id="editors-choice-grid">)(.*?)(</div>)',
+        f'\\1{editors_choice_html}\\3',
+        html_content,
+        flags=re.DOTALL
     )
     html_content = html_content.replace(
         '<div class="blogs-grid" id="latest-gossip-grid"></div>',

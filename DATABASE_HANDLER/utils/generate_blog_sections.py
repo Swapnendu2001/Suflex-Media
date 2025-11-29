@@ -157,12 +157,23 @@ def generate_unified_blog_card_html(blog):
     '''
 
 
-def generate_editors_choice_card_html(blog):
+def generate_editors_choice_vertical_card_html(blog):
     """
-    Generate HTML for a single Editor's Choice blog card.
+    Generate HTML for a single Editor's Choice blog card for the vertical list.
     """
-    return generate_unified_blog_card_html(blog)
-
+    return f'''
+        <div class="editor-pick-card" onclick="window.location.href='/blog/{blog['slug']}'">
+            <div class="editor-pick-image-container">
+                <img src="{blog.get('cover_image', '')}" alt="{blog.get('title', '')}" class="editor-pick-image">
+            </div>
+            <div class="editor-pick-content">
+                <span class="editor-pick-category">{blog.get('category', 'General')}</span>
+                <h4 class="editor-pick-title">{blog.get('title', '')}</h4>
+                <p class="editor-pick-summary">{blog.get('summary', '')}</p>
+                <a href="/blog/{blog['slug']}" class="editor-pick-read-more">Read More →</a>
+            </div>
+        </div>
+    '''
 
 def generate_blog_card_html(blog, color_index):
     """
@@ -186,8 +197,8 @@ async def get_blogs_html():
 
     # Generate HTML for Editor's Choice carousel
     editors_choice_html = ""
-    for blog in editors_choice_data:
-        editors_choice_html += generate_editors_choice_card_html(blog)
+    for blog in editors_choice_data[:3]:
+        editors_choice_html += generate_editors_choice_vertical_card_html(blog)
 
     # Generate HTML for Latest Gossip
     latest_gossips_html = ""
