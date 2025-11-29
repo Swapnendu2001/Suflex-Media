@@ -8,3 +8,9 @@ email-validator
 minio
 httpx
 PyJWT
+
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib==0.4.6
+google-auth
+google

@@ -39,23 +39,56 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
 
-
-document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('click', () => {
-        const currentlyActive = document.querySelector('.faq-item.active');
-        if (currentlyActive && currentlyActive !== item) {
-            currentlyActive.classList.remove('active');
-            currentlyActive.querySelector('.icon').textContent = '+';
-        }
-
-        item.classList.toggle('active');
-        const icon = item.querySelector('.icon');
-        if (item.classList.contains('active')) {
-            icon.textContent = '-';
-        } else {
-            icon.textContent = '+';
-        }
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const currentlyActive = document.querySelector('.faq-item.active');
+            if (currentlyActive && currentlyActive !== item) {
+                currentlyActive.classList.remove('active');
+                currentlyActive.querySelector('.icon').textContent = '+';
+            }
+    
+            item.classList.toggle('active');
+            const icon = item.querySelector('.icon');
+            if (item.classList.contains('active')) {
+                icon.textContent = '-';
+            } else {
+                icon.textContent = '+';
+            }
+        });
     });
+
+    const insightsContainer = document.querySelector('.insights-cards-container');
+    const prevBtn = document.getElementById('prev-insight-btn');
+    const nextBtn = document.getElementById('next-insight-btn');
+
+    if (insightsContainer && prevBtn && nextBtn) {
+        const insightsCards = insightsContainer.querySelector('.insights-cards');
+        const card = insightsCards.querySelector('.insight-card');
+        if (card) {
+            const getScrollAmount = () => {
+                const cardWidth = card.offsetWidth;
+                const gap = parseFloat(window.getComputedStyle(insightsCards).gap) || 0;
+                return cardWidth + gap;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                insightsContainer.scrollBy({
+                    left: -getScrollAmount(),
+                    behavior: 'smooth'
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                insightsContainer.scrollBy({
+                    left: getScrollAmount(),
+                    behavior: 'smooth'
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                // No need to do anything here as getScrollAmount will be called on click
+            });
+        }
+    }
 });

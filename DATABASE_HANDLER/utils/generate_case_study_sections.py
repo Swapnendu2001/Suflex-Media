@@ -3,6 +3,31 @@ import json
 from html import unescape
 
 
+CATEGORY_DISPLAY_MAPPING = {
+    "linkedin-branding": "LinkedIn Branding",
+    "linkedin branding": "LinkedIn Branding",
+    "linkedin_branding": "LinkedIn Branding",
+    "ghostwriting": "Ghostwriting",
+    "ghost writing": "Ghostwriting",
+    "ghost_writing": "Ghostwriting",
+    "performance-marketing": "Performance Marketing",
+    "performance marketing": "Performance Marketing",
+    "performance_marketing": "Performance Marketing",
+    "website-development": "Website Development",
+    "website development": "Website Development",
+    "website_development": "Website Development",
+}
+
+
+def get_display_category(category):
+    if not category:
+        return ""
+    category_lower = category.lower().strip()
+    if category_lower in CATEGORY_DISPLAY_MAPPING:
+        return CATEGORY_DISPLAY_MAPPING[category_lower]
+    return category.title()
+
+
 def clean_html(html_text):
     """
     Remove HTML tags and clean up text content while preserving readability
@@ -32,7 +57,7 @@ def generate_case_study_card(case_study_data, index):
     Generate HTML card for a case study
     
     Args:
-        case_study_data: Dictionary containing case study information with 'slug' and 'preview'
+        case_study_data: Dictionary containing case study information with 'slug', 'preview', and 'category'
         index: Position index to determine light/dark theme
         
     Returns:
@@ -40,6 +65,7 @@ def generate_case_study_card(case_study_data, index):
     """
     slug = case_study_data.get('slug', '')
     preview = case_study_data.get('preview', {})
+    raw_category = case_study_data.get('category', '')
     
     if isinstance(preview, str):
         try:
@@ -52,6 +78,9 @@ def generate_case_study_card(case_study_data, index):
     blog_title = preview.get('blogTitle', 'Untitled Case Study')
     text = clean_html(preview.get('text', ''))
     project_snapshots = preview.get('projectSnapshots', [])
+    
+    display_category = get_display_category(raw_category)
+    category_badge_html = f'<span class="case-study-badge">{display_category}</span>' if display_category else ''
     
     snapshots_html = ""
     if project_snapshots:
@@ -70,6 +99,7 @@ def generate_case_study_card(case_study_data, index):
                         <img src="{image_url}" alt="{image_alt}">
                     </div>
                     <div class="case-study-content">
+                        {category_badge_html}
                         <h3 class="case-study-title">{blog_title}</h3>
                         <p class="case-study-description">
                             {text}
@@ -108,3 +138,66 @@ def generate_case_studies_html(case_studies_list, start_index=0):
         html_output += generate_case_study_card(case_study_data, index)
     
     return html_output
+
+def generate_home_case_study_html(case_study):
+    """
+    Generates the HTML for the case study section on the home page.
+    
+    Args:
+        case_study (dict): A dictionary containing the case study data.
+        
+    Returns:
+        tuple: A tuple containing the HTML for the title, the summary, and the read more button.
+    """
+    if not case_study:
+        return "", "", ""
+
+    slug = case_study.get('slug')
+    preview = case_study.get('preview', {})
+    if isinstance(preview, str):
+        try:
+            preview = json.loads(preview)
+        except (json.JSONDecodeError, TypeError):
+            preview = {}
+
+    image_url = preview.get('imageUrl', '/images/Man-with-bulb.png')
+
+    title = preview.get('blogTitle', 'Discover Our Latest Success Story')
+    
+    summary_points = preview.get('projectSnapshots', [])
+    
+    title_html = f'<h2>{title}</h2>'
+    
+    summary_html = '<ul>'
+    for point in summary_points:
+        summary_html += f'<li>{point}</li>'
+    summary_html += '</ul>'
+
+    read_more_button_html = f'<button class="read-more-btn" onclick="window.location.href=\'/case-study/{slug}\'">Read more</button>' if slug else '<button class="read-more-btn">Read more</button>'
+    
+    return title_html, summary_html, read_more_button_html, image_url
+async def get_case_study_for_home(conn):
+    """
+    Fetches the Editor's Choice case study for the home page display.
+    Prioritizes the case study marked as Editor's Choice,
+    falls back to the most recent published case study if none is set.
+    
+    Args:
+        conn: An asyncpg database connection object.
+        
+    Returns:
+        A dictionary representing the case study, or None if no case study is found.
+    """
+    query = """
+        SELECT slug, preview
+        FROM case_studies
+        WHERE isdeleted = FALSE
+            AND status = 'published'
+            AND type = 'CASE STUDY'
+        ORDER BY
+            CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+            date DESC
+        LIMIT 1
+    """
+    case_study = await conn.fetchrow(query)
+    return case_study

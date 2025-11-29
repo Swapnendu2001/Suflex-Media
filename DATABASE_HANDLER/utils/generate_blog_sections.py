@@ -8,6 +8,38 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("POSTGRES_CONNECTION_URL")
 
+def calculate_read_time(blog_content_json):
+    """
+    Calculate the estimated read time for a blog post.
+    """
+    text = ""
+    
+    # The content can be a stringified JSON or a dict
+    if isinstance(blog_content_json, str):
+        try:
+            blog_content = json.loads(blog_content_json)
+        except json.JSONDecodeError:
+            blog_content = {}
+    else:
+        blog_content = blog_content_json
+
+    # Extract text from title and summary
+    text += blog_content.get('blogTitle', '') + " "
+    text += blog_content.get('blogSummary', '') + " "
+    
+    # Extract text from the main content blocks
+    content_data = blog_content.get('blogcontent', {})
+    if isinstance(content_data, dict) and 'content' in content_data:
+        content_items = content_data['content']
+        for item in content_items:
+            if item.get('type') == 'paragraph' and item.get('data', {}).get('content'):
+                text += item['data']['content'] + " "
+    
+    word_count = len(text.split())
+    read_time_minutes = round(word_count / 200)  # Assuming 200 WPM reading speed
+    return max(1, read_time_minutes) # Ensure minimum 1 minute read time
+
+
 async def get_blog_data():
     """
     Fetch blog data from the database for the three sections:
@@ -50,6 +82,8 @@ async def get_blog_data():
             
             summary = summary[:150] + '...' if len(summary) > 150 else summary
             
+            read_time = calculate_read_time(blog['blogcontent'])
+            
             processed_blogs.append({
                 'id': blog['id'],
                 'title': title,
@@ -58,7 +92,8 @@ async def get_blog_data():
                 'slug': blog['slug'],
                 'category': blog_content.get('blogCategory', 'General'),
                 'editors_choice': blog['editors_choice'] == 'Y' or blog['editors_choice'] == "ON",
-                'cover_image': extract_blog_image(blog_content)
+                'cover_image': extract_blog_image(blog_content),
+                'read_time': read_time
             })
         print(f"Processed Blogs: {processed_blogs}") # Debug print
         # Separate blogs into the three sections
@@ -70,11 +105,13 @@ async def get_blog_data():
         latest_gossip_data = other_blogs[:3]
         read_more_data = other_blogs[3:]
 
-        return editors_choice_data, latest_gossip_data, read_more_data
+        top_blog = processed_blogs[0] if processed_blogs else None
+
+        return editors_choice_data, latest_gossip_data, read_more_data, top_blog
 
     except Exception as e:
         print(f"Error fetching blogs: {e}")
-        return [], [], []
+        return [], [], [], None
 
 
 def extract_blog_image(blog_content):
@@ -95,50 +132,54 @@ def extract_blog_image(blog_content):
     return None
 
 
-def generate_editors_choice_card_html(blog):
+def generate_unified_blog_card_html(blog):
     """
-    Generate HTML for a single Editor's Choice blog card.
+    Generate HTML for a unified blog card design with image, date, title, summary, and read more link.
     """
-    return f'''
-        <div class="blog-card editors-choice-card" onclick="window.location.href='/blog/{blog['slug']}'">
-            <div class="editors-choice-card-image-container">
-                <img src="{blog['cover_image']}" alt="{blog['title']}" class="editors-choice-card-image">
+    image_html = ''
+    if blog.get('cover_image'):
+        image_html = f'''
+            <div class="blog-card-image-container">
+                <img src="{blog['cover_image']}" alt="{blog['title']}" class="blog-card-image">
             </div>
-            <div class="editors-choice-card-content">
-                <h3 class="blog-title">{blog['title']}</h3>
-                <p class="blog-summary">{blog['summary']}</p>
-                <div class="blog-footer">
-                    <p class="blog-date">Suflex Media • {blog['created_at']}</p>
-                </div>
+        '''
+    
+    return f'''
+        <div class="blog-card-unified" onclick="window.location.href='/blog/{blog['slug']}'">
+            {image_html}
+            <div class="blog-card-body">
+                <span class="blog-card-date">{blog['created_at']}</span>
+                <h3 class="blog-card-title">{blog['title']}</h3>
+                <p class="blog-card-summary">{blog['summary']}</p>
+                <a href="/blog/{blog['slug']}" class="blog-card-read-more">Read More →</a>
             </div>
         </div>
     '''
 
+
+def generate_editors_choice_vertical_card_html(blog):
+    """
+    Generate HTML for a single Editor's Choice blog card for the vertical list.
+    """
+    return f'''
+        <div class="editor-pick-card" onclick="window.location.href='/blog/{blog['slug']}'">
+            <div class="editor-pick-image-container">
+                <img src="{blog.get('cover_image', '')}" alt="{blog.get('title', '')}" class="editor-pick-image">
+            </div>
+            <div class="editor-pick-content">
+                <span class="editor-pick-category">{blog.get('category', 'General')}</span>
+                <h4 class="editor-pick-title">{blog.get('title', '')}</h4>
+                <p class="editor-pick-summary">{blog.get('summary', '')}</p>
+                <a href="/blog/{blog['slug']}" class="editor-pick-read-more">Read More →</a>
+            </div>
+        </div>
+    '''
 
 def generate_blog_card_html(blog, color_index):
     """
-    Generate HTML for a single blog card based on the existing structure
+    Generate HTML for a single blog card based on the unified structure.
     """
-    return f'''
-        <div class="blog-card" data-category="{blog['category']}" onclick="window.location.href='/blog/{blog['slug']}'">
-            <div class="blog-card-header">
-                <div class="blog-dot" style="background-color: {get_blog_color(color_index)}"></div>
-                <span class="blog-read-time">5 mins read</span>
-            </div>
-            <h3 class="blog-title">{blog['title']}</h3>
-            <p class="blog-date">{blog['created_at']} • {blog['category']}</p>
-            <p class="blog-description">{blog['summary']}</p>
-            <div class="blog-footer">
-                <a href="/blog/{blog['slug']}" class="blog-arrow-link">
-                    <div class="blog-arrow">
-                        <svg viewBox="0 24 24" fill="none">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
-    '''
+    return generate_unified_blog_card_html(blog)
 
 def get_blog_color(index):
     """
@@ -152,12 +193,12 @@ async def get_blogs_html():
     Generate the HTML content for the blogs_landing.html page with dynamic content
     for all three sections.
     """
-    editors_choice_data, latest_gossip_data, read_more_data = await get_blog_data()
+    editors_choice_data, latest_gossip_data, read_more_data, top_blog = await get_blog_data()
 
     # Generate HTML for Editor's Choice carousel
     editors_choice_html = ""
-    for blog in editors_choice_data:
-        editors_choice_html += generate_editors_choice_card_html(blog)
+    for blog in editors_choice_data[:3]:
+        editors_choice_html += generate_editors_choice_vertical_card_html(blog)
 
     # Generate HTML for Latest Gossip
     latest_gossips_html = ""
@@ -170,7 +211,7 @@ async def get_blogs_html():
         # Start color index from 3 to avoid repeating colors from latest gossips
         read_more_html += generate_blog_card_html(blog, i + 3)
 
-    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data[:3]
+    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data, top_blog
 
 
 async def get_home_insights_html(editors_choice_data):
@@ -181,37 +222,32 @@ async def get_home_insights_html(editors_choice_data):
     home_insights_html = ""
     for i, blog in enumerate(editors_choice_data):
         home_insights_html += generate_home_insight_card_html(blog, i)
+        if i == 2:
+            break  # Only take top 3
     return home_insights_html
 
 
 def generate_home_insight_card_html(blog, index):
     """
-    Generate HTML for a single insight card on the home page based on the existing structure
+    Generate HTML for a single insight card on the home page based on the new structure
     """
-    # Map index to color markers: 0=green, 1=pink, 2=orange
-    colors = ['green', 'pink', 'orange']
-    color_class = colors[index % len(colors)] if index < len(colors) else 'green'
-    
     return f'''
-                    <div class="insight-card">
-                        <div class="card-top">
-                            <span class="color-marker {color_class}"></span>
-                            <span class="read-time">5 mins read</span>
-                        </div>
-                        <h3>{blog['title']}</h3>
-                        <p>{blog['summary']}</p>
-                        <div class="card-content-bottom">
-                            <a href="/blog/{blog['slug']}">
-                                <img src="/icons/black_arrow.svg" alt="Read more" class="card-arrow-icon">
-                            </a>
-                        </div>
-                    </div>'''
+        <div class="insight-card" onclick="window.location.href='/blog/{blog['slug']}'">
+            <img src="{blog['cover_image']}" alt="{blog['title']}" class="insight-card-image">
+            <div class="insight-card-content">
+                <span class="publication-date">{blog['created_at']}</span>
+                <h3 class="insight-card-title">{blog['title']}</h3>
+                <p class="insight-card-summary">{blog['summary']}</p>
+                <a href="/blog/{blog['slug']}" class="read-more-link">Read More →</a>
+            </div>
+        </div>
+    '''
 
 if __name__ == "__main__":
     import asyncio
     
     async def main():
-        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data = await get_blogs_html()
+        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog = await get_blogs_html()
         home_insights_html = await get_home_insights_html(top_editors_choice_data)
         
         print("Generated Editor's Choice HTML:\n", editors_choice_html)

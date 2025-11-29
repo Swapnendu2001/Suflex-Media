@@ -33,7 +33,7 @@
                     <a href="/seo">Search Engine Optimisation</a>
                 </div>
             </div>
-            <a href="/portfolio">Case Study</a>
+            <a href="/case-studies">Case Studies</a>
             <a href="/blogs" class="active">Blog</a>
             <a href="/contact" class="contact-us">
                 <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
@@ -52,63 +52,54 @@
     </header>
 
     <div class="content-wrapper">
-
-        <!-- Section 1: Editor's Choice (Carousel) -->
-        <section class="blogs-section editors-choice-section">
-            <div class="section-heading">
-                <h1>Editor's Choice</h1>
+        <section class="hero-section">
+            <div class="hero-image-container">
+                <img src="https://picsum.photos/800/600" alt="Blog post image">
             </div>
-            <div class="editors-choice-carousel-container">
-                <button class="carousel-arrow left" id="carousel-arrow-left"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <div class="editors-choice-carousel-wrapper">
-                    <div class="editors-choice-carousel" id="editors-choice-carousel">
-                        <!-- Editor's Choice blogs will be inserted here dynamically -->
-                        <div id="dynamic-editors-choice-content"></div>
-                    </div>
+            <div class="hero-content">
+                <div class="hero-meta">
+                    <span class="hero-badge">News!</span>
+                    <span class="hero-read-time">8 mins read</span>
                 </div>
-                <button class="carousel-arrow right" id="carousel-arrow-right"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
-            </div>
-        </section>
-        <!-- Section 1: Editor's Choice (Mobile Carousel) -->
-        <section class="blogs-section editors-choice-section-mobile">
-            <div class="section-heading">
-                <h1>Editor's Choice</h1>
-            </div>
-            <div class="editors-choice-carousel-container-mobile">
-                <button class="carousel-arrow-mobile left" id="carousel-arrow-left-mobile"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <div class="editors-choice-carousel-wrapper-mobile">
-                    <div class="editors-choice-carousel-mobile" id="editors-choice-carousel-mobile">
-                        <!-- Editor's Choice blogs will be inserted here dynamically -->
-                    </div>
-                </div>
-                <button class="carousel-arrow-mobile right" id="carousel-arrow-right-mobile"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                <h1 class="hero-title">Unlocking Efficiency: The Power Of A Modern POS System</h1>
+                <p class="hero-summary">In today's fast-paced business landscape, efficiency is key to success. From small local shops to large-scale enterprises, businesses are constantly seeking ways to streamline their operations and enhance customer experi...</p>
+                <a href="#" class="hero-read-more">Read More &rarr;</a>
             </div>
         </section>
 
-        <!-- Section 2: Latest Gossip -->
+
+        <!-- Section 1: Latest Gossip -->
         <section class="blogs-section latest-gossip-section">
             <div class="section-heading">
                 <h1>The Latest Gossip</h1>
             </div>
-            <div class="blogs-grid" id="latest-gossip-grid">
-                <!-- Latest Gossip blogs will be inserted here dynamically -->
-                <div id="dynamic-latest-gossip-content"></div>
-            </div>
+            <div class="blogs-grid" id="latest-gossip-grid"></div>
         </section>
 
-        <!-- Section 3: Read More of Our Stories -->
+                <!-- Section 3: Editor's Choice -->
+        <section class="blogs-section editors-choice-section">
+            <div class="editors-choice-container">
+                <div class="editors-choice-left">
+                    <h2 class="editors-choice-title">Trending Articles You Need To Read</h2>
+                    <p class="editors-choice-subtitle">Stay Ahead of the Curve and Dive Deep into the Must-Read Trending Articles that Keep You Informed and Inspired</p>
+                </div>
+                <div class="editors-choice-right" id="editors-choice-grid">
+                    <!-- Editor's Choice blogs will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+        <!-- Section 2: Read More of Our Stories -->
         <section class="blogs-section read-more-section">
             <div class="section-heading">
                 <h1>Read More of Our Stories</h1>
             </div>
-            <div class="blogs-grid" id="read-more-grid">
-                <!-- "Read More" blogs will be inserted here dynamically -->
-                <div id="dynamic-read-more-content"></div>
-            </div>
+            <div class="blogs-grid" id="read-more-grid"></div>
             <div class="pagination-container" id="read-more-pagination"></div>
         </section>
 
-    </div>
+
 
     <footer class="footer">
         <div class="footer-content">
