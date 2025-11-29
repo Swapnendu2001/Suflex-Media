@@ -53,35 +53,19 @@
 
     <div class="content-wrapper">
 
-        <!-- Section 1: Editor's Choice (Carousel) -->
+        <!-- Section 1: Editor's Choice -->
         <section class="blogs-section editors-choice-section">
             <div class="section-heading">
                 <h1>Editor's Choice</h1>
             </div>
-            <div class="editors-choice-carousel-container">
-                <button class="carousel-arrow left" id="carousel-arrow-left"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <div class="editors-choice-carousel-wrapper">
-                    <div class="editors-choice-carousel" id="editors-choice-carousel">
-                        <!-- Editor's Choice blogs will be inserted here dynamically -->
-                        <div id="dynamic-editors-choice-content"></div>
-                    </div>
-                </div>
-                <button class="carousel-arrow right" id="carousel-arrow-right"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
-            </div>
+            <div class="blogs-grid" id="editors-choice-grid"></div>
         </section>
-        <!-- Section 1: Editor's Choice (Mobile Carousel) -->
+        <!-- Section 1: Editor's Choice (Mobile) -->
         <section class="blogs-section editors-choice-section-mobile">
             <div class="section-heading">
                 <h1>Editor's Choice</h1>
             </div>
-            <div class="editors-choice-carousel-container-mobile">
-                <button class="carousel-arrow-mobile left" id="carousel-arrow-left-mobile"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <div class="editors-choice-carousel-wrapper-mobile">
-                    <div class="editors-choice-carousel-mobile" id="editors-choice-carousel-mobile">
-                        <!-- Editor's Choice blogs will be inserted here dynamically -->
-                    </div>
-                </div>
-                <button class="carousel-arrow-mobile right" id="carousel-arrow-right-mobile"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+            <div class="blogs-grid" id="editors-choice-carousel-mobile">
             </div>
         </section>
 
@@ -90,10 +74,7 @@
             <div class="section-heading">
                 <h1>The Latest Gossip</h1>
             </div>
-            <div class="blogs-grid" id="latest-gossip-grid">
-                <!-- Latest Gossip blogs will be inserted here dynamically -->
-                <div id="dynamic-latest-gossip-content"></div>
-            </div>
+            <div class="blogs-grid" id="latest-gossip-grid"></div>
         </section>
 
         <!-- Section 3: Read More of Our Stories -->
@@ -101,10 +82,7 @@
             <div class="section-heading">
                 <h1>Read More of Our Stories</h1>
             </div>
-            <div class="blogs-grid" id="read-more-grid">
-                <!-- "Read More" blogs will be inserted here dynamically -->
-                <div id="dynamic-read-more-content"></div>
-            </div>
+            <div class="blogs-grid" id="read-more-grid"></div>
             <div class="pagination-container" id="read-more-pagination"></div>
         </section>
 
