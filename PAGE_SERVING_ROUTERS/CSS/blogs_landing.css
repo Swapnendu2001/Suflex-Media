@@ -194,13 +194,12 @@ body {
 
 .hero-image-container {
     flex: 1;
-    background-color: #fff;
+    background-color: transparent;
     padding: 1vw;
     border-radius: 1.5vw;
     box-shadow: 0 0.5vh 1vw rgba(0, 0, 0, 0.08);
     height: 25vw;
     overflow: hidden;
-    border: 0.15vw solid #017AFF;
 }
 
 .hero-image-container img {

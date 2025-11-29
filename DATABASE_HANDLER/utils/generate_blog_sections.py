@@ -8,6 +8,38 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("POSTGRES_CONNECTION_URL")
 
+def calculate_read_time(blog_content_json):
+    """
+    Calculate the estimated read time for a blog post.
+    """
+    text = ""
+    
+    # The content can be a stringified JSON or a dict
+    if isinstance(blog_content_json, str):
+        try:
+            blog_content = json.loads(blog_content_json)
+        except json.JSONDecodeError:
+            blog_content = {}
+    else:
+        blog_content = blog_content_json
+
+    # Extract text from title and summary
+    text += blog_content.get('blogTitle', '') + " "
+    text += blog_content.get('blogSummary', '') + " "
+    
+    # Extract text from the main content blocks
+    content_data = blog_content.get('blogcontent', {})
+    if isinstance(content_data, dict) and 'content' in content_data:
+        content_items = content_data['content']
+        for item in content_items:
+            if item.get('type') == 'paragraph' and item.get('data', {}).get('content'):
+                text += item['data']['content'] + " "
+    
+    word_count = len(text.split())
+    read_time_minutes = round(word_count / 200)  # Assuming 200 WPM reading speed
+    return max(1, read_time_minutes) # Ensure minimum 1 minute read time
+
+
 async def get_blog_data():
     """
     Fetch blog data from the database for the three sections:
@@ -50,6 +82,8 @@ async def get_blog_data():
             
             summary = summary[:150] + '...' if len(summary) > 150 else summary
             
+            read_time = calculate_read_time(blog['blogcontent'])
+            
             processed_blogs.append({
                 'id': blog['id'],
                 'title': title,
@@ -58,7 +92,8 @@ async def get_blog_data():
                 'slug': blog['slug'],
                 'category': blog_content.get('blogCategory', 'General'),
                 'editors_choice': blog['editors_choice'] == 'Y' or blog['editors_choice'] == "ON",
-                'cover_image': extract_blog_image(blog_content)
+                'cover_image': extract_blog_image(blog_content),
+                'read_time': read_time
             })
         print(f"Processed Blogs: {processed_blogs}") # Debug print
         # Separate blogs into the three sections
@@ -70,11 +105,13 @@ async def get_blog_data():
         latest_gossip_data = other_blogs[:3]
         read_more_data = other_blogs[3:]
 
-        return editors_choice_data, latest_gossip_data, read_more_data
+        top_blog = processed_blogs[0] if processed_blogs else None
+
+        return editors_choice_data, latest_gossip_data, read_more_data, top_blog
 
     except Exception as e:
         print(f"Error fetching blogs: {e}")
-        return [], [], []
+        return [], [], [], None
 
 
 def extract_blog_image(blog_content):
@@ -145,7 +182,7 @@ async def get_blogs_html():
     Generate the HTML content for the blogs_landing.html page with dynamic content
     for all three sections.
     """
-    editors_choice_data, latest_gossip_data, read_more_data = await get_blog_data()
+    editors_choice_data, latest_gossip_data, read_more_data, top_blog = await get_blog_data()
 
     # Generate HTML for Editor's Choice carousel
     editors_choice_html = ""
@@ -163,7 +200,7 @@ async def get_blogs_html():
         # Start color index from 3 to avoid repeating colors from latest gossips
         read_more_html += generate_blog_card_html(blog, i + 3)
 
-    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data
+    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data, top_blog
 
 
 async def get_home_insights_html(editors_choice_data):
@@ -199,7 +236,7 @@ if __name__ == "__main__":
     import asyncio
     
     async def main():
-        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data = await get_blogs_html()
+        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog = await get_blogs_html()
         home_insights_html = await get_home_insights_html(top_editors_choice_data)
         
         print("Generated Editor's Choice HTML:\n", editors_choice_html)
