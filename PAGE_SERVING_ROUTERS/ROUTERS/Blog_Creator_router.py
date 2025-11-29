@@ -354,6 +354,11 @@ async def getFooter():
         font-size: 1.2vw;
         text-decoration: none;
         display: inline-block;
+        transition: transform 0.3s ease;
+      }
+
+      .footer .footer-section.cta .button:hover {
+        transform: scale(1.05);
       }
 
       /* Social Links */

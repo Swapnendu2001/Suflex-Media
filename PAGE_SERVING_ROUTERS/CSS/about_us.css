@@ -767,6 +767,11 @@ body {
     border-radius: 0.5vw;
     text-align: center;
     font-size: 1.2vw;
+    transition: transform 0.3s ease;
+}
+
+.footer-section.cta .button:hover {
+    transform: scale(1.05);
 }
 
 .social-links {
