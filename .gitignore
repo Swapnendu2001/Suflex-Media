@@ -217,6 +217,7 @@ test_db_pool.py
 test_db_pool_async.py
 test_asyncpg.py
 test_*.py
+test*.py
 
 # pdf
 *.pdf
