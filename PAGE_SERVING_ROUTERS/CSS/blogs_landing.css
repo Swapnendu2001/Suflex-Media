@@ -180,6 +180,116 @@ body {
 .hamburger.active span:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -7px);
 }
+/* Hero Section */
+.hero-section {
+    display: flex;
+    align-items: center;
+    gap: 3vw;
+    padding: 8vh 0vw;
+    background-color: transparent;
+    width: 85vw;
+    margin: 0 auto 5vh auto;
+    border-radius: 1.5vw;
+}
+
+.hero-image-container {
+    flex: 1;
+    background-color: #fff;
+    padding: 1vw;
+    border-radius: 1.5vw;
+    box-shadow: 0 0.5vh 1vw rgba(0, 0, 0, 0.08);
+    height: 25vw;
+    overflow: hidden;
+    border: 0.15vw solid #017AFF;
+}
+
+.hero-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1vw;
+    display: block;
+}
+
+.hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+}
+
+.hero-badge {
+    background-color: #017AFF;
+    color: #fff;
+    padding: 0.5vh 1vw;
+    border-radius: 0.5vw;
+    font-size: 0.9vw;
+    font-weight: 500;
+}
+
+.hero-read-time {
+    font-size: 0.9vw;
+    color: #666;
+}
+
+.hero-title {
+    font-size: 2.5vw;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #000;
+}
+
+.hero-summary {
+    font-size: 1vw;
+    color: #555;
+    line-height: 1.6;
+}
+
+.hero-read-more {
+    color: #017AFF;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1vw;
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+}
+
+.hero-read-more:hover {
+    text-decoration: underline;
+}
+
+/* Responsive styles for hero section */
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column;
+        width: 90vw;
+        padding: 6vh 5vw;
+        gap: 4vh;
+    }
+
+    .hero-image-container {
+        height: 50vw;
+    }
+
+    .hero-title {
+        font-size: 6vw;
+    }
+
+    .hero-summary {
+        font-size: 3.5vw;
+    }
+
+    .hero-badge, .hero-read-time, .hero-read-more {
+        font-size: 3vw;
+    }
+}
 
 @media (max-width: 1024px) {
     .nav-links {
