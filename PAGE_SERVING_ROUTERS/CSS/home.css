@@ -432,7 +432,7 @@ body {
     position: absolute;
     width: 36.25vw;
     height: auto;
-    left: calc(50% - 16.125vw);
+    left: calc(50% - 18.125vw);
     top: 60vh;
     font-family: 'Lexend', sans-serif;
     font-style: normal;
@@ -1500,11 +1500,13 @@ body {
     background-size: 50vw;
     background-repeat: repeat;
     width: 100%;
-    padding: 5vh 0;
+    padding: 15vh 0;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-bottom-left-radius: 50vw 5vh;
+    border-bottom-right-radius: 50vw 5vh;
 }
 
 .care-content-wrapper::before {
@@ -1514,7 +1516,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: transparent;
     z-index: 0;
 }
 
@@ -1588,11 +1590,18 @@ body {
     font-weight: normal;
     color: #fff;
     background-color: #017AFF;
-    border: none;
+    border: 1px solid #017AFF;
     border-radius: 0.5vw;
     cursor: pointer;
     position: relative;
     z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.care-cta-button:hover {
+    transform: scale(1.05);
+    background-color: #fff;
+    color: #017AFF;
 }
 
 @media (max-width: 768px) {
