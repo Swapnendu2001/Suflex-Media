@@ -424,14 +424,14 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
         .download-form-field input:focus {
-            border-color: #5E4B8B;
+            border-color: #017AFF;
             background: #fff;
         }
         .download-form-field input:focus + label,
         .download-form-field input:not(:placeholder-shown) + label {
             top: 8px;
             font-size: 11px;
-            color: #5E4B8B;
+            color: #017AFF;
         }
         .download-form-field .optional-tag {
             color: #8B4513;
