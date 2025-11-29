@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS blogs (
     type VARCHAR(50) NOT NULL DEFAULT 'BLOG',
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     keyword JSONB,
+    category TEXT,
     editors_choice VARCHAR(1) DEFAULT 'N',
     redirect_url TEXT,
     isDeleted BOOLEAN DEFAULT FALSE,
@@ -36,6 +37,7 @@ CREATE INDEX IF NOT EXISTS idx_blogs_blog ON blogs USING GIN(blogContent);
 CREATE INDEX IF NOT EXISTS idx_blogs_editors_choice ON blogs(editors_choice) WHERE isDeleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_blogs_home_page ON blogs(home_page) WHERE isDeleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_blogs_hero_blog ON blogs(hero_blog) WHERE isDeleted = FALSE;
+CREATE INDEX IF NOT EXISTS idx_blogs_category ON blogs(category) WHERE isDeleted = FALSE;
 
 CREATE TABLE IF NOT EXISTS case_studies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -45,6 +47,7 @@ CREATE TABLE IF NOT EXISTS case_studies (
     type VARCHAR(50) NOT NULL DEFAULT 'CASE STUDY',
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     keyword JSONB,
+    category TEXT,
     preview JSONB,
     editors_choice VARCHAR(1) DEFAULT 'N',
     redirect_url TEXT,
@@ -63,6 +66,7 @@ CREATE INDEX IF NOT EXISTS idx_case_studies_keyword ON case_studies USING GIN(ke
 CREATE INDEX IF NOT EXISTS idx_case_studies_preview ON case_studies USING GIN(preview);
 CREATE INDEX IF NOT EXISTS idx_case_studies_case_study ON case_studies USING GIN(case_study);
 CREATE INDEX IF NOT EXISTS idx_case_studies_editors_choice ON case_studies(editors_choice) WHERE isDeleted = FALSE;
+CREATE INDEX IF NOT EXISTS idx_case_studies_category ON case_studies(category) WHERE isDeleted = FALSE;
 
 CREATE TABLE IF NOT EXISTS pdf_downloads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

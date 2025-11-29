@@ -95,50 +95,43 @@ def extract_blog_image(blog_content):
     return None
 
 
+def generate_unified_blog_card_html(blog):
+    """
+    Generate HTML for a unified blog card design with image, date, title, summary, and read more link.
+    """
+    image_html = ''
+    if blog.get('cover_image'):
+        image_html = f'''
+            <div class="blog-card-image-container">
+                <img src="{blog['cover_image']}" alt="{blog['title']}" class="blog-card-image">
+            </div>
+        '''
+    
+    return f'''
+        <div class="blog-card-unified" onclick="window.location.href='/blog/{blog['slug']}'">
+            {image_html}
+            <div class="blog-card-body">
+                <span class="blog-card-date">{blog['created_at']}</span>
+                <h3 class="blog-card-title">{blog['title']}</h3>
+                <p class="blog-card-summary">{blog['summary']}</p>
+                <a href="/blog/{blog['slug']}" class="blog-card-read-more">Read More →</a>
+            </div>
+        </div>
+    '''
+
+
 def generate_editors_choice_card_html(blog):
     """
     Generate HTML for a single Editor's Choice blog card.
     """
-    return f'''
-        <div class="blog-card editors-choice-card" onclick="window.location.href='/blog/{blog['slug']}'">
-            <div class="editors-choice-card-image-container">
-                <img src="{blog['cover_image']}" alt="{blog['title']}" class="editors-choice-card-image">
-            </div>
-            <div class="editors-choice-card-content">
-                <h3 class="blog-title">{blog['title']}</h3>
-                <p class="blog-summary">{blog['summary']}</p>
-                <div class="blog-footer">
-                    <p class="blog-date">Suflex Media • {blog['created_at']}</p>
-                </div>
-            </div>
-        </div>
-    '''
+    return generate_unified_blog_card_html(blog)
 
 
 def generate_blog_card_html(blog, color_index):
     """
-    Generate HTML for a single blog card based on the existing structure
+    Generate HTML for a single blog card based on the unified structure.
     """
-    return f'''
-        <div class="blog-card" data-category="{blog['category']}" onclick="window.location.href='/blog/{blog['slug']}'">
-            <div class="blog-card-header">
-                <div class="blog-dot" style="background-color: {get_blog_color(color_index)}"></div>
-                <span class="blog-read-time">5 mins read</span>
-            </div>
-            <h3 class="blog-title">{blog['title']}</h3>
-            <p class="blog-date">{blog['created_at']} • {blog['category']}</p>
-            <p class="blog-description">{blog['summary']}</p>
-            <div class="blog-footer">
-                <a href="/blog/{blog['slug']}" class="blog-arrow-link">
-                    <div class="blog-arrow">
-                        <svg viewBox="0 24 24" fill="none">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
-    '''
+    return generate_unified_blog_card_html(blog)
 
 def get_blog_color(index):
     """

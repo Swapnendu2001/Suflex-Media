@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.responses import FileResponse, HTMLResponse
-from typing import Dict
+from typing import Dict, Optional
 import asyncpg
 import os
 import json
@@ -52,37 +52,73 @@ for route_path, html_file in STATIC_PAGES.items():
         name=f"serve_{route_path.replace('/', '_').strip('_')}_page"
     )
 
+CATEGORY_MAPPING = {
+    "linkedin-branding": "LinkedIn Branding",
+    "ghostwriting": "Ghostwriting",
+    "performance-marketing": "Performance Marketing",
+    "website-development": "Website Development",
+}
+
 @router.get("/case-studies", response_class=HTMLResponse)
-async def get_portfolio_page():
+async def get_portfolio_page(category: Optional[str] = Query(None, description="Filter case studies by category")):
     """
     Serve portfolio page with dynamically fetched case studies
+    Optionally filters by category when provided
     """
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
         per_page = 4
-        query = """
-            SELECT slug, preview
-            FROM case_studies
-            WHERE isdeleted = FALSE
-                AND status = 'published'
-                AND type = 'CASE STUDY'
-            ORDER BY
-                CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
-                date DESC
-            LIMIT $1
-        """
         
-        case_studies = await conn.fetch(query, per_page)
+        mapped_category = CATEGORY_MAPPING.get(category) if category else None
         
-        count_query = """
-            SELECT COUNT(*)
-            FROM case_studies
-            WHERE isdeleted = FALSE
-                AND status = 'published'
-                AND type = 'CASE STUDY'
-        """
-        total_count = await conn.fetchval(count_query)
+        if mapped_category:
+            query = """
+                SELECT slug, preview, category
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = 'published'
+                    AND type = 'CASE STUDY'
+                    AND LOWER(category) = LOWER($2)
+                ORDER BY
+                    CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+                    date DESC
+                LIMIT $1
+            """
+            case_studies = await conn.fetch(query, per_page, mapped_category)
+            
+            count_query = """
+                SELECT COUNT(*)
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = 'published'
+                    AND type = 'CASE STUDY'
+                    AND LOWER(category) = LOWER($1)
+            """
+            total_count = await conn.fetchval(count_query, mapped_category)
+        else:
+            query = """
+                SELECT slug, preview, category
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = 'published'
+                    AND type = 'CASE STUDY'
+                ORDER BY
+                    CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+                    date DESC
+                LIMIT $1
+            """
+            case_studies = await conn.fetch(query, per_page)
+            
+            count_query = """
+                SELECT COUNT(*)
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = 'published'
+                    AND type = 'CASE STUDY'
+            """
+            total_count = await conn.fetchval(count_query)
+        
         await conn.close()
         
         case_studies_list = []
@@ -96,7 +132,8 @@ async def get_portfolio_page():
             
             case_studies_list.append({
                 'slug': record['slug'],
-                'preview': preview
+                'preview': preview,
+                'category': record['category'] if record['category'] else ''
             })
         
         case_studies_html = generate_case_studies_html(case_studies_list)
@@ -114,6 +151,12 @@ async def get_portfolio_page():
         html_content = html_content.replace(
             '<!-- PAGINATION WILL BE GENERATED DYNAMICALLY -->',
             f'<span style="display:none" id="totalPages">{total_pages}</span>'
+        )
+        
+        category_value = category if category else ''
+        html_content = html_content.replace(
+            '<!-- CATEGORY FILTER WILL BE INSERTED HERE -->',
+            f'<span style="display:none" id="currentCategory">{category_value}</span>'
         )
         
         return HTMLResponse(content=html_content)

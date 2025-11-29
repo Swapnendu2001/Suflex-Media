@@ -449,6 +449,19 @@ body {
     background-color: #017AFF;
 }
 
+.portfolio-hero-card.active {
+    background-color: #017AFF;
+    box-shadow: 0px 8px 30px rgba(1, 122, 255, 0.4);
+}
+
+.portfolio-hero-card.active .card-left p {
+    color: #fff;
+}
+
+.portfolio-hero-card.active .card-arrow {
+    filter: brightness(0) invert(1);
+}
+
 .portfolio-hero-card:hover .card-left p {
     color: #fff;
 }

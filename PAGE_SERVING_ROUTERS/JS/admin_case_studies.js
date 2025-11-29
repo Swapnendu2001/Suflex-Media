@@ -1901,7 +1901,7 @@ function populateEditForm(blog) {
     });
 
     const blogCategory = document.getElementById('blogCategory');
-    if (blogCategory) blogCategory.value = blogData.blogCategory || '';
+    if (blogCategory) blogCategory.value = blogData.blogCategory || blog.category || '';
     
     const editorsChoice = document.getElementById('editorsChoice');
     if (editorsChoice) editorsChoice.checked = blogData.editors_choice === 'Y';
