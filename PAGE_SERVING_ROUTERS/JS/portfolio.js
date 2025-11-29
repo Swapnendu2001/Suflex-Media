@@ -1,6 +1,50 @@
 let currentPage = 1;
 let totalPages = 1;
 const perPage = 4;
+let currentCategory = '';
+
+const CATEGORY_DISPLAY_MAPPING = {
+    "linkedin-branding": "LinkedIn Branding",
+    "linkedin branding": "LinkedIn Branding",
+    "linkedin_branding": "LinkedIn Branding",
+    "ghostwriting": "Ghostwriting",
+    "ghost writing": "Ghostwriting",
+    "ghost_writing": "Ghostwriting",
+    "performance-marketing": "Performance Marketing",
+    "performance marketing": "Performance Marketing",
+    "performance_marketing": "Performance Marketing",
+    "website-development": "Website Development",
+    "website development": "Website Development",
+    "website_development": "Website Development"
+};
+
+function getDisplayCategory(category) {
+    if (!category) return '';
+    const categoryLower = category.toLowerCase().trim();
+    if (CATEGORY_DISPLAY_MAPPING[categoryLower]) {
+        return CATEGORY_DISPLAY_MAPPING[categoryLower];
+    }
+    return category.split(/[\s_-]+/).map(word =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+}
+
+function getCategoryFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('category') || '';
+}
+
+function highlightActiveCategory() {
+    const categoryCards = document.querySelectorAll('.portfolio-hero-card');
+    categoryCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category') || '';
+        if (cardCategory === currentCategory) {
+            card.classList.add('active');
+        } else {
+            card.classList.remove('active');
+        }
+    });
+}
 
 function cleanHtml(htmlText) {
     if (!htmlText) return '';
@@ -14,6 +58,7 @@ function cleanHtml(htmlText) {
 function generateCaseStudyCard(caseStudy, index) {
     const preview = caseStudy.preview || {};
     const slug = caseStudy.slug || '';
+    const category = caseStudy.category || '';
     
     const imageUrl = preview.imageUrl || '/images/Frame1.jpg';
     const imageAlt = preview.imageAlt || 'Case Study';
@@ -34,6 +79,8 @@ function generateCaseStudyCard(caseStudy, index) {
     }
     
     const cardClass = index % 2 === 0 ? 'case-study-card-light' : 'dark';
+    const displayCategory = getDisplayCategory(category);
+    const categoryBadgeHtml = displayCategory ? `<span class="case-study-badge">${displayCategory}</span>` : '';
     
     return `
         <div class="case-study-card ${cardClass}">
@@ -41,6 +88,7 @@ function generateCaseStudyCard(caseStudy, index) {
                 <img src="${imageUrl}" alt="${imageAlt}">
             </div>
             <div class="case-study-content">
+                ${categoryBadgeHtml}
                 <h3 class="case-study-title">${blogTitle}</h3>
                 <p class="case-study-description">${text}</p>
                 ${snapshotsHtml ? `<div class="case-study-description">${snapshotsHtml}</div>` : ''}
@@ -115,7 +163,12 @@ function generatePaginationButtons() {
 
 async function loadPage(page) {
     try {
-        const response = await fetch(`/api/case-studies/paginated?page=${page}&per_page=${perPage}`);
+        let url = `/api/case-studies/paginated?page=${page}&per_page=${perPage}`;
+        if (currentCategory) {
+            url += `&category=${encodeURIComponent(currentCategory)}`;
+        }
+        
+        const response = await fetch(url);
         const data = await response.json();
         
         if (data.status === 'success') {
@@ -179,5 +232,14 @@ document.addEventListener('DOMContentLoaded', function () {
         totalPagesElement.remove();
     }
     
+    const currentCategoryElement = document.getElementById('currentCategory');
+    if (currentCategoryElement) {
+        currentCategory = currentCategoryElement.textContent || '';
+        currentCategoryElement.remove();
+    } else {
+        currentCategory = getCategoryFromUrl();
+    }
+    
+    highlightActiveCategory();
     generatePaginationButtons();
 });

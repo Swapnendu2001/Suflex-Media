@@ -31,6 +31,7 @@ class UpdateCaseStudyRequest(BaseModel):
     editors_choice: Optional[str] = None
     slug: Optional[str] = None
     redirect_url: Optional[str] = None
+    category: Optional[str] = None
 
 @router.get("/case-studies")
 async def get_case_studies(include_deleted: bool = Query(False, description="Include soft-deleted case studies")):
@@ -44,14 +45,14 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
         
         if include_deleted:
             query = f"""
-                SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, editors_choice, isdeleted, created_at, updated_at
+                SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, category, editors_choice, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
             """
         else:
             query = f"""
-                SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, editors_choice, isdeleted, created_at, updated_at
+                SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, category, editors_choice, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE isdeleted = FALSE AND type = '{ContentTypeConstants.CASE_STUDY}'
                 ORDER BY date DESC
@@ -72,6 +73,7 @@ async def get_case_studies(include_deleted: bool = Query(False, description="Inc
                 "type": case_study['type'],
                 "redirect_url": case_study['redirect_url'],
                 "pdf_url": case_study['pdf_url'],
+                "category": case_study['category'],
                 "editors_choice": case_study['editors_choice'],
                 "isdeleted": case_study['isdeleted'],
                 "created_at": case_study['created_at'].isoformat() if case_study['created_at'] else None,
@@ -242,6 +244,11 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
             update_values.append(case_study_data.redirect_url)
             param_count += 1
         
+        if case_study_data.category is not None:
+            update_fields.append(f"category = ${param_count}")
+            update_values.append(case_study_data.category)
+            param_count += 1
+        
         if not update_fields:
             await conn.close()
             raise HTTPException(status_code=400, detail="No fields to update")
@@ -253,7 +260,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
             UPDATE case_studies
             SET {', '.join(update_fields)}
             WHERE id = ${param_count}
-            RETURNING id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, isdeleted, created_at, updated_at
+            RETURNING id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, category, isdeleted, created_at, updated_at
         """
         
         updated_case_study = await conn.fetchrow(query, *update_values)
@@ -274,6 +281,7 @@ async def update_case_study(case_study_id: str, case_study_data: UpdateCaseStudy
                 "type": updated_case_study['type'],
                 "redirect_url": updated_case_study['redirect_url'],
                 "pdf_url": updated_case_study['pdf_url'],
+                "category": updated_case_study['category'],
                 "isdeleted": updated_case_study['isdeleted'],
                 "created_at": updated_case_study['created_at'].isoformat() if updated_case_study['created_at'] else None,
                 "updated_at": updated_case_study['updated_at'].isoformat() if updated_case_study['updated_at'] else None
@@ -390,43 +398,101 @@ async def restore_case_study(case_study_id: str, current_user: Dict[str, Any] = 
         logger.error(f"Unexpected error in restore_case_study: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+CATEGORY_MAPPING = {
+    "linkedin-branding": "LinkedIn Branding",
+    "ghostwriting": "Ghostwriting",
+    "performance-marketing": "Performance Marketing",
+    "website-development": "Website Development",
+}
+
+CATEGORY_DISPLAY_MAPPING = {
+    "linkedin-branding": "LinkedIn Branding",
+    "linkedin branding": "LinkedIn Branding",
+    "linkedin_branding": "LinkedIn Branding",
+    "ghostwriting": "Ghostwriting",
+    "ghost writing": "Ghostwriting",
+    "ghost_writing": "Ghostwriting",
+    "performance-marketing": "Performance Marketing",
+    "performance marketing": "Performance Marketing",
+    "performance_marketing": "Performance Marketing",
+    "website-development": "Website Development",
+    "website development": "Website Development",
+    "website_development": "Website Development",
+}
+
+def get_display_category(category: str) -> str:
+    if not category:
+        return ""
+    category_lower = category.lower().strip()
+    if category_lower in CATEGORY_DISPLAY_MAPPING:
+        return CATEGORY_DISPLAY_MAPPING[category_lower]
+    return category.title()
+
 @router.get("/case-studies/paginated")
 async def get_paginated_case_studies(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
-    per_page: int = Query(4, ge=1, le=20, description="Items per page")
+    per_page: int = Query(4, ge=1, le=20, description="Items per page"),
+    category: Optional[str] = Query(None, description="Filter by category")
 ):
     """
     Get paginated case studies for portfolio page
     Returns only published case studies with pagination
+    Optionally filters by category when provided
     """
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         
         offset = (page - 1) * per_page
         
-        count_query = f"""
-            SELECT COUNT(*)
-            FROM case_studies
-            WHERE isdeleted = FALSE
-                AND status = '{StatusConstants.PUBLISHED}'
-                AND type = '{ContentTypeConstants.CASE_STUDY}'
-        """
+        mapped_category = CATEGORY_MAPPING.get(category) if category else None
         
-        total_count = await conn.fetchval(count_query)
+        if mapped_category:
+            count_query = f"""
+                SELECT COUNT(*)
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = '{StatusConstants.PUBLISHED}'
+                    AND type = '{ContentTypeConstants.CASE_STUDY}'
+                    AND LOWER(category) = LOWER($1)
+            """
+            total_count = await conn.fetchval(count_query, mapped_category)
+            
+            query = f"""
+                SELECT slug, preview, category
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = '{StatusConstants.PUBLISHED}'
+                    AND type = '{ContentTypeConstants.CASE_STUDY}'
+                    AND LOWER(category) = LOWER($3)
+                ORDER BY
+                    CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+                    date DESC
+                LIMIT $1 OFFSET $2
+            """
+            case_studies = await conn.fetch(query, per_page, offset, mapped_category)
+        else:
+            count_query = f"""
+                SELECT COUNT(*)
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = '{StatusConstants.PUBLISHED}'
+                    AND type = '{ContentTypeConstants.CASE_STUDY}'
+            """
+            total_count = await conn.fetchval(count_query)
+            
+            query = f"""
+                SELECT slug, preview, category
+                FROM case_studies
+                WHERE isdeleted = FALSE
+                    AND status = '{StatusConstants.PUBLISHED}'
+                    AND type = '{ContentTypeConstants.CASE_STUDY}'
+                ORDER BY
+                    CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
+                    date DESC
+                LIMIT $1 OFFSET $2
+            """
+            case_studies = await conn.fetch(query, per_page, offset)
         
-        query = f"""
-            SELECT slug, preview
-            FROM case_studies
-            WHERE isdeleted = FALSE
-                AND status = '{StatusConstants.PUBLISHED}'
-                AND type = '{ContentTypeConstants.CASE_STUDY}'
-            ORDER BY
-                CASE WHEN editors_choice = 'Y' THEN 0 ELSE 1 END,
-                date DESC
-            LIMIT $1 OFFSET $2
-        """
-        
-        case_studies = await conn.fetch(query, per_page, offset)
         await conn.close()
         
         case_studies_list = []
@@ -438,9 +504,13 @@ async def get_paginated_case_studies(
                 except:
                     preview = {}
             
+            raw_category = record['category'] or ''
+            display_category = get_display_category(raw_category)
+            
             case_studies_list.append({
                 'slug': record['slug'],
-                'preview': preview
+                'preview': preview,
+                'category': display_category
             })
         
         total_pages = (total_count + per_page - 1) // per_page
@@ -473,7 +543,7 @@ async def get_editors_choice_case_studies():
         conn = await asyncpg.connect(DATABASE_URL)
         
         query = f"""
-            SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, editors_choice, isdeleted, created_at, updated_at
+            SELECT id, case_study, status, date, keyword, preview, slug, type, redirect_url, pdf_url, category, editors_choice, isdeleted, created_at, updated_at
             FROM case_studies
             WHERE isdeleted = FALSE
             AND type = '{ContentTypeConstants.CASE_STUDY}'
@@ -496,6 +566,7 @@ async def get_editors_choice_case_studies():
                 "type": case_study['type'],
                 "redirect_url": case_study['redirect_url'],
                 "pdf_url": case_study['pdf_url'],
+                "category": case_study['category'] or '',
                 "editors_choice": case_study['editors_choice'],
                 "isdeleted": case_study['isdeleted'],
                 "created_at": case_study['created_at'].isoformat() if case_study['created_at'] else None,
@@ -517,7 +588,8 @@ async def get_editors_choice_case_studies():
 async def toggle_editors_choice(case_study_id: str, current_user: Dict[str, Any] = Depends(require_admin)):
     """
     Toggle editor's choice status for a case study
-    Validates the 5-item maximum limit before setting to 'Y'
+    Only 1 case study can be marked as Editor's Choice at a time
+    When setting a new editor's choice, the previous one is automatically unset
     """
     logger.info(f"Toggling editor's choice for case study ID: {case_study_id}")
     
@@ -541,20 +613,15 @@ async def toggle_editors_choice(case_study_id: str, current_user: Dict[str, Any]
         new_status = 'N' if current_status == 'Y' else 'Y'
         
         if new_status == 'Y':
-            count_result = await conn.fetchval(
+            await conn.execute(
                 """
-                SELECT COUNT(*) FROM case_studies
+                UPDATE case_studies
+                SET editors_choice = 'N', updated_at = CURRENT_TIMESTAMP
                 WHERE editors_choice = 'Y' AND isdeleted = FALSE AND type = $1
                 """,
                 ContentTypeConstants.CASE_STUDY
             )
-            
-            if count_result >= 5:
-                await conn.close()
-                raise HTTPException(
-                    status_code=400,
-                    detail="Maximum of 5 case studies can be marked as Editor's Choice. Please remove one before adding another."
-                )
+            logger.info("Cleared previous editor's choice selection")
         
         updated_case_study = await conn.fetchrow(
             """
@@ -572,7 +639,7 @@ async def toggle_editors_choice(case_study_id: str, current_user: Dict[str, Any]
         logger.info(f"Editor's choice toggled successfully for case study: {case_study_id} to {new_status}")
         return {
             "status": "success",
-            "message": f"Editor's choice {'added' if new_status == 'Y' else 'removed'} successfully",
+            "message": f"Editor's choice {'set' if new_status == 'Y' else 'removed'} successfully",
             "editors_choice": new_status,
             "case_study": {
                 "id": str(updated_case_study['id']),
@@ -738,6 +805,7 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 
                 preview_data = data.pop('previewData', None)
                 pdf_url = data.pop('pdfUrl', None)
+                case_study_category = data.get('blogCategory', '')
                 
                 if preview_data is None:
                     preview_data = {}
@@ -746,9 +814,9 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 updated_case_study = await conn.fetchrow(
                     """
                     UPDATE case_studies
-                    SET case_study = $1, status = $2, preview = $3, editors_choice = $4, slug = $5, type = $6, pdf_url = $7, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = $8
-                    RETURNING id, case_study, status, date, keyword, preview, editors_choice, slug, type, redirect_url, pdf_url, isdeleted, created_at, updated_at
+                    SET case_study = $1, status = $2, preview = $3, editors_choice = $4, slug = $5, type = $6, pdf_url = $7, category = $8, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $9
+                    RETURNING id, case_study, status, date, keyword, preview, editors_choice, slug, type, redirect_url, pdf_url, category, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     case_study_status,
@@ -757,6 +825,7 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                     slug,
                     content_type,
                     pdf_url,
+                    case_study_category,
                     case_study_id
                 )
                 
@@ -795,6 +864,7 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
             
                 preview_data = data.pop('previewData', None)
                 pdf_url = data.pop('pdfUrl', None)
+                case_study_category = data.get('blogCategory', '')
                 
                 if preview_data is None:
                     preview_data = {}
@@ -802,9 +872,9 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                 
                 new_case_study = await conn.fetchrow(
                     """
-                    INSERT INTO case_studies (case_study, status, preview, editors_choice, slug, type, pdf_url, isdeleted)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)
-                    RETURNING id, case_study, status, date, keyword, preview, editors_choice, slug, type, redirect_url, pdf_url, isdeleted, created_at, updated_at
+                    INSERT INTO case_studies (case_study, status, preview, editors_choice, slug, type, pdf_url, category, isdeleted)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, FALSE)
+                    RETURNING id, case_study, status, date, keyword, preview, editors_choice, slug, type, redirect_url, pdf_url, category, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     case_study_status,
@@ -812,7 +882,8 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
-                    pdf_url
+                    pdf_url,
+                    case_study_category
                 )
                 
                 case_study_id = str(new_case_study['id'])
@@ -842,3 +913,48 @@ async def admin_save_case_study(request: Request, current_user: Dict[str, Any] =
     except Exception as e:
         logger.error(f"Unexpected error in admin_save_case_study: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class PDFDownloadFormRequest(BaseModel):
+    first_name: str
+    last_name: Optional[str] = None
+    email: str
+    pdf_link: str
+
+
+@router.post("/pdf-download-form")
+async def save_pdf_download_form(form_data: PDFDownloadFormRequest):
+    """
+    Save PDF download form submission to database.
+    Called when user fills out the download form before downloading a PDF.
+    """
+    logger.info(f"Saving PDF download form for email: {form_data.email}")
+    
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        await conn.execute(
+            """
+            INSERT INTO pdf_downloads (first_name, last_name, email, pdf_link)
+            VALUES ($1, $2, $3, $4)
+            """,
+            form_data.first_name,
+            form_data.last_name or '',
+            form_data.email,
+            form_data.pdf_link
+        )
+        
+        await conn.close()
+        
+        logger.info(f"PDF download form saved successfully for: {form_data.email}")
+        return {
+            "status": "success",
+            "message": "Form submitted successfully"
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in save_pdf_download_form: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in save_pdf_download_form: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

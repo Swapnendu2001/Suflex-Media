@@ -107,6 +107,28 @@ class UpdateBlogRequest(BaseModel):
                 raise ValueError('Redirect URL must start with http:// or https://')
         return v
 
+def _extract_blog_image(blog_content: Dict[str, Any]) -> Optional[str]:
+    if not blog_content:
+        return None
+    
+    if blog_content.get('mainImageUrl'):
+        return blog_content['mainImageUrl']
+    
+    if blog_content.get('blogTitleImage'):
+        return blog_content['blogTitleImage']
+    
+    if blog_content.get('blog_cover_image') and isinstance(blog_content['blog_cover_image'], dict):
+        return blog_content['blog_cover_image'].get('url')
+    
+    if blog_content.get('blogcontent') and isinstance(blog_content['blogcontent'], dict):
+        blocks = blog_content['blogcontent'].get('blocks', [])
+        for block in blocks:
+            if block.get('type') == 'image' and block.get('data', {}).get('file', {}).get('url'):
+                return block['data']['file']['url']
+    
+    return None
+
+
 def _parse_blog_content_from_db(blog_content_raw: Any, blog_id: str) -> Dict[str, Any]:
     parsed_content = {}
     if isinstance(blog_content_raw, str):
@@ -114,26 +136,20 @@ def _parse_blog_content_from_db(blog_content_raw: Any, blog_id: str) -> Dict[str
             parsed_content = json.loads(blog_content_raw)
         except json.JSONDecodeError:
             logger.error(f"Failed to decode blogcontent JSON for blog ID {blog_id}: {blog_content_raw}")
-            return {} # Return empty dict on decode failure
+            return {}
     elif isinstance(blog_content_raw, dict):
         parsed_content = blog_content_raw
     else:
         logger.warning(f"Unexpected type for blogcontent for blog ID {blog_id}: {type(blog_content_raw)}. Expected str or dict.")
         return {}
     
-    # The admin_save_blog endpoint saves the entire request body, which has a 'blogContent' key.
-    # So, we need to check if the actual content is nested under 'blogcontent' (lowercase) or 'blogContent' (camelCase)
-    # The user feedback specifically asks for lowercase 'blogcontent'.
-    
     actual_blog_content = {}
     if 'blogcontent' in parsed_content and isinstance(parsed_content['blogcontent'], dict):
         actual_blog_content = parsed_content['blogcontent']
     elif 'blogContent' in parsed_content and isinstance(parsed_content['blogContent'], dict):
-        # Fallback for existing data that might use camelCase, but log a warning
         logger.warning(f"Using camelCase 'blogContent' for blog ID {blog_id}. Consider updating data to use 'blogcontent'.")
         actual_blog_content = parsed_content['blogContent']
     else:
-        # If no nested 'blogcontent' or 'blogContent', assume the parsed_content itself is the blog content
         actual_blog_content = parsed_content
     
     return actual_blog_content
@@ -143,19 +159,21 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
     for blog in blogs_list_raw:
         actual_blog_content = _parse_blog_content_from_db(blog['blogcontent'], str(blog['id']))
         
-        # Ensure keyword is a dictionary
         keyword_dict = blog['keyword']
         if isinstance(keyword_dict, str):
             try:
                 keyword_dict = json.loads(keyword_dict)
             except json.JSONDecodeError:
                 logger.error(f"Failed to decode keyword for blog ID {blog['id']}: {keyword_dict}")
-                keyword_dict = {} # Fallback to empty dict
+                keyword_dict = {}
 
-        blog_category = actual_blog_content.get('blogcategory')
-        if blog_category is None:
-            logger.warning(f"Blog category not found for blog ID {blog['id']}. Defaulting to 'General'.")
-            blog_category = 'General'
+        blog_category = blog.get('category', '')
+        if not blog_category:
+            blog_category = actual_blog_content.get('blogcategory') or actual_blog_content.get('blogCategory') or ''
+
+        cover_image = _extract_blog_image(actual_blog_content)
+        
+        actual_blog_content['coverImage'] = cover_image
 
         formatted_blogs.append({
             "id": str(blog['id']),
@@ -170,7 +188,8 @@ def _format_blog_list(blogs_list_raw: List[asyncpg.Record]) -> List[Dict[str, An
             "isdeleted": blog['isdeleted'],
             "created_at": blog['created_at'].isoformat() if blog['created_at'] else None,
             "updated_at": blog['updated_at'].isoformat() if blog['updated_at'] else None,
-            "editors_choice": blog.get('editors_choice', 'N')
+            "editors_choice": blog.get('editors_choice', 'N'),
+            "coverImage": cover_image
         })
     return formatted_blogs
 
@@ -192,7 +211,7 @@ async def get_blogs(
 
         if purpose == 'landing_page':
             query = """
-                SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, category, isdeleted, created_at, updated_at, editors_choice
                 FROM blogs
                 WHERE isdeleted = FALSE AND status = 'published'
                 ORDER BY date DESC
@@ -223,13 +242,13 @@ async def get_blogs(
         else:
             if include_deleted:
                 query = """
-                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, category, isdeleted, created_at, updated_at, editors_choice
                     FROM blogs
                     ORDER BY date DESC
                 """
             else:
                 query = """
-                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, isdeleted, created_at, updated_at, editors_choice
+                    SELECT id, blogContent, status, date, keyword, slug, type, redirect_url, category, isdeleted, created_at, updated_at, editors_choice
                     FROM blogs
                     WHERE isdeleted = FALSE
                     ORDER BY date DESC
@@ -676,19 +695,21 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                             counter += 1
                         logger.info(f"Generated unique slug: {slug}")
                 
-                # Update existing blog
+                blog_category = data.get('blogCategory', '')
+                
                 updated_blog = await conn.fetchrow(
                     """
                     UPDATE blogs
-                    SET blogContent = $1, status = $2, editors_choice = $3, slug = $4, type = $5, updated_at = CURRENT_TIMESTAMP
-                    WHERE id = $6
-                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    SET blogContent = $1, status = $2, editors_choice = $3, slug = $4, type = $5, category = $6, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = $7
+                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, category, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
                     data.get('editors_choice', 'N'),
                     slug,
                     content_type,
+                    blog_category,
                     blog_id
                 )
                 
@@ -709,18 +730,20 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                 }
             else:
                 slug = await ensure_unique_slug(conn, slug, "blogs")
+                blog_category = data.get('blogCategory', '')
                 
                 new_blog = await conn.fetchrow(
                     """
-                    INSERT INTO blogs (blogContent, status, editors_choice, slug, type, isdeleted)
-                    VALUES ($1, $2, $3, $4, $5, FALSE)
-                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, isdeleted, created_at, updated_at
+                    INSERT INTO blogs (blogContent, status, editors_choice, slug, type, category, isdeleted)
+                    VALUES ($1, $2, $3, $4, $5, $6, FALSE)
+                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, category, isdeleted, created_at, updated_at
                     """,
                     json.dumps(data),
                     blog_status,
                     data.get('editors_choice', 'N'),
                     slug,
-                    content_type
+                    content_type,
+                    blog_category
                 )
                 
                 blog_id = str(new_blog['id'])

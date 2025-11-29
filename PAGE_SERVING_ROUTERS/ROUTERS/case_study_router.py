@@ -322,6 +322,202 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                 bottom: 10px;
             }
         }
+
+        /* Download Form Modal */
+        .download-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            backdrop-filter: blur(4px);
+        }
+        .download-modal-overlay.show {
+            display: flex;
+        }
+        .download-modal {
+            background: #FBFAF7;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 520px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .download-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #5f6368;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        .download-modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #1A1A1A;
+        }
+        .download-modal h2 {
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin: 0 0 24px 0;
+        }
+        .download-form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .download-form-field {
+            flex: 1;
+            position: relative;
+        }
+        .download-form-field.full-width {
+            width: 100%;
+        }
+        .download-form-field label {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            font-size: 14px;
+            color: #5f6368;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-form-field input {
+            width: 100%;
+            padding: 32px 16px 12px 16px;
+            border: 1px solid #E5E2DC;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #F5F3EF;
+            color: #1A1A1A;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-form-field input:focus {
+            border-color: #5E4B8B;
+            background: #fff;
+        }
+        .download-form-field input:focus + label,
+        .download-form-field input:not(:placeholder-shown) + label {
+            top: 8px;
+            font-size: 11px;
+            color: #5E4B8B;
+        }
+        .download-form-field .optional-tag {
+            color: #8B4513;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        .download-form-field input::placeholder {
+            color: transparent;
+        }
+        .download-form-field .placeholder-text {
+            position: absolute;
+            top: 38px;
+            left: 16px;
+            font-size: 14px;
+            color: #999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .download-form-field input:focus ~ .placeholder-text,
+        .download-form-field input:not(:placeholder-shown) ~ .placeholder-text {
+            opacity: 0;
+        }
+        .download-form-field input:placeholder-shown:not(:focus) ~ .placeholder-text {
+            opacity: 1;
+        }
+        .download-form-consent {
+            font-size: 13px;
+            color: #5f6368;
+            line-height: 1.5;
+            margin: 20px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-form-consent a {
+            color: #8B4513;
+            text-decoration: none;
+        }
+        .download-form-consent a:hover {
+            text-decoration: underline;
+        }
+        .download-form-submit {
+            background: #1A1A1A;
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-form-submit:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+        .download-form-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .download-form-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
+        }
+        .download-form-field.error input {
+            border-color: #dc3545;
+        }
+        .download-form-field.error .download-form-error {
+            display: block;
+        }
+        @media (max-width: 480px) {
+            .download-modal {
+                padding: 24px;
+                margin: 16px;
+            }
+            .download-modal h2 {
+                font-size: 20px;
+            }
+            .download-form-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
     </style>
 </head>
 <body class="iframe-mode loading">
@@ -377,6 +573,39 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
         </svg>
         <span>Download started! It will continue in the background.</span>
+    </div>
+
+    <div id="downloadModalOverlay" class="download-modal-overlay">
+        <div class="download-modal">
+            <button class="download-modal-close" id="downloadModalClose">&times;</button>
+            <h2>Download a PDF version.</h2>
+            <form id="downloadForm">
+                <div class="download-form-row">
+                    <div class="download-form-field">
+                        <input type="text" id="firstName" name="firstName" placeholder=" " required>
+                        <label for="firstName">First/Given name</label>
+                        <div class="download-form-error">Please enter your first name</div>
+                    </div>
+                    <div class="download-form-field">
+                        <input type="text" id="lastName" name="lastName" placeholder=" ">
+                        <label for="lastName">Last/Family name <span class="optional-tag">(optional)</span></label>
+                    </div>
+                </div>
+                <div class="download-form-row">
+                    <div class="download-form-field full-width">
+                        <input type="email" id="workEmail" name="workEmail" placeholder=" " required>
+                        <label for="workEmail">Work Email</label>
+                        <span class="placeholder-text">name@example.com</span>
+                        <div class="download-form-error">Please enter a valid email address</div>
+                    </div>
+                </div>
+                <div class="download-form-consent">
+                    <p>By submitting this form, you agree to the processing of the submitted personal data in accordance with <a href="/privacy-policy" target="_blank">Suflex Media's Privacy Policy</a>, including the transfer of data to the United States.</p>
+                    <p style="margin-top: 12px;">By submitting this form, you agree to receive information from Suflex Media related to our services, events, and promotions. You may unsubscribe at any time by following the instructions in those communications.</p>
+                </div>
+                <button type="submit" class="download-form-submit" id="downloadFormSubmit">Download now</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -718,7 +947,29 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             }, 3000);
         }
 
-        document.getElementById('downloadBtn').addEventListener('click', () => {
+        function showDownloadModal() {
+            const overlay = document.getElementById('downloadModalOverlay');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideDownloadModal() {
+            const overlay = document.getElementById('downloadModalOverlay');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+            const form = document.getElementById('downloadForm');
+            form.reset();
+            document.querySelectorAll('.download-form-field').forEach(field => {
+                field.classList.remove('error');
+            });
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function performDownload() {
             const filename = (pdfUrl.split('/').pop() || 'document.pdf');
             
             showDownloadToast();
@@ -754,6 +1005,93 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+            }
+        }
+
+        async function submitDownloadForm(firstName, lastName, email) {
+            try {
+                const parentOrigin = (() => {
+                    try { return new URL(document.referrer).origin; } catch { return window.location.origin; }
+                })();
+                
+                const response = await fetch(`${parentOrigin}/api/pdf-download-form`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: email,
+                        pdf_link: pdfUrl
+                    })
+                });
+                
+                return response.ok;
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                return false;
+            }
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            showDownloadModal();
+        });
+
+        document.getElementById('downloadModalClose').addEventListener('click', () => {
+            hideDownloadModal();
+        });
+
+        document.getElementById('downloadModalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                hideDownloadModal();
+            }
+        });
+
+        document.getElementById('downloadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('workEmail').value.trim();
+            
+            let hasError = false;
+            
+            document.querySelectorAll('.download-form-field').forEach(field => {
+                field.classList.remove('error');
+            });
+            
+            if (!firstName) {
+                document.getElementById('firstName').closest('.download-form-field').classList.add('error');
+                hasError = true;
+            }
+            
+            if (!email || !validateEmail(email)) {
+                document.getElementById('workEmail').closest('.download-form-field').classList.add('error');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            const submitBtn = document.getElementById('downloadFormSubmit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            await submitDownloadForm(firstName, lastName, email);
+            
+            hideDownloadModal();
+            performDownload();
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Download now';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('downloadModalOverlay');
+                if (overlay.classList.contains('show')) {
+                    hideDownloadModal();
+                }
             }
         });
 
@@ -1098,6 +1436,20 @@ def get_raw_html(pdf_url):
                       console.error('Parent message handler error:', e);
                     }
                   });
+                  document.addEventListener('keydown', function (e) {
+                    if (!iframeEl || !iframeEl.contentWindow) return;
+                    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
+                    if (e.key === 'ArrowLeft') {
+                      e.preventDefault();
+                      iframeEl.contentWindow.postMessage({ type: 'prevPage' }, '*');
+                    } else if (e.key === 'ArrowRight') {
+                      e.preventDefault();
+                      iframeEl.contentWindow.postMessage({ type: 'nextPage' }, '*');
+                    } else if (e.key === 'f' || e.key === 'F') {
+                      e.preventDefault();
+                      iframeEl.contentWindow.postMessage({ type: 'toggleFullscreen' }, '*');
+                    }
+                  });
                 })();
               </script>
     """
@@ -1292,8 +1644,8 @@ def generate_header_section() -> str:
                     <a href="/seo">Search Engine Optimisation</a>
                 </div>
             </div>
-            <a href="/case-studies">Case Studies</a>
-            <a href="/blogs" class="active">Blog</a>
+            <a href="/case-studies" class="active">Case Studies</a>
+            <a href="/blogs">Blog</a>
             <a href="/contact" class="contact-us">
                 <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
                 <span>Contact Us</span>
@@ -1313,19 +1665,21 @@ def generate_header_section() -> str:
     <main id="main" class="wrap" role="main" aria-labelledby="title">"""
 
 
-def generate_article_header(blog_data: Dict[str, Any], case_study_date: str) -> str:
+def generate_article_header(blog_data: Dict[str, Any], case_study_date: str, category: str = None) -> str:
     """
-    Generate the article header section with kicker, title, and date
+    Generate the article header section with breadcrumbs, title, and date
     """
     title = blog_data.get('blogTitle', 'Case Study')
-    content_type = blog_data.get('contentType', 'Case Study')
     formatted_date, iso_date = format_date(case_study_date)
+    
+    breadcrumb_html = "Case Study"
+    if category:
+        breadcrumb_html = f'Case Study <svg class="breadcrumb-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> {category} <svg class="breadcrumb-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> '
     
     return f"""
         <header class="article-header">
             <span class="kicker" aria-label="Content type">
-                <span class="dot" aria-hidden="true"></span>
-                {content_type}
+                {breadcrumb_html}
             </span>
             <h1 id="title" class="title">{title}</h1>
             <div class="meta">
@@ -1604,6 +1958,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     blog_data = parse_blog_json(blog_json_str)
     case_study_date = case_study_data.get('date', '')
     pdf_url = case_study_data.get('pdf_url')
+    category = case_study_data.get('category', '')
     
     preview_json_str = case_study_data.get('preview', '{}')
     preview_data = parse_blog_json(preview_json_str)
@@ -1611,7 +1966,7 @@ def assemble_case_study_html(case_study_data: Dict[str, Any]) -> str:
     html_parts = [
         generate_head_section(blog_data, case_study_date),
         generate_header_section(),
-        generate_article_header(blog_data, case_study_date),
+        generate_article_header(blog_data, case_study_date, category),
         generate_summary_section(preview_data),
         generate_pdf_viewer_section(pdf_url),
         generate_vision_section(blog_data),
@@ -1634,7 +1989,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
         
         if by_slug:
             query = """
-                SELECT id, slug, case_study, status, type, date, keyword, preview,
+                SELECT id, slug, case_study, status, type, date, keyword, preview, category,
                        editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE slug = $1 AND isdeleted = FALSE
@@ -1642,7 +1997,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
             """
         else:
             query = """
-                SELECT id, slug, case_study, status, type, date, keyword, preview,
+                SELECT id, slug, case_study, status, type, date, keyword, preview, category,
                        editors_choice, redirect_url, pdf_url, isdeleted, created_at, updated_at
                 FROM case_studies
                 WHERE id = $1 AND isdeleted = FALSE
@@ -1661,6 +2016,7 @@ async def fetch_case_study(identifier: str, by_slug: bool = True) -> Optional[Di
                 "type": case_study['type'],
                 "date": case_study['date'].isoformat() if case_study['date'] else None,
                 "keyword": case_study['keyword'],
+                "category": case_study['category'],
                 "preview": case_study['preview'],
                 "editors_choice": case_study['editors_choice'],
                 "redirect_url": case_study['redirect_url'],
@@ -1709,6 +2065,7 @@ async def get_case_study_by_id(case_study_id: str):
         raise HTTPException(status_code=404, detail="Case study not available")
     
     html_content = assemble_case_study_html(case_study_data)
+    return HTMLResponse(content=html_content, status_code=200)
 
 @router.get("/download_proxy")
 async def download_proxy(pdf: str, filename: str = "document.pdf"):

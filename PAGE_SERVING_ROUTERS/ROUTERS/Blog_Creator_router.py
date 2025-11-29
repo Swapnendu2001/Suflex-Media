@@ -56,8 +56,13 @@ async def getHeader():
 
       .header .nav-links a {
         text-decoration: none;
-        color: #000;
+        color: #888;
         font-size: 1.25vw;
+      }
+
+      .header .nav-links a.active {
+        color: #000;
+        font-weight: 600;
       }
 
       /* Contact Us Button */
@@ -226,7 +231,7 @@ async def getHeader():
         <a href="/about">About Us</a>
         <a href="/services">Services</a>
         <a href="/case-studies">Case Studies</a>
-        <a href="/blogs">Blog</a>
+        <a href="/blogs" class="active">Blog</a>
         <!-- <a href="/careers">Careers</a> -->
         <a href="/contact" class="contact-us">
           <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
@@ -1081,7 +1086,7 @@ async def get_blog_hero_section(data: dict):
     <nav class="mb-2 text-left mobile-breadcrumb ml-0 md:ml-[-39.5rem] mt-2 md:mt-8" aria-label="Breadcrumb">
         <div class="text-sm text-gray-600">
             <span class="font-jakarta font-medium flex items-center flex-wrap">
-                <a href="/blogs" class="flex items-center">blogs</a>
+                <a href="/blogs" class="flex items-center font-bold">Blog</a>
                 <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -1314,7 +1319,7 @@ async def get_blog_content(data: list):
                     f"""<div class="w-full h-[120px] sm:h-[160px] md:h-[236px] my-8 md:my-12"><img src="{url}" alt="{alt}" class="w-full h-full object-cover"/></div>"""
                 )
     content_str = "\n".join(content)
-    return f"""<section class="max-w-[43rem] space-y-6 md:space-y-5 text-justify order-1 lg:order-2">{content_str}</section>"""
+    return f"""<section class="max-w-[43rem] space-y-6 md:space-y-5 text-left order-1 lg:order-2">{content_str}</section>"""
 
 
 async def get_blog_body(data: dict):
@@ -1793,6 +1798,177 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
                 background-color: rgba(53, 51, 205, 0.1);
             }
         }
+
+        .download-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .download-modal-overlay.show {
+            display: flex;
+        }
+
+        .download-modal {
+            background: #FBFAF7;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .download-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .download-modal-close:hover {
+            color: #333;
+        }
+
+        .download-modal h2 {
+            font-size: 24px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0 0 24px 0;
+            padding-right: 30px;
+        }
+
+        .download-form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .download-form-field {
+            flex: 1;
+        }
+
+        .download-form-field.full-width {
+            width: 100%;
+        }
+
+        .download-form-field input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f5f5f0;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .download-form-field input:focus {
+            outline: none;
+            border-color: #017AFF;
+            box-shadow: 0 0 0 3px rgba(1, 122, 255, 0.1);
+        }
+
+        .download-form-field input::placeholder {
+            color: #999;
+        }
+
+        .download-form-field label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .download-form-field .optional {
+            color: #8B4513;
+            font-size: 12px;
+        }
+
+        .download-modal-terms {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .download-modal-terms a {
+            color: #8B4513;
+            text-decoration: none;
+        }
+
+        .download-modal-terms a:hover {
+            text-decoration: underline;
+        }
+
+        .download-modal-submit {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .download-modal-submit:hover {
+            background: #333;
+        }
+
+        .download-modal-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .download-form-error {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .download-form-field.error input {
+            border-color: #e53935;
+        }
+
+        .download-form-field.error .download-form-error {
+            display: block;
+        }
+
+        @media screen and (max-width: 600px) {
+            .download-form-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .download-modal {
+                padding: 24px;
+                margin: 10px;
+            }
+            
+            .download-modal h2 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -2066,60 +2242,15 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
                 const contentSection = document.querySelector('section.space-y-6, section.order-1');
                 const bodyContent = contentSection?.innerHTML || '';
                 
-                try {
-                    const printWindow = window.open('', '_blank');
-                    if (printWindow) {
-                        printWindow.document.write(`
-                            <html>
-                                <head>
-                                    <title>${articleTitle}</title>
-                                    <style>
-                                        @media print {
-                                            body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
-                                            img { max-width: 100%; height: auto; margin: 20px 0; }
-                                            .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
-                                            h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
-                                            .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
-                                            h2 { color: #333; margin-top: 30px; font-size: 24px; }
-                                            h3 { color: #333; margin-top: 20px; font-size: 20px; }
-                                            p { line-height: 1.6; margin-bottom: 15px; }
-                                        }
-                                        body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
-                                        img { max-width: 100%; height: auto; margin: 20px 0; }
-                                        .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
-                                        h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
-                                        .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
-                                        h2 { color: #333; margin-top: 30px; font-size: 24px; }
-                                        h3 { color: #333; margin-top: 20px; font-size: 20px; }
-                                        p { line-height: 1.6; margin-bottom: 15px; }
-                                    </style>
-                                </head>
-                                <body>
-                                    ${mainImageUrl ? `<img src="${mainImageUrl}" alt="${mainImageAlt}" class="main-image" />` : ''}
-                                    <h1>${articleTitle}</h1>
-                                    ${summary ? `<div class="summary">${summary}</div>` : ''}
-                                    <div class="content">
-                                        ${bodyContent}
-                                    </div>
-                                </body>
-                            </html>
-                        `);
-                        printWindow.document.close();
-                        
-                        setTimeout(() => {
-                            printWindow.print();
-                            printWindow.close();
-                        }, 1000);
-                        
-                        console.log('Print window opened successfully');
-                    } else {
-                        console.log('Failed to open print window, trying fallback');
-                        fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
-                    }
-                } catch (error) {
-                    console.error('Print method failed:', error);
-                    fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
-                }
+                pendingDownloadData = {
+                    articleTitle,
+                    mainImageUrl,
+                    mainImageAlt,
+                    summary,
+                    bodyContent
+                };
+                
+                showDownloadModal();
             }
             
             function fallbackDownload(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent) {
@@ -2251,6 +2382,227 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
                 });
             });
         }
+    </script>
+
+    <div id="downloadModalOverlay" class="download-modal-overlay">
+        <div class="download-modal">
+            <button class="download-modal-close" onclick="hideDownloadModal()">&times;</button>
+            <h2>Download Article as PDF</h2>
+            <form id="downloadForm" onsubmit="submitDownloadForm(event)">
+                <div class="download-form-row">
+                    <div class="download-form-field" id="firstNameField">
+                        <label>First/Given name</label>
+                        <input type="text" id="downloadFirstName" placeholder="Enter your first name" required>
+                        <div class="download-form-error">Please enter your first name</div>
+                    </div>
+                    <div class="download-form-field" id="lastNameField">
+                        <label>Last/Family name <span class="optional">(optional)</span></label>
+                        <input type="text" id="downloadLastName" placeholder="Enter your last name">
+                    </div>
+                </div>
+                <div class="download-form-field full-width" id="emailField" style="margin-bottom: 16px;">
+                    <label>Work Email</label>
+                    <input type="email" id="downloadEmail" placeholder="name@example.com" required>
+                    <div class="download-form-error">Please enter a valid email address</div>
+                </div>
+                <div class="download-modal-terms">
+                    By submitting this form, you agree to the processing of the submitted personal data in accordance
+                    with <a href="/privacy-policy" target="_blank">Suflex Media's Privacy Policy</a>, including the transfer of data to the United States.
+                </div>
+                <div class="download-modal-terms">
+                    By submitting this form, you agree to receive information from Suflex Media related to our services, events,
+                    and promotions. You may unsubscribe at any time by following the instructions in those communications.
+                </div>
+                <button type="submit" class="download-modal-submit" id="downloadSubmitBtn">Download now</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let pendingDownloadData = null;
+
+        function showDownloadModal() {
+            document.getElementById('downloadModalOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideDownloadModal() {
+            document.getElementById('downloadModalOverlay').classList.remove('show');
+            document.body.style.overflow = '';
+            document.getElementById('downloadForm').reset();
+            document.querySelectorAll('.download-form-field').forEach(f => f.classList.remove('error'));
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function performDownload() {
+            if (!pendingDownloadData) return;
+            
+            const { articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent } = pendingDownloadData;
+            
+            try {
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>${articleTitle}</title>
+                                <style>
+                                    @media print {
+                                        body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
+                                        img { max-width: 100%; height: auto; margin: 20px 0; }
+                                        .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
+                                        h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
+                                        .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
+                                        h2 { color: #333; margin-top: 30px; font-size: 24px; }
+                                        h3 { color: #333; margin-top: 20px; font-size: 20px; }
+                                        p { line-height: 1.6; margin-bottom: 15px; }
+                                    }
+                                    body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
+                                    img { max-width: 100%; height: auto; margin: 20px 0; }
+                                    .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
+                                    h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
+                                    .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
+                                    h2 { color: #333; margin-top: 30px; font-size: 24px; }
+                                    h3 { color: #333; margin-top: 20px; font-size: 20px; }
+                                    p { line-height: 1.6; margin-bottom: 15px; }
+                                </style>
+                            </head>
+                            <body>
+                                ${mainImageUrl ? `<img src="${mainImageUrl}" alt="${mainImageAlt}" class="main-image" />` : ''}
+                                <h1>${articleTitle}</h1>
+                                ${summary ? `<div class="summary">${summary}</div>` : ''}
+                                <div class="content">
+                                    ${bodyContent}
+                                </div>
+                            </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                    
+                    setTimeout(() => {
+                        printWindow.print();
+                        printWindow.close();
+                    }, 1000);
+                } else {
+                    fallbackDownloadFromModal(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
+                }
+            } catch (error) {
+                console.error('Print method failed:', error);
+                fallbackDownloadFromModal(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent);
+            }
+            
+            pendingDownloadData = null;
+        }
+
+        function fallbackDownloadFromModal(articleTitle, mainImageUrl, mainImageAlt, summary, bodyContent) {
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <title>${articleTitle}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
+                            img { max-width: 100%; height: auto; margin: 20px 0; }
+                            .main-image { width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 20px; }
+                            h1 { color: #017AFF; font-size: 32px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #017AFF; }
+                            .summary { font-size: 18px; color: #636363; margin-bottom: 30px; line-height: 1.6; }
+                            h2 { color: #333; margin-top: 30px; font-size: 24px; }
+                            h3 { color: #333; margin-top: 20px; font-size: 20px; }
+                            p { line-height: 1.6; margin-bottom: 15px; }
+                        </style>
+                    </head>
+                    <body>
+                        ${mainImageUrl ? `<img src="${mainImageUrl}" alt="${mainImageAlt}" class="main-image" />` : ''}
+                        <h1>${articleTitle}</h1>
+                        ${summary ? `<div class="summary">${summary}</div>` : ''}
+                        <div class="content">
+                            ${bodyContent}
+                        </div>
+                    </body>
+                </html>
+            `;
+            
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = articleTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function submitDownloadForm(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('downloadFirstName').value.trim();
+            const lastName = document.getElementById('downloadLastName').value.trim();
+            const email = document.getElementById('downloadEmail').value.trim();
+            
+            let hasError = false;
+            
+            document.querySelectorAll('.download-form-field').forEach(f => f.classList.remove('error'));
+            
+            if (!firstName) {
+                document.getElementById('firstNameField').classList.add('error');
+                hasError = true;
+            }
+            
+            if (!email || !validateEmail(email)) {
+                document.getElementById('emailField').classList.add('error');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            const submitBtn = document.getElementById('downloadSubmitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            
+            try {
+                const pdfLink = window.location.href;
+                
+                const response = await fetch('/api/pdf-download-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: email,
+                        pdf_link: pdfLink
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to submit form');
+                }
+                
+                hideDownloadModal();
+                performDownload();
+                
+            } catch (error) {
+                console.error('Form submission error:', error);
+                hideDownloadModal();
+                performDownload();
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        document.getElementById('downloadModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDownloadModal();
+            }
+        });
     </script>
 </body>
 

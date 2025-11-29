@@ -46,144 +46,6 @@ const blogColors = ['#22c5e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82
 
 const blogsPerPage = 9; // 9 blogs per page for the "Read More" section
 
-function setupCarousel() {
-    const carousel = document.getElementById('editors-choice-carousel');
-    if (!carousel) return;
-
-    const items = carousel.querySelectorAll('.editors-choice-card');
-    const totalItems = items.length;
-    if (totalItems <= 3) {
-        const leftArrow = document.getElementById('carousel-arrow-left');
-        const rightArrow = document.getElementById('carousel-arrow-right');
-        if(leftArrow) leftArrow.style.display = 'none';
-        if(rightArrow) rightArrow.style.display = 'none';
-        return;
-    };
-
-    let currentIndex = 0;
-    let autoScrollInterval;
-
-    function updateCarousel() {
-        const cardWidth = items[0].offsetWidth;
-        const gap = parseFloat(window.getComputedStyle(carousel).columnGap) || 0;
-        const offset = -currentIndex * (cardWidth + gap);
-        carousel.style.transform = `translateX(${offset}px)`;
-    }
-
-    function showNext() {
-        const maxIndex = totalItems - 3;
-        currentIndex = (currentIndex + 1) > maxIndex ? 0 : currentIndex + 1;
-        updateCarousel();
-    }
-    
-    function showPrev() {
-        const maxIndex = totalItems - 3;
-        currentIndex = (currentIndex - 1) < 0 ? maxIndex : currentIndex - 1;
-        updateCarousel();
-    }
-
-    function startAutoScroll() {
-        stopAutoScroll();
-        autoScrollInterval = setInterval(showNext, 3000);
-    }
-
-    function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
-    }
-
-    leftArrow.addEventListener('click', () => {
-        stopAutoScroll();
-        showPrev();
-        startAutoScroll();
-    });
-
-    rightArrow.addEventListener('click', () => {
-        stopAutoScroll();
-        showNext();
-        startAutoScroll();
-    });
-
-    carousel.parentElement.addEventListener('mouseenter', stopAutoScroll);
-    carousel.parentElement.addEventListener('mouseleave', startAutoScroll);
-
-    startAutoScroll();
-    updateCarousel();
-    window.addEventListener('resize', updateCarousel);
-}
-
-
-function setupMobileCarousel() {
-    const mobileCarousel = document.getElementById('editors-choice-carousel-mobile');
-    if (!mobileCarousel) return;
-
-    const items = mobileCarousel.querySelectorAll('.blog-card');
-    if (items.length <= 1) {
-        const leftArrow = document.getElementById('carousel-arrow-left-mobile');
-        const rightArrow = document.getElementById('carousel-arrow-right-mobile');
-        if(leftArrow) leftArrow.style.display = 'none';
-        if(rightArrow) rightArrow.style.display = 'none';
-        return;
-    }
-
-    let currentIndex = 0;
-    const totalItems = items.length;
-    let autoScrollInterval;
-
-    const leftArrow = document.getElementById('carousel-arrow-left-mobile');
-    const rightArrow = document.getElementById('carousel-arrow-right-mobile');
-
-    function updateCarousel() {
-        const card = items[0];
-        if (!card) return;
-        const carouselStyle = window.getComputedStyle(mobileCarousel);
-        const cardWidth = card.offsetWidth;
-        const gap = parseFloat(carouselStyle.columnGap) || 0;
-        const offset = -currentIndex * (cardWidth + gap);
-        mobileCarousel.style.transform = `translateX(${offset}px)`;
-    }
-
-    function showNext() {
-        currentIndex = (currentIndex + 1) % totalItems;
-        updateCarousel();
-    }
-    
-    function showPrev() {
-        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-        updateCarousel();
-    }
-
-    function startAutoScroll() {
-        stopAutoScroll(); // Ensure no multiple intervals are running
-        autoScrollInterval = setInterval(showNext, 3000); // Change slide every 3 seconds
-    }
-
-    function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
-    }
-
-    leftArrow.addEventListener('click', () => {
-        stopAutoScroll();
-        showPrev();
-        startAutoScroll();
-    });
-
-    rightArrow.addEventListener('click', () => {
-        stopAutoScroll();
-        showNext();
-        startAutoScroll();
-    });
-
-    // Start auto-scrolling
-    startAutoScroll();
-    
-    // Pause on hover
-    mobileCarousel.addEventListener('mouseenter', stopAutoScroll);
-    mobileCarousel.addEventListener('mouseleave', startAutoScroll);
-
-    // Initial call
-    updateCarousel();
-    window.addEventListener('resize', updateCarousel);
-}
 
 
 function setupPagination() {
@@ -191,13 +53,14 @@ function setupPagination() {
     const pagination = document.getElementById('read-more-pagination');
     if (!grid || !pagination) return;
 
-    const allBlogs = Array.from(grid.querySelectorAll('.blog-card'));
+    const allBlogs = Array.from(grid.querySelectorAll('.blog-card-unified'));
     const totalBlogs = allBlogs.length;
     const totalPages = Math.ceil(totalBlogs / blogsPerPage);
     let currentPage = 1;
 
     if (totalBlogs <= blogsPerPage) {
         pagination.style.display = 'none';
+        allBlogs.forEach(blog => blog.style.display = 'flex');
         return;
     }
 
@@ -211,6 +74,11 @@ function setupPagination() {
                 blog.style.display = 'none';
             }
         });
+        
+        const section = document.querySelector('.read-more-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     function createPaginationControls() {
@@ -221,17 +89,20 @@ function setupPagination() {
             return;
         }
         
+        pagination.style.display = 'flex';
+        
         if (totalPages <= 5) {
             for (let i = 1; i <= totalPages; i++) {
                 paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
             }
         } else {
             if (currentPage > 1) {
-                paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}">Prev</button>`;
+                paginationHTML += `<button class="page-btn prev-btn" data-page="${currentPage - 1}"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.25 9H3.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 14.25L3.75 9L9 3.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Prev</button>`;
             }
 
             const showPages = new Set();
             
+            showPages.add(1);
             if (currentPage > 1) {
                 showPages.add(currentPage - 1);
             }
@@ -243,13 +114,13 @@ function setupPagination() {
             
             const sortedPages = Array.from(showPages).sort((a, b) => a - b);
             
-            let prevPage = 0;
+            let prevPageNum = 0;
             sortedPages.forEach(page => {
-                if (prevPage > 0 && page > prevPage + 1) {
+                if (prevPageNum > 0 && page > prevPageNum + 1) {
                     paginationHTML += `<span class="page-dots">...</span>`;
                 }
                 paginationHTML += `<button class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">${page}</button>`;
-                prevPage = page;
+                prevPageNum = page;
             });
 
             if (currentPage < totalPages) {
@@ -266,8 +137,9 @@ function setupPagination() {
     }
 
     pagination.addEventListener('click', function (e) {
-        if (e.target.classList.contains('page-btn') && e.target.dataset.page) {
-            const page = parseInt(e.target.dataset.page);
+        const btn = e.target.closest('.page-btn');
+        if (btn && btn.dataset.page) {
+            const page = parseInt(btn.dataset.page);
             updatePage(page);
         }
     });
@@ -276,75 +148,88 @@ function setupPagination() {
     createPaginationControls();
 }
 
-function renderEditorsChoice(blogs) {
-    const container = document.getElementById('dynamic-editors-choice-content');
-    if (!container) return;
-
-    container.innerHTML = blogs.map(blog => {
-        let blogData = {};
-        try {
-            blogData = typeof blog.blog === 'string' ? JSON.parse(blog.blog) : blog.blog;
-        } catch (e) {
-            console.error('Error parsing blog data:', e, blog.blog);
+function extractBlogImage(blog) {
+    if (blog.coverImage) {
+        return blog.coverImage;
+    }
+    
+    const blogContent = blog.blogContent || blog;
+    if (!blogContent) return null;
+    
+    if (blogContent.coverImage) {
+        return blogContent.coverImage;
+    }
+    
+    if (blogContent.mainImageUrl) {
+        return blogContent.mainImageUrl;
+    }
+    
+    if (blogContent.blogTitleImage) {
+        return blogContent.blogTitleImage;
+    }
+    
+    if (blogContent.blog_cover_image && blogContent.blog_cover_image.url) {
+        return blogContent.blog_cover_image.url;
+    }
+    
+    if (blogContent.blogcontent && blogContent.blogcontent.blocks) {
+        for (const block of blogContent.blogcontent.blocks) {
+            if (block.type === 'image' && block.data && block.data.file && block.data.file.url) {
+                return block.data.file.url;
+            }
         }
-        return `
-        <div class="editors-choice-card" onclick="window.location.href='/blog/${blog.slug}'">
-            <div class="editors-choice-card-image-container">
-                <img src="${blogData.blogTitleImage}" alt="${blogData.blogTitle}" class="editors-choice-card-image">
-            </div>
-            <div class="editors-choice-card-content">
-                <h3 class="blog-title">${blogData.blogTitle}</h3>
-                <p class="blog-summary">${blogData.blogSummary}</p>
-                <div class="blog-footer">
-                    <span class="blog-date">${new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${blog.category}</span>
-                </div>
-            </div>
-        </div>
-    `}).join('');
-    setupCarousel();
+    }
+    
+    return null;
+}
+
+function renderEditorsChoice(blogs) {
+    const container = document.getElementById('editors-choice-grid');
+    if (!container) return;
+    if (!blogs || blogs.length === 0) {
+        setupPagination();
+        return;
+    }
+    container.innerHTML = blogs.map(blog => renderBlogCard(blog, 0)).join('');
 }
 
 function renderLatestGossip(blogs) {
-    const container = document.getElementById('dynamic-latest-gossip-content');
+    const container = document.getElementById('latest-gossip-grid');
     if (!container) return;
+    if (!blogs || blogs.length === 0) return;
     container.innerHTML = blogs.map((blog, index) => renderBlogCard(blog, index)).join('');
 }
 
 function renderReadMore(blogs) {
-    const container = document.getElementById('dynamic-read-more-content');
+    const container = document.getElementById('read-more-grid');
     if (!container) return;
+    if (!blogs || blogs.length === 0) {
+        setupPagination();
+        return;
+    }
     container.innerHTML = blogs.map((blog, index) => renderBlogCard(blog, index)).join('');
     setupPagination();
 }
 
 function renderBlogCard(blog, index) {
-    const color = blogColors[index % blogColors.length];
-    let blogData = {};
-    try {
-        blogData = typeof blog.blog === 'string' ? JSON.parse(blog.blog) : blog.blog;
-    } catch (e) {
-        console.error('Error parsing blog data:', e, blog.blog);
-    }
-
-    const readTime = blogData.readTime || '5 mins read';
-    const title = blogData.blogTitle || 'No Title';
+    const blogData = blog.blogContent || {};
+    const imageUrl = extractBlogImage(blog);
+    const title = blogData.blogTitle || 'Untitled';
     const summary = blogData.blogSummary || '';
+    const dateStr = new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
     return `
-        <div class="blog-card" onclick="window.location.href='/blog/${blog.slug}'">
-            <div class="blog-card-header">
-                <div class="blog-dot" style="background-color: ${color};"></div>
-                <span class="blog-read-time">${readTime}</span>
+        <div class="blog-card-unified" onclick="window.location.href='/blog/${blog.slug}'">
+            ${imageUrl ? `
+            <div class="blog-card-image-container">
+                <img src="${imageUrl}" alt="${title}" class="blog-card-image">
             </div>
-            <h2 class="blog-title">${title}</h2>
-            <p class="blog-date">${new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${blog.category}</p>
-            <div class="blog-footer">
-                <p class="blog-description">${summary}</p>
-                <a href="/blog/${blog.slug}" class="blog-arrow-link">
-                    <div class="blog-arrow">
-                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                    </div>
-                </a>
+            ` : ''}
+            <div class="blog-card-body">
+                <span class="blog-card-date">${dateStr}</span>
+                <h3 class="blog-card-title">${title}</h3>
+                <p class="blog-card-summary">${summary}</p>
+                <a href="/blog/${blog.slug}" class="blog-card-read-more">Read More →</a>
             </div>
         </div>
     `;
@@ -355,14 +240,13 @@ async function fetchBlogs() {
         const response = await fetch('/api/blogs?purpose=landing_page');
         const data = await response.json();
         if (data.status === 'success' && data.sections) {
-            renderEditorsChoice(data.sections.editors_choice);
-            renderLatestGossip(data.sections.latest_gossip);
-            renderReadMore(data.sections.read_more);
+            renderEditorsChoice(data.sections.editors_choice || []);
+            renderLatestGossip(data.sections.latest_gossip || []);
+            renderReadMore(data.sections.read_more || []);
             
-            const mobileCarousel = document.getElementById('editors-choice-carousel-mobile');
-            if (mobileCarousel) {
-                mobileCarousel.innerHTML = data.sections.editors_choice.map((blog, index) => renderBlogCard(blog, index)).join('');
-                setupMobileCarousel();
+            const mobileGrid = document.getElementById('editors-choice-carousel-mobile');
+            if (mobileGrid && data.sections.editors_choice && data.sections.editors_choice.length > 0) {
+                mobileGrid.innerHTML = data.sections.editors_choice.map((blog, index) => renderBlogCard(blog, index)).join('');
             }
         }
     } catch (error) {

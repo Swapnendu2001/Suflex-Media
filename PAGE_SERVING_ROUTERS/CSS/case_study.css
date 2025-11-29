@@ -61,10 +61,17 @@ header.article-header {
     display: inline-block;
 }
 
+.breadcrumb-arrow {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 4px;
+    opacity: 0.8;
+}
+
 h1.title {
-    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-family: 'Lexend', sans-serif;
     font-weight: 800;
-    font-size: clamp(32px, 5vw, 54px);
+    font-size: 3vw;
     line-height: 1.15;
     margin: 14px 0 8px;
     letter-spacing: -0.01em;
@@ -121,7 +128,7 @@ h1.title {
 }
 
 .section h2 {
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: 'Lexend', sans-serif;
     font-weight: 800;
     font-size: clamp(22px, 3.2vw, 32px);
     margin: 0 0 14px;
@@ -129,7 +136,7 @@ h1.title {
 }
 
 .section h3 {
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: 'Lexend', sans-serif;
     font-weight: 700;
     font-size: clamp(18px, 2.4vw, 24px);
     margin: 24px 0 6px;
@@ -163,7 +170,7 @@ h1.title {
 
 blockquote {
     margin: 0;
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(18px, 2.4vw, 22px);
     font-weight: 600;
     line-height: 1.5;
@@ -215,7 +222,7 @@ blockquote {
 }
 
 .result-quote {
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: 'Lexend', sans-serif;
     font-size: clamp(18px, 2.2vw, 20px);
     font-style: italic;
     color: var(--lead);
