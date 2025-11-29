@@ -613,7 +613,7 @@ body {
     .contact-form-section,
     .contact-info-section {
         padding: 5vh 6vw;
-        margin-top: -10vh;
+        margin-top: 0vh;
     }
 }
 

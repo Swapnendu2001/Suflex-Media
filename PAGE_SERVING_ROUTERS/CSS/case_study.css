@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --bg: #FBFAF7;
+    --bg: transparent;
     --bg-contrast: #ffffff;
     --text: #1A1A1A;
     --muted: #5f6368;
@@ -55,7 +55,6 @@ header.article-header {
     padding: 8px 12px;
     border-radius: 999px;
     font-weight: 700;
-    border-style: solid;
 }
 
 .dot {

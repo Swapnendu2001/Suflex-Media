@@ -1407,7 +1407,7 @@ body {
 
     .about-hero-text {
         max-width: 100%;
-        top: 0;
+        top: 1vh;
         text-align: center;
     }
 
@@ -1707,9 +1707,10 @@ body {
     }
 
     .about-third-section-middle-right img {
-        width: 80vw;
+        width: 100vw;
         margin: 0 auto;
         display: block;
+        height: 35vh;
     }
 
     .about-third-section-bottom {
@@ -1931,7 +1932,7 @@ body {
     }
 
     .about-third-section-middle-right {
-        width: 90vw;
+        width: 100vw;
     }
 
     .about-third-section-bottom h3 {
