@@ -393,8 +393,8 @@ body {
     position: absolute;
     top: -10vh;
     left: 0;
-    width: 100vw;
-    height: 300vh;
+    width: 160vw;
+    height: 220vh;
     object-fit: cover;
     z-index: -1;
     pointer-events: none;
