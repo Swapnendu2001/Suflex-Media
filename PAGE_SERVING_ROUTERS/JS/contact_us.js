@@ -41,8 +41,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.getElementById('contactForm').addEventListener('submit', function (e) {
+document.getElementById('contactForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
-    this.reset();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    data.consent = formData.get('consent') === 'on';
+
+    try {
+        const response = await fetch('/api/contact/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+        } else {
+            const errorData = await response.json();
+            alert(`An error occurred: ${errorData.detail || 'Please try again later.'}`);
+        }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred. Please try again later.');
+    }
 });
