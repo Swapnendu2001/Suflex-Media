@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS blogs (
     slug TEXT UNIQUE,
     blogContent JSONB NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'draft',
-    type VARCHAR(50) NOT NULL DEFAULT 'BLOG',
+    type VARCHAR(50) NOT NULL DEFAULT 'GENERAL',
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     keyword JSONB,
     category TEXT,
@@ -22,9 +22,7 @@ CREATE TABLE IF NOT EXISTS blogs (
     redirect_url TEXT,
     isDeleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    home_page VARCHAR(1) DEFAULT 'N',
-    hero_blog VARCHAR(1) DEFAULT 'N'
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_blogs_status ON blogs(status) WHERE isDeleted = FALSE;

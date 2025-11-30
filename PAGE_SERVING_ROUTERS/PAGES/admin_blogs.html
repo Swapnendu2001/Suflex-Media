@@ -243,6 +243,19 @@
                                     <input type="text" id="blogCategory" name="blogCategory" class="form-input"
                                         placeholder="Enter blog category (e.g., Technology, Marketing, Business)..." />
                                 </div>
+
+                                <div class="form-item">
+                                    <label class="form-label" for="blogType">
+                                        <i data-lucide="award" class="w-4 h-4 inline mr-2"></i>Blog Type
+                                    </label>
+                                    <select id="blogType" name="blogType" class="form-input">
+                                        <option value="GENERAL">GENERAL</option>
+                                        <option value="EDITORS_CHOICE">EDITOR'S CHOICE</option>
+                                        <option value="BLOG_HERO">BLOG HERO</option>
+                                        <option value="BLOG_HOME_PAGE">BLOG HOME PAGE</option>
+                                    </select>
+                                    <p id="blogTypeCounter" class="text-xs text-white/50 mt-1"></p>
+                                </div>
                             </div>
 
                             <div
@@ -490,12 +503,26 @@
                                 </div>
                             </div>
 
-                            <div class="mb-6 flex items-center gap-2">
-                                <button id="filterEditorsChoiceBtn" class="form-button bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm px-4 py-2">
+                            <div class="mb-6 flex items-center gap-2 flex-wrap">
+                                <button id="filterEditorsChoiceBtn" class="form-button filter-btn bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm px-4 py-2">
                                     <i data-lucide="star" class="w-4 h-4 inline mr-2"></i>
-                                    <span>Show Editor's Choice</span>
+                                    <span>Editor's Choice</span>
                                 </button>
                                 <span id="editorsChoiceCount" class="text-xs text-white/60"></span>
+                                <button id="filterBlogHeroBtn" class="form-button filter-btn bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm px-4 py-2">
+                                    <i data-lucide="crown" class="w-4 h-4 inline mr-2"></i>
+                                    <span>Blog Hero</span>
+                                </button>
+                                <span id="blogHeroCount" class="text-xs text-white/60"></span>
+                                <button id="filterBlogHomePageBtn" class="form-button filter-btn bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm px-4 py-2">
+                                    <i data-lucide="home" class="w-4 h-4 inline mr-2"></i>
+                                    <span>Blog Home Page</span>
+                                </button>
+                                <span id="blogHomePageCount" class="text-xs text-white/60"></span>
+                                <button id="filterAllBtn" class="form-button filter-btn bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm px-4 py-2">
+                                    <i data-lucide="list" class="w-4 h-4 inline mr-2"></i>
+                                    <span>All Blogs</span>
+                                </button>
                             </div>
 
                             <div id="blogsLoading" class="text-center py-8 hidden">
