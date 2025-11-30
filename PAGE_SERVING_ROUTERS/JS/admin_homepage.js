@@ -37,6 +37,10 @@ function handleCardClick(page) {
     'admin-users': {
       title: 'Admin Users',
       url: '/admin/users'
+    },
+    'pdf-downloads': {
+      title: 'PDF Downloads',
+      url: '/admin/pdf-downloads'
     }
   };
 

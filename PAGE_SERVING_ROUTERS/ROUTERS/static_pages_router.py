@@ -25,8 +25,8 @@ STATIC_PAGES: Dict[str, str] = {
     "/cancellation-and-refund-policy": "PAGE_SERVING_ROUTERS/PAGES/cancellation_and_refund_policy.html",
     "/terms-of-service": "PAGE_SERVING_ROUTERS/PAGES/terms_of_service.html",
     "/privacy-policy": "PAGE_SERVING_ROUTERS/PAGES/privacy_policy.html",
+    "/admin/pdf-downloads": "PAGE_SERVING_ROUTERS/PAGES/admin_pdf_downloads.html"
 }
-
 def create_page_route(route_path: str, html_file: str):
     """
     Factory function to create a static page route handler

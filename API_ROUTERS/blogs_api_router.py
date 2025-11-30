@@ -810,3 +810,96 @@ async def save_pdf_download_form_blog(form_data: PDFDownloadFormRequest):
     else:
         logger.error(f"Failed to save PDF download form for blog: {form_data.pdf_link}")
         raise HTTPException(status_code=500, detail="Failed to save form data.")
+
+@router.get("/pdf-downloads")
+async def get_pdf_downloads(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    per_page: int = Query(10, ge=1, le=100, description="Items per page")
+):
+    """
+    Get paginated PDF download records.
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        offset = (page - 1) * per_page
+        
+        count_query = "SELECT COUNT(*) FROM pdf_downloads"
+        total_count = await conn.fetchval(count_query)
+        
+        query = """
+            SELECT timestamp, first_name, last_name, email, company_name, mobile_number, pdf_link
+            FROM pdf_downloads
+            ORDER BY timestamp DESC
+            LIMIT $1 OFFSET $2
+        """
+        downloads = await conn.fetch(query, per_page, offset)
+        
+        await conn.close()
+        
+        downloads_list = [dict(record) for record in downloads]
+        
+        total_pages = (total_count + per_page - 1) // per_page
+        
+        return {
+            "status": "success",
+            "pdf_downloads": downloads_list,
+            "page": page,
+            "per_page": per_page,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "has_next": page < total_pages,
+            "has_prev": page > 1
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in get_pdf_downloads: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in get_pdf_downloads: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/pdf-downloads-kpi")
+async def get_pdf_downloads_kpi():
+    """
+    Get Key Performance Indicators for PDF downloads.
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        # Total downloads this month
+        monthly_downloads_query = """
+            SELECT COUNT(*) FROM pdf_downloads
+            WHERE timestamp >= date_trunc('month', CURRENT_DATE)
+        """
+        total_downloads_this_month = await conn.fetchval(monthly_downloads_query)
+        
+        # Most downloaded PDF
+        most_downloaded_query = """
+            SELECT pdf_link, COUNT(*) as download_count
+            FROM pdf_downloads
+            GROUP BY pdf_link
+            ORDER BY download_count DESC
+            LIMIT 1
+        """
+        most_downloaded_record = await conn.fetchrow(most_downloaded_query)
+        most_downloaded_pdf = most_downloaded_record['pdf_link'] if most_downloaded_record else "-"
+        
+        # Total downloads
+        total_downloads_query = "SELECT COUNT(*) FROM pdf_downloads"
+        total_downloads = await conn.fetchval(total_downloads_query)
+        
+        await conn.close()
+        
+        return {
+            "total_downloads_this_month": total_downloads_this_month,
+            "most_downloaded_pdf": most_downloaded_pdf,
+            "total_downloads": total_downloads,
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in get_pdf_downloads_kpi: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in get_pdf_downloads_kpi: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
