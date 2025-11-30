@@ -508,6 +508,24 @@ body {
     margin: 0;
 }
 
+.latest-gossip-section .section-heading {
+    text-align: left;
+    width: 85vw;
+    margin: 0 auto 4vh auto;
+}
+
+.latest-gossip-section .section-heading h1 {
+    font-size: 2.4vw;
+    font-weight: 500;
+    color: #020617;
+}
+
+.latest-gossip-section .section-description {
+    margin-top: 1vh;
+    font-size: 1vw;
+    color: #64748B;
+}
+
 .blogs-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
