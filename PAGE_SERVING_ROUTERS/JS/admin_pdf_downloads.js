@@ -41,7 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             monthlyDownloadsEl.textContent = data.total_downloads_this_month;
             const fullPdfName = data.most_downloaded_pdf.split('/').pop();
-            mostDownloadedEl.textContent = fullPdfName.length > 20 ? fullPdfName.substring(0, 20) + '...' : fullPdfName;
+            const truncatedPdfName = fullPdfName.length > 20 ? fullPdfName.substring(0, 20) + '...' : fullPdfName;
+            mostDownloadedEl.innerHTML = `
+                <a href="${data.most_downloaded_pdf}" target="_blank" title="${fullPdfName}">${truncatedPdfName}</a>
+                <div class="tooltip">${fullPdfName}</div>
+            `;
             totalDownloadsEl.textContent = data.total_downloads;
         } catch (error) {
             console.error('Error fetching KPI data:', error);
@@ -63,15 +67,28 @@ document.addEventListener('DOMContentLoaded', () => {
         downloads.forEach((download, index) => {
             const row = document.createElement('tr');
             const rowNumber = (currentPage - 1) * rowsPerPage + index + 1;
+            const truncatedEmail = download.email.length > 20 ? download.email.substring(0, 20) + '...' : download.email;
+            const truncatedPdfLink = download.pdf_link.length > 30 ? download.pdf_link.substring(0, 30) + '...' : download.pdf_link;
+            const truncatedCompanyName = download.company_name.length > 20 ? download.company_name.substring(0, 20) + '...' : download.company_name;
+
             row.innerHTML = `
                 <td>${rowNumber}</td>
                 <td>${new Date(download.timestamp).toLocaleString()}</td>
                 <td>${download.first_name}</td>
                 <td>${download.last_name}</td>
-                <td>${download.email}</td>
-                <td>${download.company_name}</td>
+                <td>
+                    <a href="mailto:${download.email}" title="${download.email}">${truncatedEmail}</a>
+                    <div class="tooltip">${download.email}</div>
+                </td>
+                <td>
+                    <span title="${download.company_name}">${truncatedCompanyName}</span>
+                    <div class="tooltip">${download.company_name}</div>
+                </td>
                 <td>${download.mobile_number}</td>
-                <td>${download.pdf_link}</td>
+                <td>
+                    <a href="${download.pdf_link}" target="_blank" title="${download.pdf_link}">${truncatedPdfLink}</a>
+                    <div class="tooltip">${download.pdf_link}</div>
+                </td>
             `;
             tableBody.appendChild(row);
         });
