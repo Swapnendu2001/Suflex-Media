@@ -626,6 +626,41 @@ async def toggle_editors_choice(blog_id: str, current_user: Dict[str, Any] = Dep
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+@router.get("/blogs/type-counts")
+async def get_blog_type_counts():
+    """
+    Get the current count of blogs for special types.
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        type_counts = await conn.fetch(
+            "SELECT type, COUNT(*) as count FROM blogs WHERE type IN ('EDITORS_CHOICE', 'BLOG_HERO', 'BLOG_HOME_PAGE') AND isdeleted = FALSE GROUP BY type"
+        )
+        
+        await conn.close()
+        
+        counts = {
+            "EDITORS_CHOICE": 0,
+            "BLOG_HERO": 0,
+            "BLOG_HOME_PAGE": 0
+        }
+        for record in type_counts:
+            counts[record['type']] = record['count']
+
+        return {
+            "status": "success",
+            "counts": counts,
+            "limits": {
+                "EDITORS_CHOICE": 3,
+                "BLOG_HERO": 1,
+                "BLOG_HOME_PAGE": 3
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error getting blog type counts: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @router.post("/admin_save_blog")
 async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depends(require_admin)):
     """
@@ -640,60 +675,45 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
         logger.debug("=" * 80)
         logger.debug("RECEIVED BLOG DATA FROM FRONTEND:")
         logger.debug(json.dumps(data, indent=2))
-        logger.debug(f"Data keys: {list(data.keys())}")
-        logger.debug(f"Status field: {data.get('blogStatus', 'NOT FOUND')}")
         logger.debug("=" * 80)
         
         blog_title = data.get('blogTitle', '')
         if not blog_title:
             raise HTTPException(status_code=400, detail="Blog title is required")
         
-        # Check if this is an update request
         blog_id = data.get('blog_id')
-        reason = data.get('reason', 'create')  # 'create' or 'update'
+        reason = data.get('reason', 'create')
         
         slug = generate_slug(blog_title)
         blog_status = data.get('blogStatus', StatusConstants.DRAFT)
-        content_type = data.get('contentType', ContentTypeConstants.BLOG)
         
-        # Add the content type to the blog data for storage
-        data['contentType'] = content_type
-        
+        # Handle blog type and limits
+        blog_type = data.get('blogType', 'GENERAL')
+        editors_choice_val = 'Y' if blog_type == 'EDITORS_CHOICE' else 'N'
+
         conn = await asyncpg.connect(DATABASE_URL)
         
         try:
-            if reason == 'update' and blog_id:
-                # Check if the blog exists and is not deleted
-                existing_blog = await conn.fetchrow(
-                    "SELECT id, slug FROM blogs WHERE id = $1 AND isdeleted = FALSE",
-                    blog_id
-                )
+            # Check limits for special types
+            type_limits = {"EDITORS_CHOICE": 3, "BLOG_HERO": 1, "BLOG_HOME_PAGE": 3}
+            if blog_type in type_limits:
+                query = "SELECT COUNT(*) FROM blogs WHERE type = $1 AND isdeleted = FALSE"
+                params = [blog_type]
+                if blog_id:
+                    query += " AND id != $2"
+                    params.append(blog_id)
                 
+                count = await conn.fetchval(query, *params)
+                if count >= type_limits[blog_type]:
+                    raise HTTPException(status_code=400, detail=f"Maximum of {type_limits[blog_type]} blogs can be marked as {blog_type.replace('_', ' ')}.")
+
+            if reason == 'update' and blog_id:
+                existing_blog = await conn.fetchrow("SELECT id, slug FROM blogs WHERE id = $1 AND isdeleted = FALSE", blog_id)
                 if not existing_blog:
                     raise HTTPException(status_code=404, detail="Blog not found for update")
                 
-                # Check if the slug is being changed and if the new slug already exists
-                existing_slug = existing_blog['slug']
-                if slug != existing_slug:
-                    # Check if the new slug already exists for a different blog
-                    existing_slug_record = await conn.fetchrow(
-                        "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
-                        slug,
-                        blog_id
-                    )
-                    
-                    if existing_slug_record:
-                        original_slug = slug
-                        counter = 1
-                        while existing_slug_record:
-                            slug = f"{original_slug}-{counter}"
-                            existing_slug_record = await conn.fetchrow(
-                                "SELECT id FROM blogs WHERE slug = $1 AND id != $2 AND isdeleted = FALSE",
-                                slug,
-                                blog_id
-                            )
-                            counter += 1
-                        logger.info(f"Generated unique slug: {slug}")
+                if slug != existing_blog['slug']:
+                    slug = await ensure_unique_slug(conn, slug, "blogs", blog_id)
                 
                 blog_category = data.get('blogCategory', '')
                 
@@ -702,32 +722,18 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                     UPDATE blogs
                     SET blogContent = $1, status = $2, editors_choice = $3, slug = $4, type = $5, category = $6, updated_at = CURRENT_TIMESTAMP
                     WHERE id = $7
-                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, category, isdeleted, created_at, updated_at
+                    RETURNING id, slug
                     """,
-                    json.dumps(data),
-                    blog_status,
-                    data.get('editors_choice', 'N'),
-                    slug,
-                    content_type,
-                    blog_category,
-                    blog_id
+                    json.dumps(data), blog_status, editors_choice_val, slug, blog_type, blog_category, blog_id
                 )
                 
                 if not updated_blog:
                     raise HTTPException(status_code=404, detail="Blog not found for update")
                 
-                blog_id = str(updated_blog['id'])
-                blog_url = f"{config.BACKEND_URL}/blog/{slug}"
+                blog_url = f"{config.BACKEND_URL}/blog/{updated_blog['slug']}"
+                logger.info(f"Blog updated successfully - ID: {blog_id}, slug: {updated_blog['slug']}, status: {blog_status}, type: {blog_type}")
                 
-                logger.info(f"Blog updated successfully - ID: {blog_id}, slug: {slug}, status: {blog_status}, type: {content_type}, URL: {blog_url}")
-                
-                return {
-                    "status": "success",
-                    "message": f"Blog {'published' if blog_status == StatusConstants.PUBLISHED else 'updated'} successfully",
-                    "blog_id": blog_id,
-                    "slug": slug,
-                    "url": blog_url
-                }
+                return {"status": "success", "message": "Blog updated successfully", "blog_id": blog_id, "slug": updated_blog['slug'], "url": blog_url}
             else:
                 slug = await ensure_unique_slug(conn, slug, "blogs")
                 blog_category = data.get('blogCategory', '')
@@ -736,28 +742,16 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
                     """
                     INSERT INTO blogs (blogContent, status, editors_choice, slug, type, category, isdeleted)
                     VALUES ($1, $2, $3, $4, $5, $6, FALSE)
-                    RETURNING id, blogContent, status, date, keyword, editors_choice, slug, type, redirect_url, category, isdeleted, created_at, updated_at
+                    RETURNING id, slug
                     """,
-                    json.dumps(data),
-                    blog_status,
-                    data.get('editors_choice', 'N'),
-                    slug,
-                    content_type,
-                    blog_category
+                    json.dumps(data), blog_status, editors_choice_val, slug, blog_type, blog_category
                 )
                 
                 blog_id = str(new_blog['id'])
-                blog_url = f"{config.BACKEND_URL}/blog/{slug}"
+                blog_url = f"{config.BACKEND_URL}/blog/{new_blog['slug']}"
+                logger.info(f"Blog saved successfully - ID: {blog_id}, slug: {new_blog['slug']}, status: {blog_status}, type: {blog_type}")
                 
-                logger.info(f"Blog saved successfully - ID: {blog_id}, slug: {slug}, status: {blog_status}, type: {content_type}, URL: {blog_url}")
-                
-                return {
-                    "status": "success",
-                    "message": f"Blog {'published' if blog_status == StatusConstants.PUBLISHED else 'saved as draft'} successfully",
-                    "blog_id": blog_id,
-                    "slug": slug,
-                    "url": blog_url
-                }
+                return {"status": "success", "message": "Blog saved successfully", "blog_id": blog_id, "slug": new_blog['slug'], "url": blog_url}
             
         finally:
             await conn.close()
@@ -774,3 +768,132 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
         logger.error(f"Unexpected error in admin_save_blog: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+from DATABASE_HANDLER.utils.General_Functions import store_pdf_download
+class PDFDownloadFormRequest(BaseModel):
+    first_name: str
+    last_name: Optional[str] = None
+    email: str
+    company_name: Optional[str] = None
+    mobile_number: Optional[str] = None
+    pdf_link: str # For blogs, this will be the blog slug
+
+
+@router.post("/pdf-download-form-blog")
+async def save_pdf_download_form_blog(form_data: PDFDownloadFormRequest):
+    """
+    Save PDF download form submission to the database for a blog.
+    """
+    logger.info(f"Saving PDF download form for blog: {form_data.pdf_link}")
+    
+    success = await store_pdf_download(
+        first_name=form_data.first_name,
+        last_name=form_data.last_name,
+        email=form_data.email,
+        company_name=form_data.company_name,
+        mobile_number=form_data.mobile_number,
+        pdf_link=form_data.pdf_link
+    )
+    
+    if success:
+        logger.info(f"PDF download form saved successfully for blog: {form_data.pdf_link}")
+        return {
+            "status": "success",
+            "message": "Form submitted successfully"
+        }
+    else:
+        logger.error(f"Failed to save PDF download form for blog: {form_data.pdf_link}")
+        raise HTTPException(status_code=500, detail="Failed to save form data.")
+
+@router.get("/pdf-downloads")
+async def get_pdf_downloads(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    per_page: int = Query(10, ge=1, le=100, description="Items per page")
+):
+    """
+    Get paginated PDF download records.
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        offset = (page - 1) * per_page
+        
+        count_query = "SELECT COUNT(*) FROM pdf_downloads"
+        total_count = await conn.fetchval(count_query)
+        
+        query = """
+            SELECT timestamp, first_name, last_name, email, company_name, mobile_number, pdf_link
+            FROM pdf_downloads
+            ORDER BY timestamp DESC
+            LIMIT $1 OFFSET $2
+        """
+        downloads = await conn.fetch(query, per_page, offset)
+        
+        await conn.close()
+        
+        downloads_list = [dict(record) for record in downloads]
+        
+        total_pages = (total_count + per_page - 1) // per_page
+        
+        return {
+            "status": "success",
+            "pdf_downloads": downloads_list,
+            "page": page,
+            "per_page": per_page,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "has_next": page < total_pages,
+            "has_prev": page > 1
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in get_pdf_downloads: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in get_pdf_downloads: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/pdf-downloads-kpi")
+async def get_pdf_downloads_kpi():
+    """
+    Get Key Performance Indicators for PDF downloads.
+    """
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        
+        # Total downloads this month
+        monthly_downloads_query = """
+            SELECT COUNT(*) FROM pdf_downloads
+            WHERE timestamp >= date_trunc('month', CURRENT_DATE)
+        """
+        total_downloads_this_month = await conn.fetchval(monthly_downloads_query)
+        
+        # Most downloaded PDF
+        most_downloaded_query = """
+            SELECT pdf_link, COUNT(*) as download_count
+            FROM pdf_downloads
+            GROUP BY pdf_link
+            ORDER BY download_count DESC
+            LIMIT 1
+        """
+        most_downloaded_record = await conn.fetchrow(most_downloaded_query)
+        most_downloaded_pdf = most_downloaded_record['pdf_link'] if most_downloaded_record else "-"
+        
+        # Total downloads
+        total_downloads_query = "SELECT COUNT(*) FROM pdf_downloads"
+        total_downloads = await conn.fetchval(total_downloads_query)
+        
+        await conn.close()
+        
+        return {
+            "total_downloads_this_month": total_downloads_this_month,
+            "most_downloaded_pdf": most_downloaded_pdf,
+            "total_downloads": total_downloads,
+        }
+        
+    except asyncpg.PostgresError as e:
+        logger.error(f"Database error in get_pdf_downloads_kpi: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+    except Exception as e:
+        logger.error(f"Unexpected error in get_pdf_downloads_kpi: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

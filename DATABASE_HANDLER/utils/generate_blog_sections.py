@@ -42,17 +42,13 @@ def calculate_read_time(blog_content_json):
 
 async def get_blog_data():
     """
-    Fetch blog data from the database for the three sections:
-    1. Editor's Choice (carousel)
-    2. Latest Gossip (3 most recent blogs)
-    3. Read More (all other blogs with pagination)
+    Fetch blog data from the database for different sections based on type.
     """
     try:
         conn = await asyncpg.connect(DATABASE_URL)
 
-        # Fetch all published blogs of type 'BLOG'
         all_blogs_query = """
-            SELECT id, blogContent, date, created_at, editors_choice, slug, type
+            SELECT id, blogContent, date, created_at, slug, type
             FROM blogs
             WHERE isdeleted = FALSE
             ORDER BY created_at DESC
@@ -65,9 +61,11 @@ async def get_blog_data():
         for blog in all_blogs:
             blog_content = blog['blogcontent']
             if isinstance(blog_content, str):
-                blog_content = json.loads(blog_content)
-
-            title = blog_content.get('blogTitle', 'Untitled Blog')
+                try:
+                    blog_content = json.loads(blog_content)
+                except json.JSONDecodeError:
+                    blog_content = {}
+            
             summary = blog_content.get('blogSummary', '')
             if not summary:
                 content = blog_content.get('blogcontent', {})
@@ -81,37 +79,34 @@ async def get_blog_data():
                     summary = content
             
             summary = summary[:150] + '...' if len(summary) > 150 else summary
-            
-            read_time = calculate_read_time(blog['blogcontent'])
-            
+
             processed_blogs.append({
                 'id': blog['id'],
-                'title': title,
+                'title': blog_content.get('blogTitle', 'Untitled Blog'),
                 'summary': summary,
                 'created_at': blog['created_at'].strftime('%B %d, %Y') if blog['created_at'] else '',
                 'slug': blog['slug'],
                 'category': blog_content.get('blogCategory', 'General'),
-                'editors_choice': blog['editors_choice'] == 'Y' or blog['editors_choice'] == "ON",
+                'type': blog['type'],
                 'cover_image': extract_blog_image(blog_content),
-                'read_time': read_time
+                'read_time': calculate_read_time(blog_content)
             })
-        print(f"Processed Blogs: {processed_blogs}") # Debug print
-        # Separate blogs into the three sections
-        editors_choice_data = [b for b in processed_blogs if b['editors_choice']]
-        
-        # All other blogs that are not editor's choice
-        other_blogs = [b for b in processed_blogs if not b['editors_choice']]
-        
-        latest_gossip_data = other_blogs[:3]
-        read_more_data = other_blogs[3:]
 
-        top_blog = processed_blogs[0] if processed_blogs else None
+        editors_choice_data = [b for b in processed_blogs if b['type'] == 'EDITORS_CHOICE']
+        top_blog_data = [b for b in processed_blogs if b['type'] == 'BLOG_HERO']
+        blog_home_data = [b for b in processed_blogs if b['type'] == 'BLOG_HOME_PAGE']
+        general_blogs = [b for b in processed_blogs if b['type'] == 'GENERAL']
+        
+        latest_gossip_data = general_blogs[:3]
+        read_more_data = general_blogs[3:]
 
-        return editors_choice_data, latest_gossip_data, read_more_data, top_blog
+        top_blog = top_blog_data[0] if top_blog_data else None
+
+        return editors_choice_data, latest_gossip_data, read_more_data, top_blog, blog_home_data
 
     except Exception as e:
         print(f"Error fetching blogs: {e}")
-        return [], [], [], None
+        return [], [], [], None, []
 
 
 def extract_blog_image(blog_content):
@@ -175,11 +170,23 @@ def generate_editors_choice_vertical_card_html(blog):
         </div>
     '''
 
+
+def generate_editors_choice_mobile_html(editors_choice_data):
+    """
+    Generate HTML for the mobile-only Editor's Choice section.
+    """
+    mobile_html = ""
+    for i, blog in enumerate(editors_choice_data):
+        mobile_html += generate_unified_blog_card_html(blog)
+    return mobile_html
+
+
 def generate_blog_card_html(blog, color_index):
     """
     Generate HTML for a single blog card based on the unified structure.
     """
     return generate_unified_blog_card_html(blog)
+
 
 def get_blog_color(index):
     """
@@ -188,17 +195,21 @@ def get_blog_color(index):
     colors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e']
     return colors[index % len(colors)]
 
+
 async def get_blogs_html():
     """
     Generate the HTML content for the blogs_landing.html page with dynamic content
     for all three sections.
     """
-    editors_choice_data, latest_gossip_data, read_more_data, top_blog = await get_blog_data()
+    editors_choice_data, latest_gossip_data, read_more_data, top_blog, blog_home_data = await get_blog_data()
 
     # Generate HTML for Editor's Choice carousel
     editors_choice_html = ""
-    for blog in editors_choice_data[:3]:
+    for blog in editors_choice_data:
         editors_choice_html += generate_editors_choice_vertical_card_html(blog)
+
+    # NEW: Generate HTML for mobile Editor's Choice
+    editors_choice_mobile_html = generate_editors_choice_mobile_html(editors_choice_data)
 
     # Generate HTML for Latest Gossip
     latest_gossips_html = ""
@@ -211,16 +222,16 @@ async def get_blogs_html():
         # Start color index from 3 to avoid repeating colors from latest gossips
         read_more_html += generate_blog_card_html(blog, i + 3)
 
-    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data, top_blog
+    return editors_choice_html, latest_gossips_html, read_more_html, top_blog, editors_choice_mobile_html, blog_home_data
 
 
-async def get_home_insights_html(editors_choice_data):
+async def get_home_insights_html(blog_home_data):
     """
-    Generate the HTML content for the home page with top 3 editor's choice blogs
+    Generate the HTML content for the home page with top 3 blog home page blogs
     """
-    # Generate HTML for top 3 editor's choice blogs in home page style
+    # Generate HTML for top 3 blog home page blogs in home page style
     home_insights_html = ""
-    for i, blog in enumerate(editors_choice_data):
+    for i, blog in enumerate(blog_home_data):
         home_insights_html += generate_home_insight_card_html(blog, i)
         if i == 2:
             break  # Only take top 3
@@ -247,10 +258,11 @@ if __name__ == "__main__":
     import asyncio
     
     async def main():
-        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog = await get_blogs_html()
+        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog, editors_choice_mobile_html = await get_blogs_html()
         home_insights_html = await get_home_insights_html(top_editors_choice_data)
         
         print("Generated Editor's Choice HTML:\n", editors_choice_html)
+        print("Generated Editor's Choice Mobile HTML:\n", editors_choice_mobile_html)
         print("Generated Latest Gossips HTML:\n", latest_gossips_html)
         print("Generated Read More HTML:\n", read_more_html)
         print("Generated home insights HTML:\n", home_insights_html)

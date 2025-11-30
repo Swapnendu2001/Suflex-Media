@@ -919,6 +919,8 @@ class PDFDownloadFormRequest(BaseModel):
     first_name: str
     last_name: Optional[str] = None
     email: str
+    company_name: Optional[str] = None
+    mobile_number: Optional[str] = None
     pdf_link: str
 
 
@@ -935,12 +937,14 @@ async def save_pdf_download_form(form_data: PDFDownloadFormRequest):
         
         await conn.execute(
             """
-            INSERT INTO pdf_downloads (first_name, last_name, email, pdf_link)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO pdf_downloads (first_name, last_name, email, company_name, mobile_number, pdf_link)
+            VALUES ($1, $2, $3, $4, $5, $6)
             """,
             form_data.first_name,
             form_data.last_name or '',
             form_data.email,
+            form_data.company_name or '',
+            form_data.mobile_number or '',
             form_data.pdf_link
         )
         

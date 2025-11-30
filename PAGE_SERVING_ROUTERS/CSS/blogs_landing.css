@@ -1413,3 +1413,22 @@ body {
     font-weight: 600;
     margin-top: auto;
 }
+
+/* Responsive visibility for Editor's Choice sections */
+
+/* Hide mobile version by default */
+.mobile-editors-choice-section {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Hide desktop version on mobile */
+    .editors-choice-section {
+        display: none;
+    }
+
+    /* Show mobile version on mobile */
+    .mobile-editors-choice-section {
+        display: flex;
+    }
+}

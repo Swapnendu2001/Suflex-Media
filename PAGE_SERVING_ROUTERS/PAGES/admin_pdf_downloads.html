@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PDF Downloads • Suflex Media | Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin/admin_pdf_downloads.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="container">
+    <div class="header-container">
+        <a href="/admin" class="back-btn">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+        <h1 class="page-title">PDF Downloads</h1>
+    </div>
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <i data-lucide="calendar" class="kpi-icon"></i>
+                <div class="kpi-content">
+                    <h3>Total Downloads This Month</h3>
+                    <p id="kpi-monthly-downloads"></p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <i data-lucide="file-check" class="kpi-icon"></i>
+                <div class="kpi-content">
+                    <h3>Most Downloaded PDF</h3>
+                    <p id="kpi-most-downloaded"></p>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <i data-lucide="download-cloud" class="kpi-icon"></i>
+                <div class="kpi-content">
+                    <h3>Total Downloads</h3>
+                    <p id="kpi-total-downloads"></p>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Timestamp</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Company Name</th>
+                        <th>Mobile Number</th>
+                        <th>PDF Link</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-downloads-table-body">
+                    <!-- Data will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container">
+            <button class="pagination-btn" id="prev-page-btn" disabled>Previous</button>
+            <span id="page-info">Page 1 of 1</span>
+            <button class="pagination-btn" id="next-page-btn" disabled>Next</button>
+        </div>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <span class="spinner"></span>
+            <p class="loading-text">Loading...</p>
+        </div>
+    </div>
+    <div class="toast" id="toast" aria-live="polite"></div>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script type="module" src="/js/admin_pdf_downloads.js"></script>
+</body>
+
+</html>
