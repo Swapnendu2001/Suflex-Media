@@ -175,11 +175,23 @@ def generate_editors_choice_vertical_card_html(blog):
         </div>
     '''
 
+
+def generate_editors_choice_mobile_html(editors_choice_data):
+    """
+    Generate HTML for the mobile-only Editor's Choice section.
+    """
+    mobile_html = ""
+    for i, blog in enumerate(editors_choice_data):
+        mobile_html += generate_unified_blog_card_html(blog)
+    return mobile_html
+
+
 def generate_blog_card_html(blog, color_index):
     """
     Generate HTML for a single blog card based on the unified structure.
     """
     return generate_unified_blog_card_html(blog)
+
 
 def get_blog_color(index):
     """
@@ -187,6 +199,7 @@ def get_blog_color(index):
     """
     colors = ['#22c55e', '#ef4444', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#22c55e', '#ec4899', '#06b6d4', '#eab308', '#a855f7', '#22c55e']
     return colors[index % len(colors)]
+
 
 async def get_blogs_html():
     """
@@ -200,6 +213,9 @@ async def get_blogs_html():
     for blog in editors_choice_data[:3]:
         editors_choice_html += generate_editors_choice_vertical_card_html(blog)
 
+    # NEW: Generate HTML for mobile Editor's Choice
+    editors_choice_mobile_html = generate_editors_choice_mobile_html(editors_choice_data)
+
     # Generate HTML for Latest Gossip
     latest_gossips_html = ""
     for i, blog in enumerate(latest_gossip_data):
@@ -211,7 +227,7 @@ async def get_blogs_html():
         # Start color index from 3 to avoid repeating colors from latest gossips
         read_more_html += generate_blog_card_html(blog, i + 3)
 
-    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data, top_blog
+    return editors_choice_html, latest_gossips_html, read_more_html, editors_choice_data, top_blog, editors_choice_mobile_html
 
 
 async def get_home_insights_html(editors_choice_data):
@@ -247,10 +263,11 @@ if __name__ == "__main__":
     import asyncio
     
     async def main():
-        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog = await get_blogs_html()
+        editors_choice_html, latest_gossips_html, read_more_html, top_editors_choice_data, top_blog, editors_choice_mobile_html = await get_blogs_html()
         home_insights_html = await get_home_insights_html(top_editors_choice_data)
         
         print("Generated Editor's Choice HTML:\n", editors_choice_html)
+        print("Generated Editor's Choice Mobile HTML:\n", editors_choice_mobile_html)
         print("Generated Latest Gossips HTML:\n", latest_gossips_html)
         print("Generated Read More HTML:\n", read_more_html)
         print("Generated home insights HTML:\n", home_insights_html)

@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/blogs", response_class=HTMLResponse)
 async def get_blogs(request: Request):
-    editors_choice_html, latest_gossips_html, read_more_html, _, top_blog = await get_blogs_html()
+    editors_choice_html, latest_gossips_html, read_more_html, _, top_blog, editors_choice_mobile_html = await get_blogs_html()
 
     with open("PAGE_SERVING_ROUTERS/PAGES/blogs_landing.html", "r", encoding="utf-8") as file:
         html_content = file.read()
@@ -52,6 +52,10 @@ async def get_blogs(request: Request):
     html_content = html_content.replace(
         '<div class="blogs-grid" id="read-more-grid"></div>',
         f'<div class="blogs-grid" id="read-more-grid">{read_more_html}</div>'
+    )
+    html_content = html_content.replace(
+        '<div class="blogs-grid" id="mobile-editors-choice-grid"></div>',
+        f'<div class="blogs-grid" id="mobile-editors-choice-grid">{editors_choice_mobile_html}</div>'
     )
 
     return HTMLResponse(content=html_content)
