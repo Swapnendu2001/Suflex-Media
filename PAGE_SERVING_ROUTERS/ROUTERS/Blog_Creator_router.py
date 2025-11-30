@@ -1324,7 +1324,7 @@ async def get_blog_content(data: list):
                     f"""<div class="w-full h-[120px] sm:h-[160px] md:h-[236px] my-8 md:my-12"><img src="{url}" alt="{alt}" class="w-full h-full object-cover"/></div>"""
                 )
     content_str = "\n".join(content)
-    return f"""<section class="max-w-[43rem] space-y-6 md:space-y-5 text-left order-1 lg:order-2">{content_str}</section>"""
+    return f"""<section class="space-y-6 md:space-y-5 text-left order-1 lg:order-2">{content_str}</section>"""
 
 
 async def get_blog_body(data: dict):
@@ -1348,7 +1348,7 @@ async def get_blog_body(data: dict):
         </style>
         {hero_section}
         {mobile_toc}
-        <div class="mobile-blog-grid grid grid-cols-1 lg:grid-cols-[300px_1fr] md:ml-[-16rem] gap-8 mt-4 md:mt-8 ml-0 mr-0" style="padding: 0 0.5rem">
+        <div class="mobile-blog-grid grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-8 mt-4 md:mt-8 max-w-[80rem] mx-auto px-2 md:px-0">
         {desktop_toc}
         {blog_content}
         </div>

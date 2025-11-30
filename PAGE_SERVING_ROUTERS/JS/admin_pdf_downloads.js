@@ -41,10 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             monthlyDownloadsEl.textContent = data.total_downloads_this_month;
             const fullPdfName = data.most_downloaded_pdf.split('/').pop();
-            const truncatedPdfName = fullPdfName.length > 20 ? fullPdfName.substring(0, 20) + '...' : fullPdfName;
+            const truncatedPdfName = fullPdfName.length > 30 ? fullPdfName.substring(0, 30) + '...' : fullPdfName;
             mostDownloadedEl.innerHTML = `
-                <a href="${data.most_downloaded_pdf}" target="_blank" title="${fullPdfName}">${truncatedPdfName}</a>
-                <div class="tooltip">${fullPdfName}</div>
+                <a href="${data.most_downloaded_pdf}" target="_blank" title="${fullPdfName}" style="color: #3b82f6; text-decoration: none; transition: color 0.2s;">${truncatedPdfName}</a>
             `;
             totalDownloadsEl.textContent = data.total_downloads;
         } catch (error) {
@@ -67,9 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
         downloads.forEach((download, index) => {
             const row = document.createElement('tr');
             const rowNumber = (currentPage - 1) * rowsPerPage + index + 1;
-            const truncatedEmail = download.email.length > 20 ? download.email.substring(0, 20) + '...' : download.email;
-            const truncatedPdfLink = download.pdf_link.length > 30 ? download.pdf_link.substring(0, 30) + '...' : download.pdf_link;
-            const truncatedCompanyName = download.company_name.length > 20 ? download.company_name.substring(0, 20) + '...' : download.company_name;
+            const truncatedEmail = download.email.length > 25 ? download.email.substring(0, 25) + '...' : download.email;
+            const pdfFileName = download.pdf_link.split('/').pop();
+            const truncatedCompanyName = download.company_name.length > 25 ? download.company_name.substring(0, 25) + '...' : download.company_name;
 
             row.innerHTML = `
                 <td>${rowNumber}</td>
@@ -78,16 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${download.last_name}</td>
                 <td>
                     <a href="mailto:${download.email}" title="${download.email}">${truncatedEmail}</a>
-                    <div class="tooltip">${download.email}</div>
                 </td>
-                <td>
-                    <span title="${download.company_name}">${truncatedCompanyName}</span>
-                    <div class="tooltip">${download.company_name}</div>
+                <td title="${download.company_name}">
+                    ${truncatedCompanyName}
                 </td>
                 <td>${download.mobile_number}</td>
                 <td>
-                    <a href="${download.pdf_link}" target="_blank" title="${download.pdf_link}">${truncatedPdfLink}</a>
-                    <div class="tooltip">${download.pdf_link}</div>
+                    <a href="${download.pdf_link}" target="_blank" title="Click to open: ${download.pdf_link}">${pdfFileName}</a>
                 </td>
             `;
             tableBody.appendChild(row);
