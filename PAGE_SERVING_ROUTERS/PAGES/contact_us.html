@@ -59,7 +59,6 @@
                 <h3>Want To See Us In Action?</h3>
                 <h2>Let's Connect!</h2>
 
-                <a href="tel:+911234567890" class="phone-number">+91 123456789</a>
                 <a href="mailto:hello@suflexmedia.com" class="email-address">hello@suflexmedia.com</a>
             </div>
 
@@ -168,6 +167,12 @@
                 document.title = originalTitle;
             }
         });
+    </script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("o9t8TF0k4wl0JeGFw");
+        })();
     </script>
     <script src="/js/contact_us.js"></script>
 </body>
