@@ -599,6 +599,16 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                         <div class="download-form-error">Please enter a valid email address</div>
                     </div>
                 </div>
+                <div class="download-form-row">
+                    <div class="download-form-field">
+                        <input type="text" id="companyName" name="companyName" placeholder=" ">
+                        <label for="companyName">Company Name <span class="optional-tag">(optional)</span></label>
+                    </div>
+                    <div class="download-form-field">
+                        <input type="text" id="mobileNumber" name="mobileNumber" placeholder=" ">
+                        <label for="mobileNumber">Mobile Number <span class="optional-tag">(optional)</span></label>
+                    </div>
+                </div>
                 <div class="download-form-consent">
                     <p>By submitting this form, you agree to the processing of the submitted personal data in accordance with <a href="/privacy-policy" target="_blank">Suflex Media's Privacy Policy</a>, including the transfer of data to the United States.</p>
                     <p style="margin-top: 12px;">By submitting this form, you agree to receive information from Suflex Media related to our services, events, and promotions. You may unsubscribe at any time by following the instructions in those communications.</p>
@@ -1008,7 +1018,7 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             }
         }
 
-        async function submitDownloadForm(firstName, lastName, email) {
+        async function submitDownloadForm(firstName, lastName, email, companyName, mobileNumber) {
             try {
                 const parentOrigin = (() => {
                     try { return new URL(document.referrer).origin; } catch { return window.location.origin; }
@@ -1023,6 +1033,8 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                         first_name: firstName,
                         last_name: lastName,
                         email: email,
+                        company_name: companyName,
+                        mobile_number: mobileNumber,
                         pdf_link: pdfUrl
                     })
                 });
@@ -1054,6 +1066,8 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('workEmail').value.trim();
+            const companyName = document.getElementById('companyName').value.trim();
+            const mobileNumber = document.getElementById('mobileNumber').value.trim();
             
             let hasError = false;
             
@@ -1077,7 +1091,7 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
             
-            await submitDownloadForm(firstName, lastName, email);
+            await submitDownloadForm(firstName, lastName, email, companyName, mobileNumber);
             
             hideDownloadModal();
             performDownload();

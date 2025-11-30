@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS pdf_downloads (
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     email VARCHAR(255),
-    company VARCHAR(255),
+    company_name VARCHAR(255),
     mobile_number VARCHAR(50),
     pdf_link TEXT
 );

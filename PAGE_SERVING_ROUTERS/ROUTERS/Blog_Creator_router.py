@@ -2410,6 +2410,16 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
                     <input type="email" id="downloadEmail" placeholder="name@example.com" required>
                     <div class="download-form-error">Please enter a valid email address</div>
                 </div>
+                <div class="download-form-row">
+                    <div class="download-form-field" id="companyNameField">
+                        <label>Company Name <span class="optional">(optional)</span></label>
+                        <input type="text" id="downloadCompanyName" placeholder="Enter your company name">
+                    </div>
+                    <div class="download-form-field" id="mobileNumberField">
+                        <label>Mobile Number <span class="optional">(optional)</span></label>
+                        <input type="text" id="downloadMobileNumber" placeholder="Enter your mobile number">
+                    </div>
+                </div>
                 <div class="download-modal-terms">
                     By submitting this form, you agree to the processing of the submitted personal data in accordance
                     with <a href="/privacy-policy" target="_blank">Suflex Media's Privacy Policy</a>, including the transfer of data to the United States.
@@ -2548,6 +2558,8 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
             const firstName = document.getElementById('downloadFirstName').value.trim();
             const lastName = document.getElementById('downloadLastName').value.trim();
             const email = document.getElementById('downloadEmail').value.trim();
+            const companyName = document.getElementById('downloadCompanyName').value.trim();
+            const mobileNumber = document.getElementById('downloadMobileNumber').value.trim();
             
             let hasError = false;
             
@@ -2582,6 +2594,8 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
                         first_name: firstName,
                         last_name: lastName,
                         email: email,
+                        company_name: companyName,
+                        mobile_number: mobileNumber,
                         pdf_link: pdfLink
                     })
                 });
