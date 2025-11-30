@@ -1,85 +1,144 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Downloads • Suflex Media | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/admin/admin_pdf_downloads.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
-    <div class="container">
-    <div class="header-container">
-        <a href="/admin" class="back-btn">
-            <i data-lucide="arrow-left"></i>
-            <span>Back</span>
-        </a>
-        <h1 class="page-title">PDF Downloads</h1>
-    </div>
-        <div class="kpi-container">
-            <div class="kpi-card">
-                <i data-lucide="calendar" class="kpi-icon"></i>
-                <div class="kpi-content">
-                    <h3>Total Downloads This Month</h3>
-                    <p id="kpi-monthly-downloads"></p>
-                </div>
+    <nav class="fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <button onclick="window.history.back()" class="back-button p-2 rounded-full hover:bg-white/5 transition-colors" title="Go Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
+                </button>
+                <h1 class="logo-text text-2xl font-bold text-white">Suflex Media</h1>
             </div>
-            <div class="kpi-card">
-                <i data-lucide="file-check" class="kpi-icon"></i>
-                <div class="kpi-content">
-                    <h3>Most Downloaded PDF</h3>
-                    <p id="kpi-most-downloaded"></p>
-                </div>
-            </div>
-            <div class="kpi-card">
-                <i data-lucide="download-cloud" class="kpi-icon"></i>
-                <div class="kpi-content">
-                    <h3>Total Downloads</h3>
-                    <p id="kpi-total-downloads"></p>
-                </div>
-            </div>
+            
+            <button onclick="handleLogout()" class="logout-button">
+                <i data-lucide="log-out" class="w-4 h-4 text-black"></i>
+                <span>Logout</span>
+            </button>
         </div>
-        <div class="table-container">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Timestamp</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Company Name</th>
-                        <th>Mobile Number</th>
-                        <th>PDF Link</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-downloads-table-body">
-                    <!-- Data will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-container">
-            <button class="pagination-btn" id="prev-page-btn" disabled>Previous</button>
-            <span id="page-info">Page 1 of 1</span>
-            <button class="pagination-btn" id="next-page-btn" disabled>Next</button>
-        </div>
-    </div>
+    </nav>
+
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <span class="spinner"></span>
             <p class="loading-text">Loading...</p>
         </div>
     </div>
+
+    <div class="fixed inset-0 bg-gradient-to-br from-indigo-500/[0.03] via-transparent to-rose-500/[0.03] pointer-events-none"></div>
+
+    <main class="pt-24 px-6 pb-8">
+        <div class="max-w-7xl mx-auto">
+            <header class="mb-8">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h1 class="page-title">PDF Downloads</h1>
+                        <p class="page-subtitle">Track and analyze all PDF downloads captured from your lead forms.</p>
+                    </div>
+                    <span class="page-tag">Analytics View</span>
+                </div>
+            </header>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrapper">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 class="kpi-label">Total Downloads This Month</h3>
+                        <p class="kpi-value" id="kpi-monthly-downloads">-</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrapper">
+                        <i data-lucide="file-check" class="w-6 h-6"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 class="kpi-label">Most Downloaded PDF</h3>
+                        <p class="kpi-value" id="kpi-most-downloaded">-</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrapper">
+                        <i data-lucide="download-cloud" class="w-6 h-6"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 class="kpi-label">Total Downloads</h3>
+                        <p class="kpi-value" id="kpi-total-downloads">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Timestamp</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Company Name</th>
+                                <th>Mobile Number</th>
+                                <th>PDF Link</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdf-downloads-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pagination-wrapper">
+                <button class="pagination-btn" id="prev-page-btn" disabled>
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Previous</span>
+                </button>
+                <span class="page-info" id="page-info">Page 1 of 1</span>
+                <button class="pagination-btn" id="next-page-btn" disabled>
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
     <div class="toast" id="toast" aria-live="polite"></div>
+
     <script>
         lucide.createIcons();
+
+        const originalTitle = "PDF Downloads • Suflex Media | Admin";
+        const awayTitle = "😢 Missing you already!";
+        
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = awayTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+
+        function handleLogout() {
+            window.location.href = '/login';
+        }
     </script>
     <script type="module" src="/js/admin_pdf_downloads.js"></script>
 </body>

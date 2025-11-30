@@ -185,7 +185,7 @@ body {
     display: flex;
     align-items: center;
     gap: 3vw;
-    padding: 8vh 0vw;
+    padding-bottom: 8vh;
     background-color: transparent;
     width: 85vw;
     margin: 0 auto 5vh auto;

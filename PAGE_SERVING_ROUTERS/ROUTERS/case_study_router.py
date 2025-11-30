@@ -343,7 +343,7 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
         .download-modal {
             background: #FBFAF7;
             border-radius: 16px;
-            padding: 32px;
+            padding: 24px;
             max-width: 520px;
             width: 90%;
             position: relative;
@@ -362,8 +362,8 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
         }
         .download-modal-close {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 5px;
+            right: 5px;
             background: none;
             border: none;
             font-size: 24px;
@@ -383,15 +383,15 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
         }
         .download-modal h2 {
             font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #1A1A1A;
-            margin: 0 0 24px 0;
+            margin: 0 0 20px 0;
         }
         .download-form-row {
             display: flex;
             gap: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         .download-form-field {
             flex: 1;
@@ -476,13 +476,31 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
             background: #1A1A1A;
             color: #fff;
             border: none;
-            padding: 14px 28px;
+            padding: 10px 22px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #5f6368;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .download-consent {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .download-consent input {
+            margin: 0;
         }
         .download-form-submit:hover {
             background: #333;
@@ -594,7 +612,7 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                 <div class="download-form-row">
                     <div class="download-form-field full-width">
                         <input type="email" id="workEmail" name="workEmail" placeholder=" " required>
-                        <label for="workEmail">Work Email</label>
+                        <label for="workEmail">Email</label>
                         <span class="placeholder-text">name@example.com</span>
                         <div class="download-form-error">Please enter a valid email address</div>
                     </div>
@@ -609,11 +627,10 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
                         <label for="mobileNumber">Mobile Number <span class="optional-tag">(optional)</span></label>
                     </div>
                 </div>
-                <div class="download-form-consent">
-                    <p>By submitting this form, you agree to the processing of the submitted personal data in accordance with <a href="/privacy-policy" target="_blank">Suflex Media's Privacy Policy</a>, including the transfer of data to the United States.</p>
-                    <p style="margin-top: 12px;">By submitting this form, you agree to receive information from Suflex Media related to our services, events, and promotions. You may unsubscribe at any time by following the instructions in those communications.</p>
+                <div class="download-form-footer">
+                    <span>By downloading, you agree to our <a href="/privacy-policy" target="_blank">Privacy Policy</a>.</span>
+                    <button type="submit" class="download-form-submit" id="downloadFormSubmit">Accept and download</button>
                 </div>
-                <button type="submit" class="download-form-submit" id="downloadFormSubmit">Download now</button>
             </form>
         </div>
     </div>
