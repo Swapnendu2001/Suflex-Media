@@ -2585,7 +2585,7 @@ EMPTY_BLOG_TEMPLATE = r"""<!DOCTYPE html>
             try {
                 const pdfLink = window.location.href;
                 
-                const response = await fetch('/api/pdf-download-form', {
+                const response = await fetch('/api/pdf-download-form-blog', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

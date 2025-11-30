@@ -774,3 +774,39 @@ async def admin_save_blog(request: Request, current_user: Dict[str, Any] = Depen
         logger.error(f"Unexpected error in admin_save_blog: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+from DATABASE_HANDLER.utils.General_Functions import store_pdf_download
+class PDFDownloadFormRequest(BaseModel):
+    first_name: str
+    last_name: Optional[str] = None
+    email: str
+    company_name: Optional[str] = None
+    mobile_number: Optional[str] = None
+    pdf_link: str # For blogs, this will be the blog slug
+
+
+@router.post("/pdf-download-form-blog")
+async def save_pdf_download_form_blog(form_data: PDFDownloadFormRequest):
+    """
+    Save PDF download form submission to the database for a blog.
+    """
+    logger.info(f"Saving PDF download form for blog: {form_data.pdf_link}")
+    
+    success = await store_pdf_download(
+        first_name=form_data.first_name,
+        last_name=form_data.last_name,
+        email=form_data.email,
+        company_name=form_data.company_name,
+        mobile_number=form_data.mobile_number,
+        pdf_link=form_data.pdf_link
+    )
+    
+    if success:
+        logger.info(f"PDF download form saved successfully for blog: {form_data.pdf_link}")
+        return {
+            "status": "success",
+            "message": "Form submitted successfully"
+        }
+    else:
+        logger.error(f"Failed to save PDF download form for blog: {form_data.pdf_link}")
+        raise HTTPException(status_code=500, detail="Failed to save form data.")
