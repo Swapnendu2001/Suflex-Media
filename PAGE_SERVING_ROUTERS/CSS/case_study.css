@@ -46,7 +46,6 @@ header.article-header {
 .kicker {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
     font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -617,7 +616,7 @@ blockquote {
 .footer-content {
     display: flex;
     justify-content: space-around;
-    width: 100vw;
+    width: 80vw;
     align-items: flex-start;
     padding: 0 5vw;
 }
