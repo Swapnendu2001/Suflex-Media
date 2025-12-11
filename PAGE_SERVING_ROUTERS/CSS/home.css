@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+/* Font loaded via <link> in HTML head - removed duplicate @imports for performance */
 
 * {
     margin: 0;
@@ -1829,15 +1827,21 @@ body {
     font-size: 1vw;
     color: #555;
     line-height: 1.5;
-    margin: 0 0 1vw 0; /* Add margin below description */
-    flex-grow: 1; /* Allow paragraph to grow */
+    margin: 0 0 1vw 0;
+    /* Add margin below description */
+    flex-grow: 1;
+    /* Allow paragraph to grow */
 }
 
 .card-content-bottom {
-    display: block; /* Change to block to stack elements */
-    margin-top: auto; /* Push to the bottom */
-    position: relative; /* For positioning the arrow */
-    height: 3vw; /* Give some height for the arrow */
+    display: block;
+    /* Change to block to stack elements */
+    margin-top: auto;
+    /* Push to the bottom */
+    position: relative;
+    /* For positioning the arrow */
+    height: 3vw;
+    /* Give some height for the arrow */
 }
 
 .card-arrow-icon {
@@ -1944,14 +1948,19 @@ body {
     .insight-card p {
         font-size: 3.5vw;
         line-height: 1.6;
-        margin: 0 0 3vw 0; /* Adjusted for mobile margin */
+        margin: 0 0 3vw 0;
+        /* Adjusted for mobile margin */
     }
 
     .card-content-bottom {
-        display: block; /* Change to block to stack elements */
-        margin-top: auto; /* Push to the bottom */
-        position: relative; /* For positioning the arrow */
-        height: 10vw; /* Give some height for the arrow */
+        display: block;
+        /* Change to block to stack elements */
+        margin-top: auto;
+        /* Push to the bottom */
+        position: relative;
+        /* For positioning the arrow */
+        height: 10vw;
+        /* Give some height for the arrow */
     }
 
     .card-arrow-icon {
@@ -2855,10 +2864,11 @@ body {
         padding-left: 8vw;
         line-height: 1.6;
     }
-        .footer {
+
+    .footer {
         padding: 5vh 8vw 8vw 8vw;
     }
-    
+
     .footer-content {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -2920,6 +2930,7 @@ body {
         font-size: 3.5vw;
         text-align: center;
     }
+
     .mobile-hero-icons {
         display: block;
     }
@@ -2973,7 +2984,8 @@ body {
 }
 
 .insights-cards-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
+    display: none;
+    /* Chrome, Safari, and Opera */
 }
 
 @media (min-width: 769px) {
