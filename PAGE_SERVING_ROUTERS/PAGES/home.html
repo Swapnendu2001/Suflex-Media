@@ -31,7 +31,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="/css/home.css">
     <!-- Preload hero background for faster LCP -->
     <link rel="preload" as="image" href="/images/bg-hero.webp">
@@ -76,7 +80,7 @@
         </div>
     </header>
 
-    <main class="content-wrapper">
+    <main class="content-wrapper" role="main">
         <img src="/images/bg-hero.webp" alt="" class="hero-bg-image" width="1600" height="900">
 
         <section class="hero-section">
@@ -122,7 +126,10 @@
                 </div>
 
                 <div class="side-card-left">
-                    <h3>Turning Ideas into Books</h3>
+                    <video autoplay loop muted playsinline aria-hidden="true">
+                        <source src="/images/idea.mp4" type="video/mp4">
+                    </video>
+                    <span class="card-title">Turning Ideas into Books</span>
                 </div>
 
                 <div class="stats-container">
@@ -145,15 +152,21 @@
                 </div>
 
                 <div class="center-main-card">
-                    <video autoplay loop muted playsinline>
+                    <video autoplay loop muted playsinline class="desktop-video" aria-hidden="true">
+                        <source src="/images/thought_leaders.mp4" type="video/mp4">
+                    </video>
+                    <video autoplay loop muted playsinline class="mobile-video" aria-hidden="true">
                         <source src="/icons/mobile_thought_leader.mp4" type="video/mp4">
                     </video>
-                    <h3 class="desktop-text">Turning<br>Leaders into<br>Thought<br>Leaders</h3>
-                    <h3 class="mobile-text">Turning Leaders<br>into Thought<br>Leaders</h3>
+                    <span class="card-title desktop-text">Turning<br>Leaders into<br>Thought<br>Leaders</span>
+                    <span class="card-title mobile-text">Turning Leaders<br>into Thought<br>Leaders</span>
                 </div>
 
                 <div class="side-card-right">
-                    <h3>Turning Content into Lead Magnets</h3>
+                    <video autoplay loop muted playsinline aria-hidden="true">
+                        <source src="/images/lead_magnets.mp4" type="video/mp4">
+                    </video>
+                    <span class="card-title">Turning Content into Lead Magnets</span>
                 </div>
 
                 <!-- Mobile-only icons for hero section -->
@@ -177,28 +190,30 @@
             <div class="work-with-us-content">
                 <div class="cards-bucket">
                     <div class="card card-1">
-                        <img src="/images/Frame1.jpg" alt="Breakthrough Idea" loading="lazy">
+                        <img src="/images/Frame1.jpg" alt="Breakthrough Idea" loading="lazy" width="280" height="186">
                         <h4>Got a Breakthrough Idea or Product?</h4>
                         <p>We'll match it with the audience that's craving something new—no empty promises.</p>
                         <p>We believe in smarter strategies and marketing that connect on a human level. When you work
                             with us, you're getting a partner who's as invested in your success as you are.</p>
                     </div>
                     <div class="card card-2">
-                        <img src="/images/Frame2.jpg" alt="Tired of Agencies Going Dark?" loading="lazy">
+                        <img src="/images/Frame2.jpg" alt="Tired of Agencies Going Dark?" loading="lazy" width="280"
+                            height="186">
                         <h4>Tired of Agencies Going Dark?</h4>
                         <p>We stick around until your brand thrives—no radio silence or silent treatments here.</p>
                         <p>From real-time reporting dashboards to on-call support, we keep you looped in every step of
                             the way. Transparency is our middle name.</p>
                     </div>
                     <div class="card card-3">
-                        <img src="/images/Frame3.jpg" alt="Marketing Missteps" loading="lazy">
+                        <img src="/images/Frame3.jpg" alt="Marketing Missteps" loading="lazy" width="280" height="210">
                         <h4>Done with Marketing Missteps?</h4>
                         <p>We turn setbacks into comebacks—no cookie-cutter solutions and guesswork.</p>
                         <p>Using advanced data analytics and proven tactics, we turn businesses around—focusing on
                             outcomes that move the needle and impact your bottom line.</p>
                     </div>
                     <div class="card card-4">
-                        <img src="/images/Frame4.jpg" alt="Time-Tested & Data-Driven" loading="lazy">
+                        <img src="/images/Frame4.jpg" alt="Time-Tested & Data-Driven" loading="lazy" width="280"
+                            height="168">
                         <h4>Time-Tested & Data-Driven</h4>
                         <p>We harness insights to fine-tune every campaign—no trial and error, just results.</p>
                         <p>With real-time reporting and open communication, you'll always know exactly where your
