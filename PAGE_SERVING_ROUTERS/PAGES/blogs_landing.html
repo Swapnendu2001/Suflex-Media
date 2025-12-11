@@ -62,7 +62,9 @@
                     <span class="hero-read-time">8 mins read</span>
                 </div>
                 <h1 class="hero-title">Unlocking Efficiency: The Power Of A Modern POS System</h1>
-                <p class="hero-summary">In today's fast-paced business landscape, efficiency is key to success. From small local shops to large-scale enterprises, businesses are constantly seeking ways to streamline their operations and enhance customer experi...</p>
+                <p class="hero-summary">In today's fast-paced business landscape, efficiency is key to success. From
+                    small local shops to large-scale enterprises, businesses are constantly seeking ways to streamline
+                    their operations and enhance customer experi...</p>
                 <a href="#" class="hero-read-more">Read More &rarr;</a>
             </div>
         </section>
@@ -77,12 +79,13 @@
             <div class="blogs-grid" id="latest-gossip-grid"></div>
         </section>
 
-                <!-- Section 3: Editor's Choice -->
+        <!-- Section 3: Editor's Choice -->
         <section class="blogs-section editors-choice-section">
             <div class="editors-choice-container">
                 <div class="editors-choice-left">
                     <h2 class="editors-choice-title">Trending Articles You Need To Read</h2>
-                    <p class="editors-choice-subtitle">Stay Ahead of the Curve and Dive Deep into the Must-Read Editor's Choice that Keep You Informed and Inspired</p>
+                    <p class="editors-choice-subtitle">Stay Ahead of the Curve and Dive Deep into the Must-Read Editor's
+                        Choice that Keep You Informed and Inspired</p>
                 </div>
                 <div class="editors-choice-right" id="editors-choice-grid">
                     <!-- Editor's Choice blogs will be dynamically inserted here -->
@@ -98,14 +101,14 @@
         </section>
     </div>
 
-        <!-- Section 2: Read More of Our Stories -->
-        <section class="blogs-section read-more-section">
-            <div class="section-heading">
-                <h1>Read More of Our Stories</h1>
-            </div>
-            <div class="blogs-grid" id="read-more-grid"></div>
-            <div class="pagination-container" id="read-more-pagination"></div>
-        </section>
+    <!-- Section 2: Read More of Our Stories -->
+    <section class="blogs-section read-more-section">
+        <div class="section-heading">
+            <h1>Read More of Our Stories</h1>
+        </div>
+        <div class="blogs-grid" id="read-more-grid"></div>
+        <div class="pagination-container" id="read-more-pagination"></div>
+    </section>
 
 
 
@@ -136,8 +139,10 @@
             <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png" alt="Instagram"></a>
-                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
+                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png"
+                            alt="Instagram"></a>
+                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png"
+                            alt="LinkedIn"></a>
                     <a href="#"><img src="/icons/x.png" alt="X"></a>
                 </div>
             </div>
@@ -158,13 +163,40 @@
 
     <script>
         const originalTitle = "Blogs - Suflex Media | Insights & Strategies for Marketing Success";
-        const awayTitle = "😢 Missing you already!";
-        
-        document.addEventListener("visibilitychange", function() {
+        const awayTitle = "Missing you already!";
+        const originalFavicon = "/icons/favicon.ico";
+
+        function createEmojiFavicon(emoji) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '28px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, 16, 18);
+            return canvas.toDataURL('image/png');
+        }
+
+        const awayFavicon = createEmojiFavicon('😢');
+
+        function setFavicon(href) {
+            let link = document.querySelector("link[rel*='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = href;
+        }
+
+        document.addEventListener("visibilitychange", function () {
             if (document.hidden) {
                 document.title = awayTitle;
+                setFavicon(awayFavicon);
             } else {
                 document.title = originalTitle;
+                setFavicon(originalFavicon);
             }
         });
     </script>

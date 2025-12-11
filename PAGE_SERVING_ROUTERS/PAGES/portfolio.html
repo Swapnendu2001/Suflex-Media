@@ -54,7 +54,8 @@
         <section class="portfolio-hero-section">
             <div class="portfolio-hero-heading">
                 <h1>Suflex Media's Performance Marketing
-                <span>Case Studies</span></h1>
+                    <span>Case Studies</span>
+                </h1>
             </div>
             <div class="portfolio-hero-grid">
                 <a href="/case-studies" class="portfolio-hero-card" data-category="">
@@ -64,7 +65,8 @@
                     </div>
                     <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
                 </a>
-                <a href="/case-studies?category=linkedin-branding" class="portfolio-hero-card" data-category="linkedin-branding">
+                <a href="/case-studies?category=linkedin-branding" class="portfolio-hero-card"
+                    data-category="linkedin-branding">
                     <div class="card-left">
                         <img src="/icons/Personal_Branding.png" alt="Personal Branding Icon">
                         <p>LinkedIn<br>Branding</p>
@@ -78,14 +80,16 @@
                     </div>
                     <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
                 </a>
-                <a href="/case-studies?category=performance-marketing" class="portfolio-hero-card" data-category="performance-marketing">
+                <a href="/case-studies?category=performance-marketing" class="portfolio-hero-card"
+                    data-category="performance-marketing">
                     <div class="card-left">
                         <img src="/icons/Performance_Marketing.png" alt="Performance Marketing Icon">
                         <p>Performance<br>Marketing</p>
                     </div>
                     <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
                 </a>
-                <a href="/case-studies?category=website-development" class="portfolio-hero-card" data-category="website-development">
+                <a href="/case-studies?category=website-development" class="portfolio-hero-card"
+                    data-category="website-development">
                     <div class="card-left">
                         <img src="/icons/Website_Development.png" alt="Website Development Icon">
                         <p>Website<br>Development</p>
@@ -136,8 +140,10 @@
             <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png" alt="Instagram"></a>
-                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
+                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png"
+                            alt="Instagram"></a>
+                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png"
+                            alt="LinkedIn"></a>
                     <a href="#"><img src="/icons/x.png" alt="X"></a>
                 </div>
             </div>
@@ -158,13 +164,40 @@
 
     <script>
         const originalTitle = "Portfolio - Suflex Media | Success Stories & Case Studies";
-        const awayTitle = "😢 Missing you already!";
-        
-        document.addEventListener("visibilitychange", function() {
+        const awayTitle = "Missing you already!";
+        const originalFavicon = "/images/logo_header.png";
+
+        function createEmojiFavicon(emoji) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '28px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, 16, 18);
+            return canvas.toDataURL('image/png');
+        }
+
+        const awayFavicon = createEmojiFavicon('😢');
+
+        function setFavicon(href) {
+            let link = document.querySelector("link[rel*='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = href;
+        }
+
+        document.addEventListener("visibilitychange", function () {
             if (document.hidden) {
                 document.title = awayTitle;
+                setFavicon(awayFavicon);
             } else {
                 document.title = originalTitle;
+                setFavicon(originalFavicon);
             }
         });
     </script>
