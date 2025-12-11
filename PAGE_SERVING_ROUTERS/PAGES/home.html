@@ -340,17 +340,7 @@
                 <h2>Ready to <span>work</span> with us?</h2>
             </div>
             <div class="booking-main">
-                <!-- Calendly widget loads on user interaction to avoid third-party cookie issues -->
-                <div id="calendly-container">
-                    <div id="calendly-placeholder" class="calendly-placeholder">
-                        <button id="load-calendly-btn" class="load-calendly-btn" type="button">
-                            <span>📅 Click to Load Booking Calendar</span>
-                            <small>Loads Calendly scheduling widget</small>
-                        </button>
-                    </div>
-                    <div class="calendly-inline-widget" id="calendly-widget"
-                        data-url="https://calendly.com/bhuinavijit21/new-meeting" style="display: none;"></div>
-                </div>
+                <div class="calendly-inline-widget" data-url="https://calendly.com/bhuinavijit21/new-meeting"></div>
             </div>
         </section>
 
@@ -483,7 +473,7 @@
         });
     </script>
     <script src="/js/home.js"></script>
-    <!-- Calendly script loaded dynamically when user clicks to load calendar -->
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 </body>
 
