@@ -3,13 +3,75 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/images/logo_header.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Suflex Media | Results-Driven Digital Marketing Agency</title>
+    <meta name="description"
+        content="Suflex Media is a results-driven digital marketing agency. We've helped 300+ clients achieve 4X ROIs with creative solutions, transparency, and 100% client satisfaction.">
+    <link rel="canonical" href="https://suflexmedia.com/about">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="About Us - Suflex Media | Results-Driven Digital Marketing Agency">
+    <meta property="og:description"
+        content="Suflex Media is a results-driven digital marketing agency. We've helped 300+ clients achieve 4X ROIs with creative solutions, transparency, and 100% client satisfaction.">
+    <meta property="og:url" content="https://suflexmedia.com/about">
+    <meta property="og:image" content="https://suflexmedia.com/images/About-page-hero-section.gif">
+    <meta property="og:site_name" content="Suflex Media">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Us - Suflex Media | Results-Driven Digital Marketing Agency">
+    <meta name="twitter:description"
+        content="Suflex Media is a results-driven digital marketing agency. We've helped 300+ clients achieve 4X ROIs with creative solutions, transparency, and 100% client satisfaction.">
+    <meta name="twitter:image" content="https://suflexmedia.com/images/About-page-hero-section.gif">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/about_us.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '710111701297517');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=710111701297517&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Organization Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Suflex Media",
+        "url": "https://suflexmedia.com",
+        "logo": "https://suflexmedia.com/images/logo_header.png",
+        "description": "Results-driven digital marketing agency helping businesses achieve 4X ROIs with creative solutions and 100% client satisfaction.",
+        "email": "hello@suflexmedia.com",
+        "sameAs": [
+            "https://www.instagram.com/suflexmedia/",
+            "https://www.linkedin.com/company/suflex-media/"
+        ],
+        "numberOfEmployees": {
+            "@type": "QuantitativeValue",
+            "minValue": 10
+        }
+    }
+    </script>
 </head>
 
 <body>
@@ -63,7 +125,7 @@
 
                 </div>
                 <div class="about-hero-image">
-                    <img src="/images/About-page-hero-section.gif" alt="Digital Marketing Agency">
+                    <img src="/images/About-page-hero-section.gif" alt="Digital Marketing Agency" loading="lazy">
                 </div>
             </div>
             <div class="mission-section">
@@ -103,66 +165,67 @@
             <div class="feature-cluster">
                 <div class="feature-cluster-new">
                     <div class="feature-item-new" id="creative-solutions-new">
-                        <img src="/images/Creative_Solutions.png" alt="Creative Solutions">
-                    </div>
-                    <div class="feature-item-new" id="transparency-new">
-                        <img src="/images/Transparency.png" alt="Transparency">
-                    </div>
-                    <div class="feature-item-new" id="client-satisfaction-new">
-                        <img src="/images/100_Client_Satisfaction.png" alt="100% Client Satisfaction">
-                    </div>
-                    <div class="feature-item-new" id="data-driven-new">
-                        <img src="/images/Data_Driven.png" alt="Data Driven">
-                    </div>
-                    <div class="feature-item-new" id="quick-response-new">
-                        <img src="/images/Quick_Response.png" alt="Quick Response">
-                    </div>
-                    <div class="feature-item-new" id="witty-content-new">
-                        <img src="/images/Witty_Content.png" alt="Witty Content">
-                    </div>
-                    <div class="feature-item-new" id="attention-to-detail-new">
-                        <img src="/images/Attention_to_Detail.png" alt="Attention to Detail">
-                    </div>
-                    <div class="feature-item-new" id="aesthetic-design-new">
-                        <img src="/images/Aesthetic_Design.png" alt="Aesthetic Design">
-                    </div>
-                    <div class="feature-item-new" id="fast-delivery-new">
-                        <img src="/images/Fast_Delivery.png" alt="Fast Delivery">
-                    </div>
-                    <div class="feature-item-new" id="timeless-quality-new">
-                        <img src="/images/Timeless_Quality.png" alt="Timeless Quality">
+                        <img src="/images/Creative_Solutions.png" alt="Creative Solutions" loading="lazy">
                     </div>
                 </div>
+                <div class="feature-item-new" id="transparency-new">
+                    <img src="/images/Transparency.png" alt="Transparency" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="client-satisfaction-new">
+                    <img src="/images/100_Client_Satisfaction.png" alt="100% Client Satisfaction" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="data-driven-new">
+                    <img src="/images/Data_Driven.png" alt="Data Driven" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="quick-response-new">
+                    <img src="/images/Quick_Response.png" alt="Quick Response" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="witty-content-new">
+                    <img src="/images/Witty_Content.png" alt="Witty Content" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="attention-to-detail-new">
+                    <img src="/images/Attention_to_Detail.png" alt="Attention to Detail" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="aesthetic-design-new">
+                    <img src="/images/Aesthetic_Design.png" alt="Aesthetic Design" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="fast-delivery-new">
+                    <img src="/images/Fast_Delivery.png" alt="Fast Delivery" loading="lazy">
+                </div>
+                <div class="feature-item-new" id="timeless-quality-new">
+                    <img src="/images/Timeless_Quality.png" alt="Timeless Quality" loading="lazy">
+                </div>
             </div>
-        </section>
+    </div>
+    </section>
 
 
-        <section class="about-third-section">
-            <div class="about-third-section-top">
-                <h1>At Suflex Media We</h1>
-                <h2 class="sliding-text-container">
-                    <span class="sliding-text">always work hard</span>
-                </h2>
-            </div>
-            <div class="about-third-section-middle-left">
-                <p>There are many creative agencies out there, but only a few really care!</p>
-                <p>We are Suflex Media are the 1%, who look at your business like ours as we pour our passion into
-                    everything we do to dish out the quality and perfection that our clients deserve!</p>
-            </div>
-            <div class="about-third-section-middle-right">
-                <img src="/images/active-solutions.png" alt="Creative Solution Illustration">
-            </div>
-        </section>
-
-        <div class="about-third-section-bottom">
-            <h3>Looking to join our Team?</h3>
-            <a href="#" class="about-third-section-cta">
-                See Openings
-
-                <img src="/icons/arrow-button.png" alt="Arrow Icon">
-
-            </a>
+    <section class="about-third-section">
+        <div class="about-third-section-top">
+            <h1>At Suflex Media We</h1>
+            <h2 class="sliding-text-container">
+                <span class="sliding-text">always work hard</span>
+            </h2>
         </div>
+        <div class="about-third-section-middle-left">
+            <p>There are many creative agencies out there, but only a few really care!</p>
+            <p>We are Suflex Media are the 1%, who look at your business like ours as we pour our passion into
+                everything we do to dish out the quality and perfection that our clients deserve!</p>
+        </div>
+        <div class="about-third-section-middle-right">
+            <img src="/images/active-solutions.png" alt="Creative Solution Illustration" loading="lazy">
+        </div>
+    </section>
+
+    <div class="about-third-section-bottom">
+        <h3>Looking to join our Team?</h3>
+        <a href="#" class="about-third-section-cta">
+            See Openings
+
+            <img src="/icons/arrow-button.png" alt="Arrow Icon">
+
+        </a>
+    </div>
 
     </div>
 
@@ -193,8 +256,10 @@
             <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png" alt="Instagram"></a>
-                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
+                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png"
+                            alt="Instagram"></a>
+                    <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png"
+                            alt="LinkedIn"></a>
                     <a href="#"><img src="/icons/x.png" alt="X"></a>
                 </div>
             </div>
@@ -215,13 +280,40 @@
 
     <script>
         const originalTitle = "About Us - Suflex Media | Results-Driven Digital Marketing Agency";
-        const awayTitle = "😢 Missing you already!";
-        
-        document.addEventListener("visibilitychange", function() {
+        const awayTitle = "Missing you already!";
+        const originalFavicon = "/images/logo_header.png";
+
+        function createEmojiFavicon(emoji) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '28px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, 16, 18);
+            return canvas.toDataURL('image/png');
+        }
+
+        const awayFavicon = createEmojiFavicon('😢');
+
+        function setFavicon(href) {
+            let link = document.querySelector("link[rel*='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = href;
+        }
+
+        document.addEventListener("visibilitychange", function () {
             if (document.hidden) {
                 document.title = awayTitle;
+                setFavicon(awayFavicon);
             } else {
                 document.title = originalTitle;
+                setFavicon(originalFavicon);
             }
         });
     </script>

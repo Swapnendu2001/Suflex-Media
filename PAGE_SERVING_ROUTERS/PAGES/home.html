@@ -1,22 +1,74 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suflex Media - Digital Marketing & Branding Agency | 300+ Customers Served</title>
     <link rel="icon" type="image/png" href="/images/logo_header.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Permissions Policy to prevent payment API warning -->
+    <meta http-equiv="Permissions-Policy" content="payment=()">
+    <title>Suflex Media - Digital Marketing & Branding Agency | 300+ Customers Served</title>
+    <meta name="description"
+        content="Suflex Media is a full-service digital marketing and branding agency. We specialize in book writing, LinkedIn branding, content writing, performance marketing, website development, and SEO. 300+ customers served.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://suflexmedia.com/">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://suflexmedia.com/">
+    <meta property="og:title" content="Suflex Media - Digital Marketing & Branding Agency | 300+ Customers Served">
+    <meta property="og:description"
+        content="Suflex Media is a full-service digital marketing and branding agency. We specialize in book writing, LinkedIn branding, content writing, performance marketing, website development, and SEO.">
+    <meta property="og:image" content="https://suflexmedia.com/images/logo_header.png">
+    <meta property="og:site_name" content="Suflex Media">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://suflexmedia.com/">
+    <meta name="twitter:title" content="Suflex Media - Digital Marketing & Branding Agency | 300+ Customers Served">
+    <meta name="twitter:description"
+        content="Suflex Media is a full-service digital marketing and branding agency. We specialize in book writing, LinkedIn branding, content writing, performance marketing, website development, and SEO.">
+    <meta name="twitter:image" content="https://suflexmedia.com/images/logo_header.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="/css/home.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Preload hero background for faster LCP -->
+    <link rel="preload" as="image" href="/images/bg-hero.webp">
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '710111701297517');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=710111701297517&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
 
     <header class="header">
         <div class="logo">
-            <img src="/images/logo_header.png" alt="Suflex Media Logo">
+            <img src="/images/logo_header.png" alt="Suflex Media Logo" width="173" height="72">
         </div>
         <nav class="nav-links">
             <a href="/" class="active">Home</a>
@@ -35,12 +87,12 @@
             <a href="/case-studies">Case Studies</a>
             <a href="/blogs">Blog</a>
             <a href="/contact" class="contact-us">
-                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon" width="25" height="25">
                 <span>Contact Us</span>
             </a>
         </nav>
         <a href="/contact" class="contact-us">
-            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon" width="25" height="25">
             <span>Contact Us</span>
         </a>
         <div class="hamburger">
@@ -50,8 +102,8 @@
         </div>
     </header>
 
-    <div class="content-wrapper">
-        <img src="/images/bg-hero.png" alt="" class="hero-bg-image">
+    <main class="content-wrapper" role="main">
+        <img src="/images/bg-hero.webp" alt="" class="hero-bg-image" width="1600" height="900">
 
         <section class="hero-section">
             <div class="hero-content">
@@ -64,7 +116,7 @@
                         <div class="cta-inner">
                             <span class="cta-text">Book a free strategy call</span>
                             <div class="cta-icon">
-                                <img src="/icons/arrow.png" alt="arrow">
+                                <img src="/icons/arrow.png" alt="arrow" width="20" height="15">
                             </div>
                         </div>
                     </a>
@@ -72,29 +124,34 @@
 
                 <div class="trusted-logos">
                     <div class="carousel-track">
-                        <img src="/images/scroll-1.svg" alt="Logo 1">
-                        <img src="/images/scroll-2.png" alt="Logo 2" class="black-bg">
-                        <img src="/images/scroll-3.png" alt="Logo 3">
-                        <img src="/images/scroll-4.png" alt="Logo 4">
-                        <img src="/images/scroll-6.png" alt="Logo 6">
-                        <img src="/images/scroll-7.png" alt="Logo 7">
-                        <img src="/images/scroll-8.png" alt="Logo 8">
-                        <img src="/images/scroll-9.png" alt="Logo 9">
-                        <img src="/images/scroll-10.png" alt="Logo 10">
-                        <img src="/images/scroll-1.svg" alt="Logo 1">
-                        <img src="/images/scroll-2.png" alt="Logo 2" class="black-bg">
-                        <img src="/images/scroll-3.png" alt="Logo 3">
-                        <img src="/images/scroll-4.png" alt="Logo 4">
-                        <img src="/images/scroll-6.png" alt="Logo 6">
-                        <img src="/images/scroll-7.png" alt="Logo 7">
-                        <img src="/images/scroll-8.png" alt="Logo 8">
-                        <img src="/images/scroll-9.png" alt="Logo 9">
-                        <img src="/images/scroll-10.png" alt="Logo 10">
+                        <img src="/images/scroll-1.svg" alt="Logo 1" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-2.png" alt="Logo 2" class="black-bg" loading="lazy" width="115"
+                            height="86">
+                        <img src="/images/scroll-3.png" alt="Logo 3" loading="lazy" width="180" height="59">
+                        <img src="/images/scroll-4.png" alt="Logo 4" loading="lazy" width="180" height="48">
+                        <img src="/images/scroll-6.png" alt="Logo 6" loading="lazy" width="180" height="45">
+                        <img src="/images/scroll-7.png" alt="Logo 7" loading="lazy" width="180" height="38">
+                        <img src="/images/scroll-8.png" alt="Logo 8" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-9.png" alt="Logo 9" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-10.png" alt="Logo 10" loading="lazy" width="180" height="38">
+                        <img src="/images/scroll-1.svg" alt="Logo 1" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-2.png" alt="Logo 2" class="black-bg" loading="lazy" width="115"
+                            height="86">
+                        <img src="/images/scroll-3.png" alt="Logo 3" loading="lazy" width="180" height="59">
+                        <img src="/images/scroll-4.png" alt="Logo 4" loading="lazy" width="180" height="48">
+                        <img src="/images/scroll-6.png" alt="Logo 6" loading="lazy" width="180" height="45">
+                        <img src="/images/scroll-7.png" alt="Logo 7" loading="lazy" width="180" height="38">
+                        <img src="/images/scroll-8.png" alt="Logo 8" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-9.png" alt="Logo 9" loading="lazy" width="180" height="41">
+                        <img src="/images/scroll-10.png" alt="Logo 10" loading="lazy" width="180" height="38">
                     </div>
                 </div>
 
                 <div class="side-card-left">
-                    <h3>Turning Ideas into Books</h3>
+                    <video autoplay loop muted playsinline aria-hidden="true">
+                        <source src="/images/idea.mp4" type="video/mp4">
+                    </video>
+                    <span class="card-title">Turning Ideas into Books</span>
                 </div>
 
                 <div class="stats-container">
@@ -102,12 +159,14 @@
                         <div class="stat-inner-left">
                             <div class="stat-text-left"><span class="stat-number">20+</span><br>Books
                                 Published<br>Annually</div>
-                            <img src="/images/hero_ghost.webp" alt="Ghost" class="stat-icon-left">
+                            <img src="/images/hero_ghost.webp" alt="Ghost" class="stat-icon-left" width="144"
+                                height="150">
                         </div>
                     </div>
                     <div class="stat-box-right">
                         <div class="stat-inner-right">
-                            <img src="/images/hero_cup.webp" alt="Trophy Cup" class="stat-icon-right">
+                            <img src="/images/hero_cup.webp" alt="Trophy Cup" class="stat-icon-right" width="180"
+                                height="152">
                             <div class="stat-text-right"><span class="stat-number">40+</span><br>Personal<br>Brands
                                 Built</div>
                         </div>
@@ -115,23 +174,31 @@
                 </div>
 
                 <div class="center-main-card">
-                    <video autoplay loop muted playsinline>
+                    <video autoplay loop muted playsinline class="desktop-video" aria-hidden="true">
+                        <source src="/images/thought_leaders.mp4" type="video/mp4">
+                    </video>
+                    <video autoplay loop muted playsinline class="mobile-video" aria-hidden="true">
                         <source src="/icons/mobile_thought_leader.mp4" type="video/mp4">
                     </video>
-                    <h3 class="desktop-text">Turning<br>Leaders into<br>Thought<br>Leaders</h3>
-                    <h3 class="mobile-text">Turning Leaders<br>into Thought<br>Leaders</h3>
+                    <span class="card-title desktop-text">Turning<br>Leaders into<br>Thought<br>Leaders</span>
+                    <span class="card-title mobile-text">Turning Leaders<br>into Thought<br>Leaders</span>
                 </div>
 
                 <div class="side-card-right">
-                    <h3>Turning Content into Lead Magnets</h3>
+                    <video autoplay loop muted playsinline aria-hidden="true">
+                        <source src="/images/lead_magnets.mp4" type="video/mp4">
+                    </video>
+                    <span class="card-title">Turning Content into Lead Magnets</span>
                 </div>
 
                 <!-- Mobile-only icons for hero section -->
                 <div class="mobile-hero-icons">
-                    <img src="/icons/bulb.png" alt="Bulb" class="mobile-icon bulb-icon">
-                    <img src="/icons/curved-arrow.png" alt="Curved Arrow" class="mobile-icon curved-arrow-icon">
-                    <img src="/icons/doodle-arrow.png" alt="Doodle Arrow" class="mobile-icon doodle-arrow-icon">
-                    <img src="/icons/doodle.png" alt="Doodle" class="mobile-icon doodle-icon">
+                    <img src="/icons/bulb.png" alt="Bulb" class="mobile-icon bulb-icon" width="48" height="48">
+                    <img src="/icons/curved-arrow.png" alt="Curved Arrow" class="mobile-icon curved-arrow-icon"
+                        width="48" height="48">
+                    <img src="/icons/doodle-arrow.png" alt="Doodle Arrow" class="mobile-icon doodle-arrow-icon"
+                        width="48" height="48">
+                    <img src="/icons/doodle.png" alt="Doodle" class="mobile-icon doodle-icon" width="28" height="28">
                 </div>
             </div>
         </section>
@@ -145,44 +212,48 @@
             <div class="work-with-us-content">
                 <div class="cards-bucket">
                     <div class="card card-1">
-                        <img src="/images/Frame1.jpg" alt="Breakthrough Idea">
+                        <img src="/images/Frame1.jpg" alt="Breakthrough Idea" loading="lazy" width="280" height="186">
                         <h4>Got a Breakthrough Idea or Product?</h4>
                         <p>We'll match it with the audience that's craving something new—no empty promises.</p>
                         <p>We believe in smarter strategies and marketing that connect on a human level. When you work
                             with us, you're getting a partner who's as invested in your success as you are.</p>
                     </div>
                     <div class="card card-2">
-                        <img src="/images/Frame2.jpg" alt="Tired of Agencies Going Dark?">
+                        <img src="/images/Frame2.jpg" alt="Tired of Agencies Going Dark?" loading="lazy" width="280"
+                            height="186">
                         <h4>Tired of Agencies Going Dark?</h4>
                         <p>We stick around until your brand thrives—no radio silence or silent treatments here.</p>
                         <p>From real-time reporting dashboards to on-call support, we keep you looped in every step of
                             the way. Transparency is our middle name.</p>
                     </div>
                     <div class="card card-3">
-                        <img src="/images/Frame3.jpg" alt="Marketing Missteps">
+                        <img src="/images/Frame3.jpg" alt="Marketing Missteps" loading="lazy" width="280" height="210">
                         <h4>Done with Marketing Missteps?</h4>
                         <p>We turn setbacks into comebacks—no cookie-cutter solutions and guesswork.</p>
                         <p>Using advanced data analytics and proven tactics, we turn businesses around—focusing on
                             outcomes that move the needle and impact your bottom line.</p>
                     </div>
                     <div class="card card-4">
-                        <img src="/images/Frame4.jpg" alt="Time-Tested & Data-Driven">
+                        <img src="/images/Frame4.jpg" alt="Time-Tested & Data-Driven" loading="lazy" width="280"
+                            height="168">
                         <h4>Time-Tested & Data-Driven</h4>
                         <p>We harness insights to fine-tune every campaign—no trial and error, just results.</p>
                         <p>With real-time reporting and open communication, you'll always know exactly where your
                             campaigns stand—and where they're headed next.</p>
                     </div>
                     <div class="card card-5">
-                        <img src="/images/Frame5.jpg" alt="Capped Number of Projects">
+                        <img src="/images/Frame5.jpg" alt="Capped Number of Projects" loading="lazy">
                         <h4>Capped Number of Projects</h4>
                         <p>We never bite off more than we can chew — for your benefit and ours.</p>
                         <p>We cap our project load to give you undivided attention—no rush jobs, no compromise.</p>
                     </div>
                     <div class="card card-6">
-                        <img src="https://picsum.photos/400/300?random=6" alt="Built for Your Brand">
+                        <img src="https://picsum.photos/400/300?random=6" alt="Built for Your Brand" loading="lazy">
                         <h4>Built for Your Brand, Not a Template</h4>
-                        <p>We don't recycle "best practices" or generic playbooks. Your brand has its own story, its own customers, and its own goals — so your strategy should feel just as unique.</p>
-                        <p>The result is a marketing system that fits you perfectly, works with your strengths, and sets you up for long-term wins.</p>
+                        <p>We don't recycle "best practices" or generic playbooks. Your brand has its own story, its own
+                            customers, and its own goals — so your strategy should feel just as unique.</p>
+                        <p>The result is a marketing system that fits you perfectly, works with your strengths, and sets
+                            you up for long-term wins.</p>
                     </div>
                 </div>
             </div>
@@ -197,45 +268,47 @@
                 <div class="care-grid">
                     <a href="/ghostwriting" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/BookWriting.png" alt="Book Writing Icon">
+                            <img src="/icons/BookWriting.png" alt="Book Writing Icon" width="87" height="87">
                             <p>Book<br>Writing</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                     <a href="/linkedin-branding" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/LinkedinBranding.png" alt="LinkedIn Branding Icon">
+                            <img src="/icons/LinkedinBranding.png" alt="LinkedIn Branding Icon" width="87" height="87">
                             <p>LinkedIn<br>Branding</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                     <a href="/content-writing" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/ContentWriting.png" alt="Content Writing Icon">
+                            <img src="/icons/ContentWriting.png" alt="Content Writing Icon" width="87" height="87">
                             <p>Content<br>Writing</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                     <a href="/performance-marketing" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/PerformanceMarketing.png" alt="Performance Marketing Icon">
+                            <img src="/icons/PerformanceMarketing.png" alt="Performance Marketing Icon" width="87"
+                                height="87">
                             <p>Performance<br>Marketing</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                     <a href="/website-development" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/WebDevelopment.png" alt="Web Development Icon">
+                            <img src="/icons/WebDevelopment.png" alt="Web Development Icon" width="87" height="87">
                             <p>Website<br>Development</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                     <a href="/seo" class="care-card">
                         <div class="card-left">
-                            <img src="/icons/GraphicDesign.png" alt="Search Engine Optimisation Icon">
+                            <img src="/icons/GraphicDesign.png" alt="Search Engine Optimisation Icon" width="87"
+                                height="87">
                             <p>Search Engine<br>Optimisation</p>
                         </div>
-                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow">
+                        <img src="/icons/Blue-Arrow.png" alt="Arrow" class="card-arrow" width="50" height="50">
                     </a>
                 </div>
                 <button class="care-cta-button" onclick="location.href='/contact'">Book a free strategy call</button>
@@ -258,80 +331,81 @@
             </div>
         </section>
 
-    <div class="brands-section">
-        <div class="brands-heading">
-            <h1 class="desktop-heading">Big Brands. Smart Founders. One</h1>
-            <h1 class="desktop-heading">Thing in Common: <span class="blue-text">Suflex.</span></h1>
-            <h1 class="mobile-heading">Real Brands<br><span class="blue-text">Real Stories</span></h1>
-        </div>
-        <div class="brands-content">
-            <div class="brands-left">
-                <div class="image-container">
-                    <img src="[[[imageURL]]]" alt="Man with bulb" class="brands-image">
+        <div class="brands-section">
+            <div class="brands-heading">
+                <h1 class="desktop-heading">Big Brands. Smart Founders. One</h1>
+                <h1 class="desktop-heading">Thing in Common: <span class="blue-text">Suflex.</span></h1>
+                <h1 class="mobile-heading">Real Brands<br><span class="blue-text">Real Stories</span></h1>
+            </div>
+            <div class="brands-content">
+                <div class="brands-left">
+                    <div class="image-container">
+                        <img src="[[[imageURL]]]" alt="Man with bulb" class="brands-image">
+                    </div>
+                </div>
+                <div class="brands-right">
+                    <!-- CASE STUDY TITLE WILL BE INSERTED HERE DYNAMICALLY -->
+                    <!-- CASE STUDY SUMMARY WILL BE INSERTED HERE DYNAMICALLY -->
+                    <div class="brands-buttons">
+                        <!-- READ MORE BUTTON WILL BE INSERTED HERE DYNAMICALLY -->
+                        <button class="view-all-btn" onclick="window.location.href='/case-studies'">View All Case
+                            Studies</button>
+                    </div>
                 </div>
             </div>
-            <div class="brands-right">
-                <!-- CASE STUDY TITLE WILL BE INSERTED HERE DYNAMICALLY -->
-                <!-- CASE STUDY SUMMARY WILL BE INSERTED HERE DYNAMICALLY -->
-                <div class="brands-buttons">
-                    <!-- READ MORE BUTTON WILL BE INSERTED HERE DYNAMICALLY -->
-                    <button class="view-all-btn" onclick="window.location.href='/case-studies'">View All Case
-                        Studies</button>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <section id="booking-section">
-        <div class="booking-header">
-            <h2>Ready to <span>work</span> with us?</h2>
-        </div>
-        <div class="booking-main">
-            <div class="calendly-inline-widget" data-url="https://calendly.com/bhuinavijit21/new-meeting"></div>
-        </div>
-    </section>
-
-
-    <div class="faq-section">
-        <div class="faq-title-container">
-            <h2 class="faq-title">Frequently Asked<br>Questions</h2>
-        </div>
-        <div class="faq-accordion">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="icon">+</span>
-                    <span>How do i sign up for the project?</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Follow our newsletter. We will regularly update our latest project and availability.</p>
+        <section id="booking-section">
+            <div class="booking-header">
+                <h2>Ready to <span>work</span> with us?</h2>
+            </div>
+            <div class="booking-main">
+                <div class="calendly-inline-widget" data-url="https://calendly.com/suflex-media/linkedin-strategy-call">
                 </div>
             </div>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="icon">+</span>
-                    <span>What thing that i should prepare before starting?</span>
-                </div>
-                <div class="faq-answer">
-                    <p>To get started, it's helpful to have a clear idea of your project goals, target audience, and
-                        any existing brand assets. Don't worry if you don't have everything, we can help you with
-                        that!</p>
-                </div>
+        </section>
+
+
+        <div class="faq-section">
+            <div class="faq-title-container">
+                <h2 class="faq-title">Frequently Asked<br>Questions</h2>
             </div>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="icon">+</span>
-                    <span>Does my company need help for marketing advices?</span>
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="icon">+</span>
+                        <span>How do i sign up for the project?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Follow our newsletter. We will regularly update our latest project and availability.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Every company can benefit from expert marketing advice. We can provide a fresh perspective,
-                        identify growth opportunities, and help you create a strategy that delivers real results.
-                    </p>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="icon">+</span>
+                        <span>What thing that i should prepare before starting?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>To get started, it's helpful to have a clear idea of your project goals, target audience, and
+                            any existing brand assets. Don't worry if you don't have everything, we can help you with
+                            that!</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="icon">+</span>
+                        <span>Does my company need help for marketing advices?</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Every company can benefit from expert marketing advice. We can provide a fresh perspective,
+                            identify growth opportunities, and help you create a strategy that delivers real results.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    </div>
+    </main>
 
     <footer class="footer">
         <div class="footer-content">
@@ -360,11 +434,11 @@
             <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png"
-                            alt="Instagram"></a>
+                    <a href="https://www.instagram.com/suflexmedia/"><img src="/icons/instagram.png" alt="Instagram"
+                            width="33" height="33"></a>
                     <a href="https://www.linkedin.com/company/suflex-media/"><img src="/icons/linkedin.png"
-                            alt="LinkedIn"></a>
-                    <a href="#"><img src="/icons/x.png" alt="X"></a>
+                            alt="LinkedIn" width="33" height="33"></a>
+                    <a href="#"><img src="/icons/x.png" alt="X" width="33" height="33"></a>
                 </div>
             </div>
             <div class="footer-section contact-section">
@@ -374,7 +448,7 @@
         </div>
         <div class="footer-bottom">
             <div class="footer-logo">
-                <img src="/images/logo_header.png" alt="Suflex Media Logo">
+                <img src="/images/logo_header.png" alt="Suflex Media Logo" width="173" height="72">
             </div>
             <div class="copyright">
                 <p>Copyright © 2024 SuflexMedia | All Rights Reserved</p>
@@ -384,13 +458,38 @@
 
     <script>
         const originalTitle = "Suflex Media - Digital Marketing & Branding Agency | 300+ Customers Served";
-        const awayTitle = "😢 Missing you already!";
+        const awayTitle = "Missing you already!";
+        const originalFavicon = "/images/logo_header.png";
+
+        // Create an emoji favicon dynamically
+        function createEmojiFavicon(emoji) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '28px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, 16, 18);
+            return canvas.toDataURL('image/png');
+        }
+
+        const awayFavicon = createEmojiFavicon('😢');
+
+        function setFavicon(href) {
+            let link = document.querySelector("link[rel*='icon']");
+            if (link) {
+                link.href = href;
+            }
+        }
 
         document.addEventListener("visibilitychange", function () {
             if (document.hidden) {
                 document.title = awayTitle;
+                setFavicon(awayFavicon);
             } else {
                 document.title = originalTitle;
+                setFavicon(originalFavicon);
             }
         });
     </script>

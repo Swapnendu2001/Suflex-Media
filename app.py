@@ -26,6 +26,7 @@ from API_ROUTERS.serve_images_api_router import router as serve_images_api_route
 from API_ROUTERS.blogs_api_router import router as blogs_api_router
 from API_ROUTERS.case_studies_api_router import router as case_studies_api_router
 from API_ROUTERS.contact_us_api_router import router as contact_us_api_router
+from PAGE_SERVING_ROUTERS.ROUTERS.seo_router import router as seo_router
 
 
 logging.basicConfig(
@@ -68,6 +69,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Cache headers middleware for static assets
+@app.middleware("http")
+async def add_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    # Add long cache headers for static assets
+    if any(path.startswith(p) for p in ['/css/', '/js/', '/images/', '/icons/', '/fonts/']):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
+
+
 app.mount("/css", StaticFiles(directory="PAGE_SERVING_ROUTERS/CSS"), name="css")
 app.mount("/icons", StaticFiles(directory="PAGE_SERVING_ROUTERS/ICONS"), name="icons")
 app.mount("/images", StaticFiles(directory="PAGE_SERVING_ROUTERS/IMAGES"), name="images")
@@ -91,6 +103,7 @@ app.include_router(serve_images_api_router)
 app.include_router(blogs_api_router)
 app.include_router(contact_us_api_router)
 app.include_router(case_studies_api_router)
+app.include_router(seo_router)
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: HTTPException):

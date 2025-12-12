@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dropdown = document.querySelector('.dropdown');
     const dropdownToggle = document.querySelector('.dropdown-toggle');
-    
+
     if (dropdown && dropdownToggle) {
-        dropdownToggle.addEventListener('click', function(e) {
+        dropdownToggle.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             if (window.innerWidth <= 768) {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (window.innerWidth <= 768 && !dropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
             }
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentlyActive.classList.remove('active');
                 currentlyActive.querySelector('.icon').textContent = '+';
             }
-    
+
             item.classList.toggle('active');
             const icon = item.querySelector('.icon');
             if (item.classList.contains('active')) {

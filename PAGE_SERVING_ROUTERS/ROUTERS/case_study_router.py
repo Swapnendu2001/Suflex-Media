@@ -29,8 +29,7 @@ MAGAZINE_IFRAME_CONTENT = """<!DOCTYPE html>
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-    <!-- PageFlip (flip.js) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css" />
+    <!-- PageFlip (flip.js) - CSS styles are embedded inline below -->
     <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
     <style>
@@ -1431,6 +1430,7 @@ def get_raw_html(pdf_url):
     iframe = f"""<iframe
                 id="my-flipbook-container"
                 class="w-full max-w-[52rem]"
+                title="PDF Flipbook Viewer - Interactive document viewer"
                 allow="clipboard-write"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
                 allowfullscreen="true"
@@ -1629,11 +1629,32 @@ def generate_head_section(blog_data: Dict[str, Any], case_study_date: str) -> st
 
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="/css/case_study.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)}};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '710111701297517');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=710111701297517&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
     <script type="application/ld+json">
         {{
@@ -1659,7 +1680,7 @@ def generate_header_section() -> str:
     return """
     <header class="header">
         <div class="logo">
-            <a href="/"><img src="/images/logo_header.png" alt="Suflex Media Logo"></a>
+            <a href="/"><img src="/images/logo_header.png" alt="Suflex Media Logo" width="120" height="56"></a>
         </div>
         <nav class="nav-links">
             <a href="/">Home</a>
@@ -1678,12 +1699,12 @@ def generate_header_section() -> str:
             <a href="/case-studies" class="active">Case Studies</a>
             <a href="/blogs">Blog</a>
             <a href="/contact" class="contact-us">
-                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+                <img src="/icons/phone-icon.png" alt="Phone icon" class="icon" width="24" height="24">
                 <span>Contact Us</span>
             </a>
         </nav>
         <a href="/contact" class="contact-us">
-            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon">
+            <img src="/icons/phone-icon.png" alt="Phone icon" class="icon" width="24" height="24">
             <span>Contact Us</span>
         </a>
         <div class="hamburger">
@@ -1941,9 +1962,9 @@ def generate_footer_section(blog_data: Dict[str, Any]) -> str:
             <div class="footer-section social-section">
                 <h3>Social Links</h3>
                 <div class="social-links">
-                    <a href="#"><img src="/icons/instagram.png" alt="Instagram"></a>
-                    <a href="#"><img src="/icons/linkedin.png" alt="LinkedIn"></a>
-                    <a href="#"><img src="/icons/x.png" alt="X"></a>
+                    <a href="#"><img src="/icons/instagram.png" alt="Instagram" width="32" height="32"></a>
+                    <a href="#"><img src="/icons/linkedin.png" alt="LinkedIn" width="32" height="32"></a>
+                    <a href="#"><img src="/icons/x.png" alt="X" width="32" height="32"></a>
                 </div>
             </div>
             <div class="footer-section contact-section">
@@ -1953,7 +1974,7 @@ def generate_footer_section(blog_data: Dict[str, Any]) -> str:
         </div>
         <div class="footer-bottom">
             <div class="footer-logo">
-                <img src="/images/logo_header.png" alt="Suflex Media Logo">
+                <img src="/images/logo_header.png" alt="Suflex Media Logo" width="150" height="70">
             </div>
             <div class="copyright">
                 <p>Copyright © 2025 SuflexMedia | All Rights Reserved</p>
@@ -1963,13 +1984,40 @@ def generate_footer_section(blog_data: Dict[str, Any]) -> str:
 
     <script>
         const originalTitle = document.title;
-        const awayTitle = "😢 Missing you already!";
+        const awayTitle = "Missing you already!";
+        const originalFavicon = "/images/logo_header.png";
         
+        function createEmojiFavicon(emoji) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '28px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, 16, 18);
+            return canvas.toDataURL('image/png');
+        }
+        
+        const awayFavicon = createEmojiFavicon('😢');
+        
+        function setFavicon(href) {
+            let link = document.querySelector("link[rel*='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = href;
+        }
+
         document.addEventListener("visibilitychange", function() {
             if (document.hidden) {
                 document.title = awayTitle;
+                setFavicon(awayFavicon);
             } else {
                 document.title = originalTitle;
+                setFavicon(originalFavicon);
             }
         });
         
