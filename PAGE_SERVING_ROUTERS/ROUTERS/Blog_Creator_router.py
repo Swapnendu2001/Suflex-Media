@@ -1324,7 +1324,7 @@ async def get_blog_content(data: list):
                     f"""<div class="w-full h-[120px] sm:h-[160px] md:h-[236px] my-8 md:my-12"><img src="{url}" alt="{alt}" class="w-full h-full object-cover"/></div>"""
                 )
     content_str = "\n".join(content)
-    return f"""<section class="space-y-6 md:space-y-5 text-left order-1 lg:order-2">{content_str}</section>"""
+    return f"""<section class="space-y-6 md:space-y-5 text-left order-1 lg:order-2 max-w-[59vw]">{content_str}</section>"""
 
 
 async def get_blog_body(data: dict):
